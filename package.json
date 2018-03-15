@@ -1,0 +1,28 @@
+{
+  "name": "beat-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for Beat",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": "git+https://github.com/thEpisode/beat-cli.git",
+  "keywords": [
+    "beat",
+    "reverse",
+    "bytes",
+    "boilerplate"
+  ],
+  "author": "Camilo Rodriguez <camiepisode@outlook.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thEpisode/beat-cli/issues"
+  },
+  "homepage": "https://github.com/thEpisode/beat-cli#readme",
+  "dependencies": {
+    "commander": "^2.15.0",
+    "inquirer": "^5.1.0",
+    "mongoose": "^5.0.10"
+  }
+}
