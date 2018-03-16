@@ -3,6 +3,8 @@
 const program = require('commander');
 const { prompt } = require('inquirer');
 const finder = require('fs-finder');
+const fs = require('fs');
+
 const originalFolderStructure = {
   'firstLevel': [
     'config',
@@ -22,7 +24,7 @@ const originalFolderStructure = {
 };
 const fileStructure = {
   'controllers': ['mainController.js'],
-  'manage':[
+  'manage': [
     'components.js',
     'dependencies.js',
     'server.js',
@@ -57,7 +59,17 @@ const newView = [
   {
     type: 'input',
     name: 'name',
-    message: 'View name: '
+    message: 'View name:'
+  },
+  {
+    type: 'input',
+    name: 'route',
+    message: 'Route (Express notation starting with /):'
+  },
+  {
+    type: 'input',
+    name: 'action',
+    message: 'Action (name of function in controller):'
   },
 ];
 
@@ -66,6 +78,25 @@ const newApiController = [
     type: 'input',
     name: 'name',
     message: 'Controller name: '
+  },
+  {
+    type: 'input',
+    name: 'route',
+    message: 'Route (Express notation starting with /):'
+  },
+  {
+    type: 'input',
+    name: 'action',
+    message: 'Action (name of function in controller):'
+  },
+  {
+    type: 'list',
+    name: 'type',
+    message: 'Method:',
+    choices:[
+      'GET',
+      'POST'
+    ]
   },
 ]
 
@@ -98,12 +129,12 @@ program
           });
           break;
         case 'view':
-          prompt(newView).then(answers =>{
+          prompt(newView).then(answers => {
             createNewView(answers);
           });
           break;
         case 'api controller':
-          prompt(newApiController).then(answers =>{
+          prompt(newApiController).then(answers => {
             createNewAPIController(answers);
           });
           break;
@@ -136,38 +167,87 @@ program
 program.parse(process.argv);
 
 function createNewProject(data) {
-  if(isBeatFolder() === false){
+  if (isBeatFolder() === false) {
 
   }
 }
 
 function createNewView(data) {
-  if(isBeatFolder() === false){
-    
+  if (isBeatFolder() === true) {
+    var lastLine = detectLastComponent(false);
+
+    addComponent(lastLine++, `    { route: '${data.route}', view: '/${data.name}/${data.name}.route', action: '${data.action}' },`);
+    console.log(`${data.name} view added succesfuly`);
   }
 }
 
 function createNewAPIController(data) {
-  if(isBeatFolder() === false){
+  if (isBeatFolder() === true) {
+    var lastLine = detectLastComponent(true);
     
+    addComponent(lastLine++, `    { route: '${data.route}', controller: '/${data.name}/${data.name}.route', action: '${data.action}', method: '${data.method}' },`);
+    console.log(`${data.name} API controller added succesfuly`);
   }
+}
+
+function detectLastComponent(isAPI) {
+  let currentDir = process.cwd();
+
+  let lines = fs.readFileSync(currentDir + '\\src\\manage\\components.js').toString().split("\n");
+  let lastComponentLine = 0;
+  let startLine = false;
+  let token = '';
+
+  if (isAPI) {
+    token = 'apiComponents:';
+  }
+  else {
+    token = 'frontendComponents:';
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    var line = lines[i];
+
+    if (line.indexOf(token) > 0 && startLine === false) {
+      startLine = true;
+    }
+    else if (line.indexOf('route') > 0 && startLine === true) {
+      lastComponentLine = i;
+    }
+    else if (line.indexOf(']') && startLine === true) {
+      break;
+    }
+  }
+  return ++lastComponentLine;
+}
+
+function addComponent(lineNumber, component) {
+  let currentDir = process.cwd();
+
+  var data = fs.readFileSync(currentDir + '\\src\\manage\\components.js').toString().split("\n");
+  data.splice(lineNumber, 0, component);
+  var text = data.join("\n");
+
+  fs.writeFile(currentDir + '\\src\\manage\\components.js', text, function (err) {
+    if (err) return console.log(err);
+  });
 }
 
 function isBeatFolder() {
   var preserveFolderStructure = folderStructure();
   var preservefilesStructure = filesStructure();
 
-  if(preservefilesStructure === true && preserveFolderStructure === true){
+  if (preservefilesStructure === true && preserveFolderStructure === true) {
     return true;
   }
-  else{
+  else {
     return false;
   }
 }
 
 const folderStructure = function () {
   let currentDir = process.cwd();
-  
+
   let foldersFirstLevel = finder.in(currentDir).findDirectories();
   let foldersSrcLevel = finder.in(currentDir + '\\src').findDirectories();
   let foldersRoutesLevel = finder.in(currentDir + '\\src\\routes').findDirectories();
@@ -191,7 +271,7 @@ const folderStructure = function () {
     match = 0;
     foldersSrcLevel.map((folder) => {
       originalFolderStructure.srcLevel.map((structureFolder) => {
-        if (folder.indexOf(structureFolder)>0) match++;
+        if (folder.indexOf(structureFolder) > 0) match++;
       })
     })
 
@@ -216,11 +296,11 @@ const folderStructure = function () {
   return false;
 };
 
-const filesStructure = function(){
+const filesStructure = function () {
   let currentDir = process.cwd();
   let manageFiles = finder.in(currentDir + '\\src\\manage').findFiles();
 
-  if(manageFiles){
+  if (manageFiles) {
     let preserveManageFiles = false;
     let preserveControllersFiles = false;
     let match = 0;
@@ -237,5 +317,5 @@ const filesStructure = function(){
 
     return true;
   }
-  
+
 }
