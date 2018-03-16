@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "CLI tool for Beat",
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": "./index.js",
   "scripts": {
     "start": "node index.js",
     "test": "test"
