@@ -26,6 +26,7 @@
     "commander": "^2.15.0",
     "fs-finder": "^1.8.1",
     "inquirer": "^5.1.0",
+    "moment": "^2.21.0",
     "mongoose": "^5.0.10"
   }
 }

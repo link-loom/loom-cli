@@ -168,7 +168,7 @@ program.parse(process.argv);
 
 function createNewProject(data) {
   if (isBeatFolder() === false) {
-
+    
   }
 }
 
