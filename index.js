@@ -4,6 +4,7 @@ const program = require('commander');
 const { prompt } = require('inquirer');
 const finder = require('fs-finder');
 const fs = require('fs');
+const download = require('download-git-repo');
 
 const originalFolderStructure = {
   'firstLevel': [
@@ -22,6 +23,7 @@ const originalFolderStructure = {
     'frontend'
   ]
 };
+
 const fileStructure = {
   'controllers': ['mainController.js'],
   'manage': [
@@ -32,27 +34,13 @@ const fileStructure = {
     'utilities.js'
   ]
 }
+
 const newProject = [
   {
     type: 'input',
     name: 'name',
     message: 'Project name:'
   },
-  {
-    type: 'confirm',
-    name: 'firebase',
-    message: 'Do you want to use firebase? Y/n: '
-  },
-  {
-    type: 'confirm',
-    name: 'api',
-    message: 'Want to use Web API? Y/n: '
-  },
-  {
-    type: 'confirm',
-    name: 'frontend',
-    message: 'Want to use a Frontend? Y/n:'
-  }
 ];
 
 const newView = [
@@ -93,7 +81,7 @@ const newApiController = [
     type: 'list',
     name: 'type',
     message: 'Method:',
-    choices:[
+    choices: [
       'GET',
       'POST'
     ]
@@ -168,7 +156,10 @@ program.parse(process.argv);
 
 function createNewProject(data) {
   if (isBeatFolder() === false) {
-    
+    downloadProjectTemplate(data);
+  }
+  else {
+    console.log('Sorry, can\'t install Beat because current folder looks like a Beat Project');
   }
 }
 
@@ -184,7 +175,7 @@ function createNewView(data) {
 function createNewAPIController(data) {
   if (isBeatFolder() === true) {
     var lastLine = detectLastComponent(true);
-    
+
     addComponent(lastLine++, `    { route: '${data.route}', controller: '/${data.name}/${data.name}.route', action: '${data.action}', method: '${data.method}' },`);
     console.log(`${data.name} API controller added succesfuly`);
   }
@@ -246,76 +237,110 @@ function isBeatFolder() {
 }
 
 const folderStructure = function () {
-  let currentDir = process.cwd();
+  try {
+    let currentDir = process.cwd();
 
-  let foldersFirstLevel = finder.in(currentDir).findDirectories();
-  let foldersSrcLevel = finder.in(currentDir + '\\src').findDirectories();
-  let foldersRoutesLevel = finder.in(currentDir + '\\src\\routes').findDirectories();
+    let foldersFirstLevel = finder.in(currentDir).findDirectories();
+    let foldersSrcLevel = finder.in(currentDir + '\\src').findDirectories();
+    let foldersRoutesLevel = finder.in(currentDir + '\\src\\routes').findDirectories();
 
-  if (foldersFirstLevel && foldersSrcLevel && foldersRoutesLevel) {
-    let preserveFirstLevel = false;
-    let preserveSrcLevel = false;
-    let preserveRoutesLevel = false;
-    let match = 0;
+    if (foldersFirstLevel && foldersSrcLevel && foldersRoutesLevel) {
+      let preserveFirstLevel = false;
+      let preserveSrcLevel = false;
+      let preserveRoutesLevel = false;
+      let match = 0;
 
-    foldersFirstLevel.map((folder) => {
-      originalFolderStructure.firstLevel.map((structureFolder) => {
-        if (folder.indexOf(structureFolder) > 0) match++;
+      foldersFirstLevel.map((folder) => {
+        originalFolderStructure.firstLevel.map((structureFolder) => {
+          if (folder.indexOf(structureFolder) > 0) match++;
+        })
       })
-    })
 
-    if (originalFolderStructure.firstLevel.length > match) {
-      return false;
+      if (originalFolderStructure.firstLevel.length > match) {
+        return false;
+      }
+
+      match = 0;
+      foldersSrcLevel.map((folder) => {
+        originalFolderStructure.srcLevel.map((structureFolder) => {
+          if (folder.indexOf(structureFolder) > 0) match++;
+        })
+      })
+
+      if (originalFolderStructure.srcLevel.length > match) {
+        return false;
+      }
+
+      match = 0;
+      foldersRoutesLevel.map((folder) => {
+        originalFolderStructure.routesLevel.map((structureFolder) => {
+          if (folder.indexOf(structureFolder)) match++;
+        })
+      })
+
+      if (originalFolderStructure.routesLevel.length > match) {
+        return false;
+      }
+
+      return true;
     }
 
-    match = 0;
-    foldersSrcLevel.map((folder) => {
-      originalFolderStructure.srcLevel.map((structureFolder) => {
-        if (folder.indexOf(structureFolder) > 0) match++;
-      })
-    })
-
-    if (originalFolderStructure.srcLevel.length > match) {
-      return false;
-    }
-
-    match = 0;
-    foldersRoutesLevel.map((folder) => {
-      originalFolderStructure.routesLevel.map((structureFolder) => {
-        if (folder.indexOf(structureFolder)) match++;
-      })
-    })
-
-    if (originalFolderStructure.routesLevel.length > match) {
-      return false;
-    }
-
-    return true;
+    return false;
+  } catch (e) {
+    return false;
   }
 
-  return false;
 };
 
 const filesStructure = function () {
-  let currentDir = process.cwd();
-  let manageFiles = finder.in(currentDir + '\\src\\manage').findFiles();
+  try {
+    let currentDir = process.cwd();
+    let manageFiles = finder.in(currentDir + '\\src\\manage').findFiles();
 
-  if (manageFiles) {
-    let preserveManageFiles = false;
-    let preserveControllersFiles = false;
-    let match = 0;
+    if (manageFiles) {
+      let preserveManageFiles = false;
+      let preserveControllersFiles = false;
+      let match = 0;
 
-    manageFiles.map((manageFile) => {
-      fileStructure.manage.map((manageFileStructure) => {
-        if (manageFile.indexOf(manageFileStructure) > 0) match++;
+      manageFiles.map((manageFile) => {
+        fileStructure.manage.map((manageFileStructure) => {
+          if (manageFile.indexOf(manageFileStructure) > 0) match++;
+        })
       })
-    })
 
-    if (fileStructure.manage.length > match) {
-      return false;
-    }
+      if (fileStructure.manage.length > match) {
+        return false;
+      }
 
-    return true;
+      return true;
+    } 
+  } catch (e) {
+    return false;
   }
+}
+
+const createDefaultFolder = function () {
+  let dir = './beat'
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  else {
+    console.log('Current folder contains a folder named "beat"');
+  }
+}
+
+const downloadProjectTemplate = function (data, currentFolder) {
+  console.log('Downloading template project...');
+  download('thEpisode/beat', data.name, function (err) {
+    if(err){
+      console.log('Something was wrong while downloading template');
+    }
+    else{
+      console.log('Project created successfully');
+    }
+  })
+}
+
+const setupProject = function (){
 
 }
