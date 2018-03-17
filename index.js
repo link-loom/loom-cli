@@ -103,11 +103,10 @@ const typeOfProject = [
 
 program
   .version('0.0.1')
-  .description('Contact management system');
+  .description('Beat CLI');
 
 program
   .command('new')
-  .alias('n')
   .action(() => {
     prompt(typeOfProject).then(choise => {
       switch (choise.type.toLocaleLowerCase()) {
@@ -132,24 +131,6 @@ program
 
 
     });
-  });
-
-program
-  .command('new <type>')
-  .description('New project')
-  .action(() => {
-    prompt(newProject).then(answers =>
-      console.log(answers));
-  });
-
-program
-  .command('new <type> <name>')
-  .option('-f, --firebase')
-  .option('-a, --api')
-  .option('-w, -web')
-  .description('New project')
-  .action((type, name, flags) => {
-    console.log(flags.firebase)
   });
 
 program.parse(process.argv);
