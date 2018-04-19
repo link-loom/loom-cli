@@ -13,7 +13,7 @@ const {
 const app = require('./app/controller')()
 
 program
-  .version('0.0.1')
+  .version('1.0.7', '-v, --version')
   .description('Beat CLI')
 
 program
@@ -68,3 +68,5 @@ program
   })
 
 program.parse(process.argv)
+
+if (!program.args.length) program.help();
