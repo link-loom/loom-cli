@@ -193,7 +193,7 @@ function appController() {
       files: [
         `${data.name}/**/*.js`,
         `${data.name}/**/*.jsx`,
-        `${data.name}/*.json`,
+        `${data.name}/**/*.json`,
       ],
       from: /%BEAT%/g,
       to: data.name,
