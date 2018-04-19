@@ -2,9 +2,6 @@
 
 const program = require('commander');
 const { prompt } = require('inquirer');
-const finder = require('fs-finder');
-const fs = require('fs');
-const download = require('download-git-repo');
 
 const { originalFolderStructure, fileStructure } = require('./config/structure')
 const {
@@ -24,7 +21,7 @@ program
   .command('new-project')
   .action(() => {
     prompt(newProject).then(answers => {
-      app().createNewProject(answers);
+      app.createNewProject(answers);
     });
   })
 
