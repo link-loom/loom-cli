@@ -1,7 +1,7 @@
 {
   "name": "beat-cli",
-  "version": "1.0.0",
-  "description": "CLI tool for Beat",
+  "version": "1.0.2",
+  "description": "CLI tool for Beat projects template",
   "main": "index.js",
   "preferGlobal": true,
   "bin": "./index.js",
