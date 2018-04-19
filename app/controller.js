@@ -1,8 +1,9 @@
-function appController () {
+function appController() {
   const finder = require('fs-finder')
   const fs = require('fs')
   const download = require('download-git-repo')
-  const { originalFolderStructure, fileStructure } = require('./config/structure')
+  const replace = require('replace-in-file');
+  const { originalFolderStructure, fileStructure } = require('./../config/structure')
 
   const createNewProject = function (data) {
     if (isBeatFolder() === false) {
@@ -168,13 +169,38 @@ function appController () {
       if (err) {
         console.log('Something was wrong while downloading template')
       } else {
-        console.log('Project created successfully')
+        setupProject(data)
       }
     })
   }
 
-  /* const setupProject = function () {
-  } */
+  const setupProject = async function (data) {
+    try {
+      console.log(`Setting up project...`)
+      let changes = replaceToken(data)
+      
+      if(changes){
+        console.log('Project created successfully')
+      }
+    }
+    catch (error) {
+      console.error('Error occurred:', error);
+    }
+  }
+
+  const replaceToken = async function(data){
+    const options = {
+      files: [
+        `${data.name}/**/*.js`,
+        `${data.name}/**/*.jsx`,
+        `${data.name}/*.json`,
+      ],
+      from: /%BEAT%/g,
+      to: data.name,
+    };
+    const changes = await replace(options)
+    return changes
+  }
 
   return {
     createNewProject,
