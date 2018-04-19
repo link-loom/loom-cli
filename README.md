@@ -15,4 +15,18 @@ Type on your console:
 beat-cli new
 ```
 
+## Development
+
+Install all dependencies:
+
+``` bash
+npm install
+```
+
+Execute like a downloaded package:
+
+``` bash
+npm link
+```
+
 select an option what you want and follow instructions

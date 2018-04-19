@@ -15,7 +15,7 @@ const originalFolderStructure = {
     'definition',
     'frontend'
   ]
-};
+}
 
 const fileStructure = {
   'core': [
@@ -31,7 +31,7 @@ const fileStructure = {
   ]
 }
 
-module.exports ={
+module.exports = {
   originalFolderStructure,
   fileStructure
 }

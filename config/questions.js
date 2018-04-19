@@ -3,8 +3,8 @@ const newProject = [
     type: 'input',
     name: 'name',
     message: 'Project name:'
-  },
-];
+  }
+]
 
 const newView = [
   {
@@ -21,8 +21,8 @@ const newView = [
     type: 'input',
     name: 'action',
     message: 'Action (name of function in controller):'
-  },
-];
+  }
+]
 
 const newApiController = [
   {
@@ -48,7 +48,7 @@ const newApiController = [
       'GET',
       'POST'
     ]
-  },
+  }
 ]
 
 const typeOfProject = [
