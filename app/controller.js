@@ -38,7 +38,7 @@ function appController() {
   const detectLastComponent = function (isAPI) {
     let currentDir = process.cwd()
 
-    let lines = fs.readFileSync(currentDir + '\\src\\manage\\components.js').toString().split('\n')
+    let lines = fs.readFileSync(currentDir + '\\src\\routes\\router.js').toString().split('\n')
     let lastComponentLine = 0
     let startLine = false
     let token = ''
@@ -66,11 +66,11 @@ function appController() {
   const addComponent = function (lineNumber, component) {
     let currentDir = process.cwd()
 
-    var data = fs.readFileSync(currentDir + '\\src\\manage\\components.js').toString().split('\n')
+    var data = fs.readFileSync(currentDir + '\\src\\routes\\router.js').toString().split('\n')
     data.splice(lineNumber, 0, component)
     var text = data.join('\n')
 
-    fs.writeFile(currentDir + '\\src\\manage\\components.js', text, function (err) {
+    fs.writeFile(currentDir + '\\src\\routes\\router.js', text, function (err) {
       if (err) return console.log(err)
     })
   }
@@ -95,41 +95,37 @@ function appController() {
       let foldersRoutesLevel = finder.in(currentDir + '\\src\\routes').findDirectories()
 
       if (foldersFirstLevel && foldersSrcLevel && foldersRoutesLevel) {
-        let match = 0
+        let matchFirst = 0
+        let matchSrc = 0
+        let matchRoutes = 0
 
         foldersFirstLevel.map((folder) => {
           originalFolderStructure.firstLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder) > 0) match++
+            if (folder.indexOf(structureFolder) > 0) matchFirst++
           })
         })
 
-        if (originalFolderStructure.firstLevel.length > match) {
-          return false
-        }
-
-        match = 0
         foldersSrcLevel.map((folder) => {
           originalFolderStructure.srcLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder) > 0) match++
+            if (folder.indexOf(structureFolder) > 0) matchSrc++
           })
         })
-
-        if (originalFolderStructure.srcLevel.length > match) {
-          return false
-        }
 
         match = 0
         foldersRoutesLevel.map((folder) => {
           originalFolderStructure.routesLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder)) match++
+            if (folder.indexOf(structureFolder)) matchRoutes++
           })
         })
 
-        if (originalFolderStructure.routesLevel.length > match) {
+        if ((originalFolderStructure.firstLevel.length >= matchFirst && foldersFirstLevel.length <= matchFirst) ||
+          (originalFolderStructure.srcLevel.length >= matchSrc && foldersSrcLevel.length <= matchSrc) ||
+          (originalFolderStructure.routesLevel.length >= matchRoutes && foldersRoutesLevel.length <= matchRoutes)) {
+          return true
+        }
+        else {
           return false
         }
-
-        return true
       }
 
       return false
@@ -141,24 +137,27 @@ function appController() {
   const filesStructure = function () {
     try {
       let currentDir = process.cwd()
-      let manageFiles = finder.in(currentDir + '\\src\\manage').findFiles()
+      let coreFiles = finder.in(currentDir + '\\src\\core').findFiles()
 
-      if (manageFiles) {
+      if (coreFiles) {
         let match = 0
 
-        manageFiles.map((manageFile) => {
-          fileStructure.manage.map((manageFileStructure) => {
-            if (manageFile.indexOf(manageFileStructure) > 0) match++
+        coreFiles.map((coreFile) => {
+          fileStructure.core.map((coreFileStructure) => {
+            if (coreFile.indexOf(coreFileStructure) > 0) {
+              match++
+            }
           })
         })
-
-        if (fileStructure.manage.length > match) {
+        
+        if (fileStructure.core.length > match) {
           return false
         }
 
         return true
       }
     } catch (e) {
+      console.log(e);
       return false
     }
   }
@@ -178,8 +177,8 @@ function appController() {
     try {
       console.log(`Setting up project...`)
       let changes = replaceToken(data)
-      
-      if(changes){
+
+      if (changes) {
         console.log('Project created successfully')
       }
     }
@@ -188,7 +187,7 @@ function appController() {
     }
   }
 
-  const replaceToken = async function(data){
+  const replaceToken = async function (data) {
     const options = {
       files: [
         `${data.name}/**/*.js`,

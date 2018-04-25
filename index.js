@@ -25,7 +25,7 @@ program
   })
 
 program
-  .command('new-view')
+  .command('new-view-route')
   .action(() => {
     prompt(newView).then(answers => {
       app.createNewView(answers)
@@ -33,7 +33,7 @@ program
   })
 
 program
-  .command('new-api')
+  .command('new-api-route')
   .action(() => {
     prompt(newApiController).then(answers => {
       app.createNewAPIController(answers)

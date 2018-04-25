@@ -28,17 +28,17 @@ const newApiController = [
   {
     type: 'input',
     name: 'name',
-    message: 'Controller name: '
+    message: 'Controller name (without .js extension): '
   },
   {
     type: 'input',
     name: 'route',
-    message: 'Route (Express notation starting with /):'
+    message: 'API Route (Express notation starting with /):'
   },
   {
     type: 'input',
     name: 'action',
-    message: 'Action (name of function in controller):'
+    message: 'Function handler (name of function in controller):'
   },
   {
     type: 'list',
