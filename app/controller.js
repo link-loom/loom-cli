@@ -17,7 +17,7 @@ function appController() {
     if (isBeatFolder() === true) {
       var lastLine = detectLastComponent(false)
 
-      addComponent(lastLine++, `    { route: '${data.route}', view: '/${data.name}/${data.name}.route', action: '${data.action}' },`)
+      addComponent(lastLine++, `    { route: '${data.route}', view: '/routes/frontend/${data.name}/${data.name}.route', action: '${data.action}' },`)
       console.log(`${data.name} view added succesfuly`)
     } else {
       console.log(`This folder does not has a beat folder structure project`)
@@ -28,7 +28,7 @@ function appController() {
     if (isBeatFolder() === true) {
       var lastLine = detectLastComponent(true)
 
-      addComponent(lastLine++, `    { route: '${data.route}', controller: '/${data.name}/${data.name}.route', action: '${data.action}', method: '${data.method}' },`)
+      addComponent(lastLine++, `    { route: '${data.route}', controller: '/routes/api/${data.name}/${data.name}.route', action: '${data.action}', method: '${data.method}' },`)
       console.log(`${data.name} API controller added succesfuly`)
     } else {
       console.log(`This folder does not has a beat folder structure project`)
