@@ -11,6 +11,7 @@ const {
 } = require('./config/questions')
 
 const app = require('./app/controller')()
+const structure = require('./app/structure')()
 
 program
   .version('1.0.8', '-v, --version')
@@ -19,25 +20,40 @@ program
 program
   .command('new-project')
   .action(() => {
-    prompt(newProject).then(answers => {
-      app.createNewProject(answers)
-    })
+    if (structure.isBeatFolder() === false) {
+      prompt(newProject).then(answers => {
+        app.createNewProject(answers)
+      })
+    }
+    else {
+      console.log('Sorry, can\'t install Beat because current folder looks like a Beat Project')
+    }
   })
 
 program
   .command('new-view-route')
   .action(() => {
-    prompt(newView).then(answers => {
-      app.createNewView(answers)
-    })
+    if (structure.isBeatFolder() === true) {
+      prompt(newView).then(answers => {
+        app.createNewView(answers)
+      })
+    }
+    else {
+      console.log(`This folder does not has a beat folder structure project`)
+    }
   })
 
 program
   .command('new-api-route')
   .action(() => {
-    prompt(newApiController).then(answers => {
-      app.createNewAPIController(answers)
-    })
+    if (structure.isBeatFolder() === true) {
+      prompt(newApiController).then(answers => {
+        app.createNewAPIController(answers)
+      })
+    }
+    else {
+      console.log(`This folder does not has a beat folder structure project`)
+    }
   })
 
 program

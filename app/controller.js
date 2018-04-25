@@ -3,36 +3,24 @@ function appController() {
   const fs = require('fs')
   const download = require('download-git-repo')
   const replace = require('replace-in-file');
-  const { originalFolderStructure, fileStructure } = require('./../config/structure')
+  const structure = require('./structure')()
 
   const createNewProject = function (data) {
-    if (isBeatFolder() === false) {
-      downloadProjectTemplate(data)
-    } else {
-      console.log('Sorry, can\'t install Beat because current folder looks like a Beat Project')
-    }
+    downloadProjectTemplate(data)
   }
 
   const createNewView = function (data) {
-    if (isBeatFolder() === true) {
-      var lastLine = detectLastComponent(false)
+    var lastLine = detectLastComponent(false)
 
-      addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/frontend/${data.name}/${data.name}.route', handler: '${data.handler}' },`)
-      console.log(`${data.name} view added succesfuly`)
-    } else {
-      console.log(`This folder does not has a beat folder structure project`)
-    }
+    addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/frontend/${data.name}/${data.name}.route', handler: '${data.handler}' },`)
+    console.log(`${data.name} view added succesfuly`)
   }
 
   const createNewAPIController = function (data) {
-    if (isBeatFolder() === true) {
-      var lastLine = detectLastComponent(true)
+    var lastLine = detectLastComponent(true)
 
-      addComponent(lastLine++, `    { httRoute: '${data.route}', route: '/routes/api/${data.handler}/${data.handler}.route', handler: '${data.handler}', method: '${data.method}' },`)
-      console.log(`${data.name} API controller added succesfuly`)
-    } else {
-      console.log(`This folder does not has a beat folder structure project`)
-    }
+    addComponent(lastLine++, `    { httRoute: '${data.route}', route: '/routes/api/${data.handler}/${data.handler}.route', handler: '${data.handler}', method: '${data.method}' },`)
+    console.log(`${data.name} API controller added succesfuly`)
   }
 
   const detectLastComponent = function (isAPI) {
@@ -73,93 +61,6 @@ function appController() {
     fs.writeFile(currentDir + '\\src\\routes\\router.js', text, function (err) {
       if (err) return console.log(err)
     })
-  }
-
-  const isBeatFolder = function () {
-    var preserveFolderStructure = folderStructure()
-    var preservefilesStructure = filesStructure()
-
-    if (preservefilesStructure === true && preserveFolderStructure === true) {
-      return true
-    } else {
-      return false
-    }
-  }
-
-  const folderStructure = function () {
-    try {
-      let currentDir = process.cwd()
-
-      let foldersFirstLevel = finder.in(currentDir).findDirectories()
-      let foldersSrcLevel = finder.in(currentDir + '\\src').findDirectories()
-      let foldersRoutesLevel = finder.in(currentDir + '\\src\\routes').findDirectories()
-
-      if (foldersFirstLevel && foldersSrcLevel && foldersRoutesLevel) {
-        let matchFirst = 0
-        let matchSrc = 0
-        let matchRoutes = 0
-
-        foldersFirstLevel.map((folder) => {
-          originalFolderStructure.firstLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder) > 0) matchFirst++
-          })
-        })
-
-        foldersSrcLevel.map((folder) => {
-          originalFolderStructure.srcLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder) > 0) matchSrc++
-          })
-        })
-
-        match = 0
-        foldersRoutesLevel.map((folder) => {
-          originalFolderStructure.routesLevel.map((structureFolder) => {
-            if (folder.indexOf(structureFolder)) matchRoutes++
-          })
-        })
-
-        if ((originalFolderStructure.firstLevel.length >= matchFirst && foldersFirstLevel.length <= matchFirst) ||
-          (originalFolderStructure.srcLevel.length >= matchSrc && foldersSrcLevel.length <= matchSrc) ||
-          (originalFolderStructure.routesLevel.length >= matchRoutes && foldersRoutesLevel.length <= matchRoutes)) {
-          return true
-        }
-        else {
-          return false
-        }
-      }
-
-      return false
-    } catch (e) {
-      return false
-    }
-  }
-
-  const filesStructure = function () {
-    try {
-      let currentDir = process.cwd()
-      let coreFiles = finder.in(currentDir + '\\src\\core').findFiles()
-
-      if (coreFiles) {
-        let match = 0
-
-        coreFiles.map((coreFile) => {
-          fileStructure.core.map((coreFileStructure) => {
-            if (coreFile.indexOf(coreFileStructure) > 0) {
-              match++
-            }
-          })
-        })
-        
-        if (fileStructure.core.length > match) {
-          return false
-        }
-
-        return true
-      }
-    } catch (e) {
-      console.log(e);
-      return false
-    }
   }
 
   const downloadProjectTemplate = function (data, currentFolder) {
