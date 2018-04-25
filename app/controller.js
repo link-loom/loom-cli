@@ -44,9 +44,9 @@ function appController() {
     let token = ''
 
     if (isAPI) {
-      token = 'apiComponents:'
+      token = 'api:'
     } else {
-      token = 'frontendComponents:'
+      token = 'frontend:'
     }
 
     for (let i = 0; i < lines.length; i++) {

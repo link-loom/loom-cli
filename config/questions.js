@@ -42,7 +42,7 @@ const newApiController = [
   },
   {
     type: 'list',
-    name: 'type',
+    name: 'method',
     message: 'Method:',
     choices: [
       'GET',
