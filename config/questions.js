@@ -19,8 +19,8 @@ const newView = [
   },
   {
     type: 'input',
-    name: 'action',
-    message: 'Action (name of function in controller):'
+    name: 'handler',
+    message: 'Function handler (name of function in controller):'
   }
 ]
 
@@ -37,7 +37,7 @@ const newApiController = [
   },
   {
     type: 'input',
-    name: 'action',
+    name: 'handler',
     message: 'Function handler (name of function in controller):'
   },
   {
