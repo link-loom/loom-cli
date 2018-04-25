@@ -3,7 +3,6 @@ function appController() {
   const fs = require('fs')
   const download = require('download-git-repo')
   const replace = require('replace-in-file');
-  const structure = require('./structure')()
 
   const createNewProject = function (data) {
     downloadProjectTemplate(data)

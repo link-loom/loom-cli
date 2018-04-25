@@ -14,7 +14,7 @@ const app = require('./app/controller')()
 const structure = require('./app/structure')()
 
 program
-  .version('1.0.8', '-v, --version')
+  .version('1.1.2', '-v, --version')
   .description('Beat CLI')
 
 program
