@@ -13,7 +13,7 @@ const {
 const app = require('./app/controller')()
 
 program
-  .version('1.0.7', '-v, --version')
+  .version('1.0.8', '-v, --version')
   .description('Beat CLI')
 
 program

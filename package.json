@@ -1,6 +1,6 @@
 {
   "name": "beat-cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "CLI tool for Beat projects template",
   "main": "index.js",
   "preferGlobal": true,
@@ -29,7 +29,6 @@
     "fs-finder": "^1.8.1",
     "inquirer": "^5.1.0",
     "moment": "^2.21.0",
-    "mongoose": "^5.0.10",
     "replace-in-file": "^3.4.0"
   },
   "devDependencies": {
