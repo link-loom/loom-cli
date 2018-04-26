@@ -18,7 +18,7 @@ function appController() {
   const createNewAPIRoute = function (data) {
     var lastLine = detectLastComponent(true)
 
-    addComponent(lastLine++, `    { httRoute: '${data.route}', route: '/routes/api/${data.handler}/${data.handler}.route', handler: '${data.handler}', method: '${data.method}' },`)
+    addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/api/${data.name}/${data.name}.route', handler: '${data.handler}', method: '${data.method}' },`)
     console.log(`${data.name} API controller added succesfuly`)
   }
 
