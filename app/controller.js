@@ -8,18 +8,22 @@ function appController() {
     downloadProjectTemplate(data)
   }
 
-  const createNewView = function (data) {
+  const createNewViewRoute = function (data) {
     var lastLine = detectLastComponent(false)
 
     addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/frontend/${data.name}/${data.name}.route', handler: '${data.handler}' },`)
     console.log(`${data.name} view added succesfuly`)
   }
 
-  const createNewAPIController = function (data) {
+  const createNewAPIRoute = function (data) {
     var lastLine = detectLastComponent(true)
 
     addComponent(lastLine++, `    { httRoute: '${data.route}', route: '/routes/api/${data.handler}/${data.handler}.route', handler: '${data.handler}', method: '${data.method}' },`)
     console.log(`${data.name} API controller added succesfuly`)
+  }
+
+  const createNewScaffoldedAPIRoute = function(data){
+    // TODO
   }
 
   const detectLastComponent = function (isAPI) {
@@ -103,8 +107,9 @@ function appController() {
 
   return {
     createNewProject,
-    createNewView,
-    createNewAPIController
+    createNewViewRoute,
+    createNewAPIRoute,
+    createNewScaffoldedAPIRoute
   }
 }
 

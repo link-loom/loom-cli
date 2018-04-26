@@ -1,4 +1,4 @@
-const newProject = [
+const newProjectQuestions = [
   {
     type: 'input',
     name: 'name',
@@ -6,7 +6,7 @@ const newProject = [
   }
 ]
 
-const newView = [
+const newViewRouteQuestions = [
   {
     type: 'input',
     name: 'name',
@@ -24,7 +24,7 @@ const newView = [
   }
 ]
 
-const newApiController = [
+const newApiRouteQuestions = [
   {
     type: 'input',
     name: 'name',
@@ -51,7 +51,7 @@ const newApiController = [
   }
 ]
 
-const typeOfProject = [
+const optionsOfNewQuestions = [
   {
     type: 'list',
     name: 'type',
@@ -64,9 +64,21 @@ const typeOfProject = [
   }
 ]
 
+const isScaffolded = [
+  {
+    type: 'list',
+    name: 'isScaffolded',
+    message: 'Is scaffolded? (CRUD operations)',
+    choices: [
+      'Yes',
+      'No'
+    ]
+  }
+]
+
 module.exports = {
-  newProject,
-  newView,
-  newApiController,
-  typeOfProject
+  newProjectQuestions,
+  newViewRouteQuestions,
+  newApiRouteQuestions,
+  optionsOfNewQuestions
 }

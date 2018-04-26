@@ -4,10 +4,11 @@ const program = require('commander')
 const { prompt } = require('inquirer')
 
 const {
-  newProject,
-  newView,
-  newApiController,
-  typeOfProject
+  newProjectQuestions,
+  newViewRouteQuestions,
+  newApiRouteQuestions,
+  optionsOfNewQuestions,
+  isScaffolded
 } = require('./config/questions')
 
 const app = require('./app/controller')()
@@ -21,7 +22,7 @@ program
   .command('new-project')
   .action(() => {
     if (structure.isBeatFolder() === false) {
-      prompt(newProject).then(answers => {
+      prompt(newProjectQuestions).then(answers => {
         app.createNewProject(answers)
       })
     }
@@ -34,8 +35,8 @@ program
   .command('new-view-route')
   .action(() => {
     if (structure.isBeatFolder() === true) {
-      prompt(newView).then(answers => {
-        app.createNewView(answers)
+      prompt(newViewRouteQuestions).then(answers => {
+        app.createNewViewRoute(answers)
       })
     }
     else {
@@ -47,8 +48,18 @@ program
   .command('new-api-route')
   .action(() => {
     if (structure.isBeatFolder() === true) {
-      prompt(newApiController).then(answers => {
-        app.createNewAPIController(answers)
+      promt(isScaffolded).then(isScaffoldedAnswer => {
+        if (isScaffoldedAnswer.isScaffolded) {
+          prompt(newApiRouteScaffoldedQuestions).then(answers => {
+            app.createNewScaffoldedAPIRoute(answers)
+          })
+        }
+        else {
+          prompt(newApiRouteQuestions).then(answers => {
+            app.createNewAPIRoute(answers)
+          })
+        }
+
       })
     }
     else {
@@ -59,21 +70,21 @@ program
 program
   .command('new')
   .action(() => {
-    prompt(typeOfProject).then(choise => {
+    prompt(optionsOfNewQuestions).then(choise => {
       switch (choise.type.toLocaleLowerCase()) {
         case 'project':
-          prompt(newProject).then(answers => {
+          prompt(newProjectQuestions).then(answers => {
             app.createNewProject(answers)
           })
           break
         case 'view':
-          prompt(newView).then(answers => {
-            app.createNewView(answers)
+          prompt(newViewRouteQuestions).then(answers => {
+            app.createNewViewRoute(answers)
           })
           break
         case 'api controller':
-          prompt(newApiController).then(answers => {
-            app.createNewAPIController(answers)
+          prompt(newApiRouteQuestions).then(answers => {
+            app.createNewAPIRoute(answers)
           })
           break
         default:
