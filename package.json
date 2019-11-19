@@ -24,14 +24,13 @@
   },
   "homepage": "https://github.com/thEpisode/beat-cli#readme",
   "dependencies": {
-    "commander": "^2.15.0",
-    "download-git-repo": "^1.0.2",
-    "fs-finder": "^1.8.1",
-    "inquirer": "^5.1.0",
+    "commander": "^4.0.1",
+    "download-git-repo": "^3.0.2",
+    "inquirer": "^7.0.0",
     "moment": "^2.21.0",
-    "replace-in-file": "^3.4.0"
+    "replace-in-file": "^4.0.2"
   },
   "devDependencies": {
-    "standard": "^11.0.1"
+    "standard": "^14.3.1"
   }
 }

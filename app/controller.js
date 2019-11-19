@@ -1,35 +1,34 @@
-function appController() {
-  const finder = require('fs-finder')
+function appController () {
   const fs = require('fs')
   const download = require('download-git-repo')
-  const replace = require('replace-in-file');
+  const replace = require('replace-in-file')
 
-  const createNewProject = function (data) {
+  const createNewProject = (data) => {
     downloadProjectTemplate(data)
   }
 
-  const createNewViewRoute = function (data) {
+  const createNewViewRoute = (data) => {
     var lastLine = detectLastComponent(false)
 
     addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/frontend/${data.name}/${data.name}.route', handler: '${data.handler}' },`)
     console.log(`${data.name} view added succesfuly`)
   }
 
-  const createNewAPIRoute = function (data) {
+  const createNewAPIRoute = (data) => {
     var lastLine = detectLastComponent(true)
 
     addComponent(lastLine++, `    { httpRoute: '${data.route}', route: '/routes/api/${data.name}/${data.name}.route', handler: '${data.handler}', method: '${data.method}' },`)
     console.log(`${data.name} API controller added succesfuly`)
   }
 
-  const createNewScaffoldedAPIRoute = function(data){
+  const createNewScaffoldedAPIRoute = (data) => {
     // TODO
   }
 
-  const detectLastComponent = function (isAPI) {
-    let currentDir = process.cwd()
+  const detectLastComponent = (isAPI) => {
+    const currentDir = process.cwd()
 
-    let lines = fs.readFileSync(currentDir + '\\src\\routes\\router.js').toString().split('\n')
+    const lines = fs.readFileSync(currentDir + '\\src\\routes\\router.js').toString().split('\n')
     let lastComponentLine = 0
     let startLine = false
     let token = ''
@@ -54,21 +53,21 @@ function appController() {
     return ++lastComponentLine
   }
 
-  const addComponent = function (lineNumber, component) {
-    let currentDir = process.cwd()
+  const addComponent = (lineNumber, component) => {
+    const currentDir = process.cwd()
 
     var data = fs.readFileSync(currentDir + '\\src\\routes\\router.js').toString().split('\n')
     data.splice(lineNumber, 0, component)
     var text = data.join('\n')
 
-    fs.writeFile(currentDir + '\\src\\routes\\router.js', text, function (err) {
+    fs.writeFile(currentDir + '\\src\\routes\\router.js', text, (err) => {
       if (err) return console.log(err)
     })
   }
 
-  const downloadProjectTemplate = function (data, currentFolder) {
+  const downloadProjectTemplate = (data, currentFolder) => {
     console.log('Downloading template project...')
-    download('thEpisode/beat', data.name, function (err) {
+    download('thEpisode/beat', data.name, (err) => {
       if (err) {
         console.log('Something was wrong while downloading template')
       } else {
@@ -77,30 +76,29 @@ function appController() {
     })
   }
 
-  const setupProject = async function (data) {
+  const setupProject = async (data) => {
     try {
-      console.log(`Setting up project...`)
-      let changes = replaceToken(data)
+      console.log('Setting up project...')
+      const changes = replaceToken(data)
 
       if (changes) {
         console.log('Project created successfully')
       }
-    }
-    catch (error) {
-      console.error('Error occurred:', error);
+    } catch (error) {
+      console.error('Error occurred:', error)
     }
   }
 
-  const replaceToken = async function (data) {
+  const replaceToken = async (data) => {
     const options = {
       files: [
         `${data.name}/**/*.js`,
         `${data.name}/**/*.jsx`,
-        `${data.name}/**/*.json`,
+        `${data.name}/**/*.json`
       ],
       from: /%BEAT%/g,
-      to: data.name,
-    };
+      to: data.name
+    }
     const changes = await replace(options)
     return changes
   }

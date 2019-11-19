@@ -80,5 +80,6 @@ module.exports = {
   newProjectQuestions,
   newViewRouteQuestions,
   newApiRouteQuestions,
-  optionsOfNewQuestions
+  optionsOfNewQuestions,
+  isScaffolded
 }
