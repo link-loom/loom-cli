@@ -9,21 +9,15 @@ function structure () {
   const coreStructure = async () => {
     try {
       const currentDir = process.cwd()
-      const coreFiles = await finder.getFiles(currentDir + '\\src\\core')
       let match = 0
 
-      if (!coreFiles) {
-        return false
-      }
-
-      coreFiles.map((coreFile) => {
-        console.log(coreFile)
+      for await (const coreFile of finder.getFiles(currentDir + '\\src\\core')) {
         fileStructure.core.map((coreFileStructure) => {
           if (coreFile.indexOf(coreFileStructure) > 0) {
             match++
           }
         })
-      })
+      }
 
       if (fileStructure.core.length > match) {
         return false
