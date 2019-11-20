@@ -1,11 +1,3 @@
-const newProjectQuestions = [
-  {
-    type: 'input',
-    name: 'name',
-    message: 'Project name:'
-  }
-]
-
 const newViewRouteQuestions = [
   {
     type: 'input',
@@ -77,7 +69,6 @@ const isScaffolded = [
 ]
 
 module.exports = {
-  newProjectQuestions,
   newViewRouteQuestions,
   newApiRouteQuestions,
   optionsOfNewQuestions,
