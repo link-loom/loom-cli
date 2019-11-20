@@ -81,26 +81,33 @@ function appController () {
       console.log('Setting up project...')
       const changes = replaceToken(data)
 
-      if (changes) {
-        console.log('Project created successfully')
+      if (!changes) {
+        console.log('Error occurred')
       }
+
+      console.log('Project created successfully')
     } catch (error) {
       console.error('Error occurred:', error)
     }
   }
 
   const replaceToken = async (data) => {
-    const options = {
-      files: [
-        `${data.name}/**/*.js`,
-        `${data.name}/**/*.jsx`,
-        `${data.name}/**/*.json`
-      ],
-      from: /%BEAT%/g,
-      to: data.name
+    try {
+      const options = {
+        files: [
+          `${data.name}/**/*.js`,
+          `${data.name}/**/*.jsx`,
+          `${data.name}/**/*.json`
+        ],
+        from: /%BEAT%/g,
+        to: data.name
+      }
+      const changes = await replace(options)
+      return changes
+    } catch (error) {
+      console.error('Error occurred:', error)
+      return null
     }
-    const changes = await replace(options)
-    return changes
   }
 
   return {

@@ -27,7 +27,7 @@ program
       return
     }
 
-    app.createNewProject(name)
+    app.createNewProject({ name })
   })
 
 program
