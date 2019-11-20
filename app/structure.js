@@ -2,7 +2,7 @@ function structure () {
   const finder = require('./finder')
   const { fileStructure } = require('./../config/structure')
 
-  const isBeatFolder = () => {
+  const isBeatFolder = async () => {
     return coreStructure()
   }
 

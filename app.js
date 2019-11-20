@@ -21,8 +21,8 @@ program
 program
   .command('new-project <name>')
   .description('Create a new project with Beat template')
-  .action((name) => {
-    const isBeatFolder = structure.isBeatFolder()
+  .action(async (name) => {
+    const isBeatFolder = await structure.isBeatFolder()
     console.log(isBeatFolder)
     if (isBeatFolder) {
       console.log('Sorry, can\'t install Beat because current folder looks like a Beat Project')
@@ -34,8 +34,8 @@ program
 
 program
   .command('new-view-route')
-  .action(() => {
-    if (structure.isBeatFolder() === true) {
+  .action(async () => {
+    if (await structure.isBeatFolder() === true) {
       prompt(newViewRouteQuestions).then(answers => {
         app.createNewViewRoute(answers)
       })
@@ -46,8 +46,8 @@ program
 
 program
   .command('new-api-route')
-  .action(() => {
-    if (structure.isBeatFolder() === true) {
+  .action(async () => {
+    if (await structure.isBeatFolder() === true) {
       prompt(isScaffolded).then(isScaffoldedAnswer => {
         if (isScaffoldedAnswer.isScaffolded) {
           prompt(newApiRouteScaffoldedQuestions).then(answers => {
