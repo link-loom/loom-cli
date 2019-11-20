@@ -22,7 +22,9 @@ program
   .command('new-project <name>')
   .description('Create a new project with Beat template')
   .action((name) => {
-    if (structure.isBeatFolder()) {
+    const isBeatFolder = structure.isBeatFolder()
+    console.log(isBeatFolder)
+    if (isBeatFolder) {
       console.log('Sorry, can\'t install Beat because current folder looks like a Beat Project')
       return
     }
