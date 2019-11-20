@@ -3,13 +3,7 @@ function structure () {
   const { fileStructure } = require('./../config/structure')
 
   const isBeatFolder = () => {
-    var preserveCoreStructure = coreStructure()
-
-    if (preserveCoreStructure === true) {
-      return true
-    }
-
-    return false
+    return coreStructure()
   }
 
   const coreStructure = async () => {
@@ -23,6 +17,7 @@ function structure () {
       }
 
       coreFiles.map((coreFile) => {
+        console.log(coreFile)
         fileStructure.core.map((coreFileStructure) => {
           if (coreFile.indexOf(coreFileStructure) > 0) {
             match++
