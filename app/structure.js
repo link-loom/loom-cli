@@ -12,6 +12,7 @@ function structure () {
       let match = 0
 
       for await (const coreFile of finder.getFiles(currentDir + '\\src\\core')) {
+        console.log(coreFile)
         fileStructure.core.map((coreFileStructure) => {
           if (coreFile.indexOf(coreFileStructure) > 0) {
             match++
