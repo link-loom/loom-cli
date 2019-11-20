@@ -1,12 +1,12 @@
 {
   "name": "beat-cli",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CLI tool for Beat projects template",
-  "main": "index.js",
+  "main": "app.js",
   "preferGlobal": true,
-  "bin": "./index.js",
+  "bin": "./app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "./node_modules/.bin/standard",
     "standard-fix": "./node_modules/.bin/standard --fix"
   },
