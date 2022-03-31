@@ -96,7 +96,7 @@ function appController () {
       const options = {
         files: [
           `${data.name}/**/*.js`,
-          `${data.name}/**/*.jsx`,
+          `${data.name}/**/*.md`,
           `${data.name}/**/*.json`
         ],
         from: /%BEAT%/g,
