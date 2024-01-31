@@ -4,7 +4,9 @@
   "description": "CLI tool for Link Loom projects template",
   "main": "app.js",
   "preferGlobal": true,
-  "bin": "./app.js",
+  "bin": {
+    "link-loom": "./app.js"
+  },
   "scripts": {
     "start": "node app.js"
   },

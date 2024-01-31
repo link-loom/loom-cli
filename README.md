@@ -1,10 +1,10 @@
-# beat-cli
+# @link-loom/cli
 CLI tool for Beat Projects, you can create new projects, create views to frontend and create API controllers easily
 
 ## Installation
 
 ``` bash
-npm install -g beat-cli
+npm install -g @link-loom/cli
 ```
 
 ## Usage
@@ -12,7 +12,7 @@ npm install -g beat-cli
 Type on your console:
 
 ``` bash
-beat-cli new
+link-loom create --name my-project
 ```
 
 ## Development
