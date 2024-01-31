@@ -1,36 +1,32 @@
 {
-  "name": "beat-cli",
-  "version": "1.2.8",
-  "description": "CLI tool for Beat projects template",
+  "name": "@link-loom/cli",
+  "version": "2.0.0",
+  "description": "CLI tool for Link Loom projects template",
   "main": "app.js",
   "preferGlobal": true,
   "bin": "./app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "./node_modules/.bin/standard",
-    "standard-fix": "./node_modules/.bin/standard --fix"
+    "start": "node app.js"
   },
-  "repository": "git+https://github.com/thEpisode/beat-cli.git",
+  "repository": "git+https://github.com/link-loom/loom-cli.git",
   "keywords": [
-    "beat",
+    "loom",
     "reverse",
     "bytes",
-    "boilerplate"
+    "cli"
   ],
-  "author": "Camilo Rodriguez <camiepisode@outlook.com>",
+  "author": "Camilo Alexander Rodriguez Cuaran <camiepisode@outlook.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/thEpisode/beat-cli/issues"
+    "url": "https://github.com/link-loom/loom-cli/issues"
   },
-  "homepage": "https://github.com/thEpisode/beat-cli#readme",
+  "homepage": "https://github.com/link-loom/loom-cli#readme",
   "dependencies": {
-    "commander": "^4.0.1",
     "download-git-repo": "^3.0.2",
-    "inquirer": "^7.0.0",
-    "moment": "^2.21.0",
-    "replace-in-file": "^4.0.2"
-  },
-  "devDependencies": {
-    "standard": "^14.3.1"
+    "git-clone": "^0.2.0",
+    "replace-in-file": "^7.1.0",
+    "rimraf": "^5.0.5",
+    "shelljs": "^0.8.5",
+    "yargs": "^17.7.2"
   }
 }
