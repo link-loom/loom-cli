@@ -1,5 +1,5 @@
 # @link-loom/cli
-CLI tool for Beat Projects, you can create new projects, create views to frontend and create API controllers easily
+CLI tool for Link Loom Projects, you can create new projects, create views to frontend and create API controllers easily
 
 ## Installation
 
