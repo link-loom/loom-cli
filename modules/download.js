@@ -1,9 +1,9 @@
 const clone = require('git-clone');
 const path = require('path');
-const rimraf = require('rimraf');
+const { rimraf } = require('rimraf');
 const shell = require('shelljs');
 
-function downloadRepo(projectName) {
+function downloadRepo (projectName) {
   return new Promise((resolve, reject) => {
     // Clone into a temporary folder
     const tempPath = path.resolve('temp-' + Math.random().toString(36).substring(2, 15));
