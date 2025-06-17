@@ -21,7 +21,7 @@ if (argv._.includes('create') && argv.name) {
   console.log(`Creating project: ${argv.name}`);
   downloadRepo(argv.name)
     .then(() => replacePlaceholder(argv.name))
-    .then(() => setupProject())
+    .then(() => setupProject(argv.name))
     .then(() => console.log('Project created successfully.'))
     .catch(err => console.error(err));
 } else {
