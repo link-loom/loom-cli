@@ -21,7 +21,7 @@ function downloadRepo(projectName) {
         // Move files from the temp folder to the project folder
         shell.mv('-n', `${tempPath}/*`, `${projectName}/`);
         shell.mv('-n', `${tempPath}/.*`, `${projectName}/`); // Includes hidden files
-        rimraf(tempPath, () => resolve()); // Delete the temp folder
+        rimraf(tempPath).then(resolve).catch(reject); // Delete the temp folder
       }
     });
   });
