@@ -2,6 +2,8 @@ const replace = require('replace-in-file');
 const path = require('path');
 
 function replacePlaceholder(projectName) {
+  console.log('Replacing template names...');
+  
   const options = {
     // Specify paths to files or use glob patterns
     files: path.resolve(projectName, '**', '*'),
