@@ -1,6 +1,6 @@
 {
   "name": "@link-loom/cli",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "CLI tool for Link Loom projects template",
   "main": "app.js",
   "preferGlobal": true,
