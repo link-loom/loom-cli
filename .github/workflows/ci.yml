@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [22, 24]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  # Every layer combination of `create webapp` must pass its own lint, tests and build against the published SDKs.
+  webapp:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        combination: [all, no-command-center, no-stoneos, base]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/e2e/webapp-matrix.mjs --only ${{ matrix.combination }} --out ${{ runner.temp }}/matrix
+
+  # Every layer combination of `create landing` must pass `link-loom check`, `astro check` and the build.
+  landing:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        combination: [all, no-editor, no-search, base]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/e2e/landing-matrix.mjs --only ${{ matrix.combination }} --out ${{ runner.temp }}/matrix

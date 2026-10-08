@@ -1,0 +1,32 @@
+name: Publish
+
+# Runs when `npm run version-patch` pushes a v* tag. Publishing uses npm trusted publishing (OIDC):
+# no token is stored; each package must have this repository and workflow set as its trusted publisher on npmjs.com.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm test
+      - name: Publish every package in dependency order
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG=latest
+          case "$VERSION" in *-*) TAG=next ;; esac
+          for workspace in devkit node-generators react-generators astro-generators migrate cli; do
+            npm publish --workspace "packages/$workspace" --access public --provenance --tag "$TAG"
+          done

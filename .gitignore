@@ -56,3 +56,13 @@ typings/
 
 # dotenv environment variables file
 .env
+
+# Link Loom CLI
+.loom-tmp/
+coverage/
+.DS_Store
+
+# Agent evaluations: the local registry data and the projects agents produce
+evals/registry/storage/
+evals/registry/htpasswd
+evals/work/

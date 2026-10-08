@@ -1,0 +1,8 @@
+node_modules
+coverage
+# Templates follow the generated project's own Prettier settings, not the monorepo's.
+packages/*/src/generators/*/layers/*/files/**
+packages/*/skills/**/assets/**
+packages/*/tests/fixtures/**
+packages/*/src/generators/*/files*/**
+packages/*/tests/golden/**
