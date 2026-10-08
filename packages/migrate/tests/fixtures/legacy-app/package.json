@@ -1,0 +1,5 @@
+{
+  "name": "acme-legacy-admin",
+  "description": "The admin console of Acme.",
+  "dependencies": { "@link-loom/react-sdk": "1.1.78", "react": "18.2.0", "react-router-dom": "6.4.2" }
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/migrate/decisions",
+  "title": "Migration decisions",
+  "description": "What `link-loom migrate apply` builds the new project from. `migrate analyze <repo>` writes a draft of it (migration.decisions.json); a person or an agent finishes it. The legacy repo is only read.",
+  "type": "object",
+  "required": ["source", "project", "files"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "source": {
+      "type": "string",
+      "description": "Absolute folder of the legacy app (written by analyze; leave it)"
+    },
+    "project": {
+      "type": "object",
+      "description": "The options of `create webapp` for the new project (npx link-loom schema webapp): name, slug, variant (client|admin), description and descriptionEs (written natively in Spanish), defaultLocale, signup, stoneos, commandCenter, primaryColor, headerColor…",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Product name, as people read it (e.g. \"ÊTRUNE ID\")"
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "description": "The legacy routes and the page file each renders (written by analyze). A page decided `move` is mounted on its paths, relative to the app's base route.",
+      "items": {
+        "type": "object",
+        "required": ["path", "file"],
+        "properties": {
+          "path": { "type": "string" },
+          "file": { "type": "string" },
+          "layout": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "description": "Lists and records rebuilt with the kit: each item is the input of `add entity` (npx link-loom schema entity). Decide their legacy list, record and form files `discard`. When a sidebar row below opens the entity's list (/<domain>/<plural>), that row keeps its place and the entity adds no row of its own.",
+      "items": { "type": "object", "required": ["domain", "entity"] }
+    },
+    "files": {
+      "type": "array",
+      "description": "Every source file of the legacy app, carried over (`move`) or left behind (`discard`). A moved file lands where `link-loom check` expects it, from its kind, domain, entity, role and name; a name that would land on a file of the new project must change, or the file be discarded.",
+      "items": {
+        "type": "object",
+        "required": ["file", "action"],
+        "properties": {
+          "file": { "type": "string", "description": "Path in the legacy app" },
+          "action": { "enum": ["move", "discard"] },
+          "reason": { "type": "string", "description": "Why it is discarded (for the report)" },
+          "kind": {
+            "enum": ["page", "component", "service", "hook", "constants", "utils"],
+            "description": "page → src/pages/<domain>/<Domain><Name>.page.jsx; service → src/services/<domain>/<entity>/<domain>-<entity>.service.js (base: true → src/services/base/); hook → src/hooks/; constants → src/constants/<name>.constants.js (name theme merges into the palette); component → by role"
+          },
+          "role": {
+            "enum": ["list", "record", "quick-actions", "shared", "component", "utils"],
+            "description": "For components: list|record|quick-actions → src/components/pages/<domain>/<entity>/<role>/; shared → src/components/shared/<name>/; component → src/components/pages/<domain>/<name>/; utils → src/utils/"
+          },
+          "domain": { "type": "string", "description": "Domain folder in kebab-case (e.g. inventory)" },
+          "entity": {
+            "type": "string",
+            "description": "Entity in kebab-case, for services and list/record components"
+          },
+          "name": { "type": "string", "description": "The file's new name (PascalCase for pages and components)" },
+          "base": { "type": "boolean", "description": "The legacy BaseApi class (kind service)" }
+        }
+      }
+    },
+    "navigation": {
+      "type": "array",
+      "description": "The sidebar rows, in order; each becomes `add nav-item` (npx link-loom schema nav-item). analyze reads them from the legacy sidebar with their icon, section title and group.",
+      "items": {
+        "type": "object",
+        "required": ["to", "labelEn"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Row id in kebab-case" },
+          "to": { "type": "string", "description": "Legacy full path (e.g. /admin/item/management)" },
+          "labelEn": { "type": "string" },
+          "labelEs": { "type": "string", "description": "Spanish label (neutral, with \"tú\")" },
+          "icon": {
+            "type": "string",
+            "description": "A key of the icon catalog (npx link-loom schema nav-item); empty for the default"
+          },
+          "before": {
+            "type": "string",
+            "description": "Id of the row this one goes before (default: Advanced settings)"
+          },
+          "sectionEn": { "type": "string", "description": "Section title printed above the row or its group" },
+          "sectionEs": { "type": "string" },
+          "group": {
+            "type": "string",
+            "description": "Id of the group (a collapsible title with links) this row belongs to"
+          },
+          "groupEn": { "type": "string" },
+          "groupEs": { "type": "string" },
+          "groupIcon": { "type": "string" },
+          "skip": { "type": "boolean", "description": "Leave the row out" }
+        }
+      }
+    },
+    "texts": {
+      "type": "array",
+      "description": "Every text the carried code writes for people: JSX text and literals, text attributes, labels of object literals (columns, tabs, tiles) and notices. Each needs its key, English and Spanish to move into src/i18n; a text without them stays written in the code. Two texts may share a key only with the same words.",
+      "items": {
+        "type": "object",
+        "required": ["file", "start", "text"],
+        "properties": {
+          "file": { "type": "string" },
+          "start": {
+            "type": "integer",
+            "description": "Offset of the text in the legacy file (written by analyze; leave it)"
+          },
+          "line": { "type": "integer" },
+          "text": { "type": "string", "description": "The text as the legacy code writes it" },
+          "key": {
+            "type": "string",
+            "pattern": "^[A-Za-z][\\w]*(\\.[A-Za-z0-9][\\w-]*)+$",
+            "description": "Dotted dictionary key"
+          },
+          "en": { "type": "string" },
+          "es": { "type": "string", "description": "Spanish, written natively (neutral, with \"tú\")" }
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "description": "Legacy app paths written in the code → their place in the new project (e.g. \"/admin/account/overview\": \"/admin/account/profile\"). A key rewrites that path (with its ?query or #hash); a key ending in \"/\" rewrites every path under it (\"/admin/item/\": \"/admin/items/\"). `migrate finish` lists the links that still lead nowhere in MIGRATION.md.",
+      "additionalProperties": { "type": "string" }
+    },
+    "assets": {
+      "type": "array",
+      "description": "Public files the code uses; `keep: false` leaves one behind",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": { "path": { "type": "string" }, "keep": { "type": "boolean" } }
+      }
+    }
+  }
+}
