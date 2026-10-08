@@ -65,8 +65,11 @@ describe('link-loom mcp', () => {
     await client.close();
 
     expect(created.isError).toBe(false);
+    // The SDK client handles a notification a tick after it arrives and a response at once: the last one ("Done", 100)
+    // can land with the result and be dropped. The result is what marks the end.
     expect(events.length).toBeGreaterThanOrEqual(2);
-    expect(events.at(-1)).toMatchObject({ progress: 100, total: 100, message: 'Done' });
+    expect(events.every((event) => event.total === 100)).toBe(true);
+    expect(events[0]).toMatchObject({ progress: 0, message: 'Preparing the template' });
     expect(events.map((event) => event.progress)).toEqual(
       [...events.map((event) => event.progress)].sort((a, b) => a - b),
     );

@@ -138,8 +138,9 @@ events above:
 }
 ```
 
-Most MCP clients wait for the result of a call, so a create with the install holds the agent for those minutes even
-with progress. Prefer `install: false` and the background install above when the agent has more to do.
+The result is what marks the end of a call: a client may drop the last notification (100, `Done`) when it arrives
+together with the result. Most MCP clients wait for the result of a call, so a create with the install holds the agent
+for those minutes even with progress. Prefer `install: false` and the background install above when the agent has more to do.
 
 ## For people
 
