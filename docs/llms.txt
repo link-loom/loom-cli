@@ -1,0 +1,17 @@
+# Link Loom CLI
+
+> Create Link Loom projects (landing, webapp, backend) with generators. Agent-first: JSON output, dry runs, stable exit codes.
+
+- [README](../README.md): status, agent contract, exit codes, progress, MCP, packages
+- [Collection contract](collections.md): collection.json, generator factory, JSON Schema, templates
+- `npx @link-loom/cli describe --json`: the live machine contract
+- `npx @link-loom/cli schema <type> --json`: the input schema of a generator
+- `npx @link-loom/cli describe --project --json`: inside a project, what it holds and what can be added
+- `npx @link-loom/cli add <generator> --json`: in a webapp entity, page, component, service, hook, nav-item, settings-section, platform-section, copy, feature; in a landing page, section, blog-post, copy
+- `npx @link-loom/cli <command> <generator> --help`: the flags of one generator
+- `npx @link-loom/cli check --json`: the quality gate of a project (exit 4 when a rule fails)
+- `npx @link-loom/cli migrate analyze <repo> --json`, then `migrate apply --decisions migration.decisions.json --out <dir>` (builds, installs and runs `migrate finish`): move an existing webapp onto the standard (temporary)
+- `npx @link-loom/cli ai status|install|ask "<question>"`: the optional local model of the TUI, and answers from the docs
+- Progress: `create`, `update` and `migrate apply` install dependencies (one to three minutes) and report it on stderr; with `--json`, one event per line `{"event":"progress","command","step","progress":0-100,"total":100,"message","phase"?,"found"?,"done"?,"packages"?}`, the last one `{"step":"done","progress":100}`. stdout keeps its single JSON document.
+- Not waiting on the install: `create … --no-install --json` answers in seconds and its `next` lists `npm install`; run it in the background and keep generating with `npx @link-loom/cli add … --yes --json` (generators only write files). `verify`, `check`, build and tests wait for the install.
+- `npx @link-loom/cli mcp`: the same commands as an MCP server over stdio (generated projects connect it in `.mcp.json`). Outside a project: describe, schema, check, create_landing, create_webapp, create_service; inside one: add_<generator> and brand. Input = the generator's JSON Schema + `dryRun`, `yes` or `install`. A `tools/call` with `params._meta.progressToken` gets `notifications/progress` `{progressToken, progress, total: 100, message}`; prefer `install: false` plus a background `npm install` when the agent has more to do.
