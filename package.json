@@ -1,6 +1,6 @@
 {
   "name": "loom-cli-monorepo",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "private": true,
   "description": "Link Loom CLI and its generator collections",
   "type": "module",

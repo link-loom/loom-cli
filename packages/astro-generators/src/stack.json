@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@link-loom/cli": "^3.0.0-alpha.0",
+    "@link-loom/cli": "^3.0.0",
     "@types/node": "^22.20.5",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

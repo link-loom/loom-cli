@@ -1,6 +1,6 @@
 {
   "name": "@link-loom/node-generators",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "Link Loom backend generators (monolith and microservice)",
   "type": "module",
   "main": "./collection.json",
@@ -13,7 +13,7 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@link-loom/devkit": "3.0.0-alpha.0"
+    "@link-loom/devkit": "3.0.0"
   },
   "publishConfig": {
     "access": "public"

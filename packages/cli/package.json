@@ -1,6 +1,6 @@
 {
   "name": "@link-loom/cli",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "Create any Link Loom project (landing, webapp, backend) with generators. Built for agents, with a real TUI for people.",
   "type": "module",
   "bin": {
@@ -15,11 +15,11 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@link-loom/astro-generators": "3.0.0-alpha.0",
-    "@link-loom/devkit": "3.0.0-alpha.0",
-    "@link-loom/migrate": "3.0.0-alpha.0",
-    "@link-loom/node-generators": "3.0.0-alpha.0",
-    "@link-loom/react-generators": "3.0.0-alpha.0",
+    "@link-loom/astro-generators": "3.0.0",
+    "@link-loom/devkit": "3.0.0",
+    "@link-loom/migrate": "3.0.0",
+    "@link-loom/node-generators": "3.0.0",
+    "@link-loom/react-generators": "3.0.0",
     "htm": "^3.1.1",
     "ink": "^8.0.0",
     "react": "^19.3.0"

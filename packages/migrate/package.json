@@ -1,6 +1,6 @@
 {
   "name": "@link-loom/migrate",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "Temporary: moves existing Link Loom webapps onto the generated standard (analyze, decide, apply). Removed after two or three releases.",
   "type": "module",
   "main": "./src/index.js",
@@ -12,8 +12,8 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@link-loom/devkit": "3.0.0-alpha.0",
-    "@link-loom/react-generators": "3.0.0-alpha.0",
+    "@link-loom/devkit": "3.0.0",
+    "@link-loom/react-generators": "3.0.0",
     "magic-string": "^1.4.3"
   },
   "publishConfig": {

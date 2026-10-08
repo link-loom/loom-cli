@@ -1,6 +1,6 @@
 {
   "name": "@link-loom/devkit",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0",
   "description": "Engine for Link Loom generator collections: virtual tree, plans, atomic apply, templates and structural edits",
   "type": "module",
   "main": "./src/index.js",
