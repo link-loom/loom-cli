@@ -1,0 +1,19 @@
+{
+  "id": "etrune-id-admin",
+  "reference": { "app": "etrune-id-admin-ref", "url": null },
+  "expect": {
+    "manifest": {
+      "type": "webapp",
+      "variant": "admin",
+      "name": "ÊTRUNE ID",
+      "layers": ["base"],
+      "brand.colors.header": "#563e2e",
+      "brand.colors.primary": "#563e2e"
+    },
+    "files": {
+      "src/app.config.js": ["defaultLocale: \"es\""],
+      "src/i18n/es.js": ["Clientes"]
+    },
+    "entities": [{ "domain": "identity", "entity": "customer", "list": "compact", "actions": ["quickview", "delete"] }]
+  }
+}

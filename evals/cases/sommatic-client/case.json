@@ -1,0 +1,19 @@
+{
+  "id": "sommatic-client",
+  "reference": { "app": "sommatic-client-ref", "url": null },
+  "expect": {
+    "manifest": {
+      "type": "webapp",
+      "variant": "client",
+      "name": "Sommatic",
+      "layers": ["base", "signup", "stoneos", "command-center"],
+      "platforms": ["veripass", "sommatic", "vectry"],
+      "brand.colors.header": "#3a2e4f",
+      "brand.colors.primary": "#3a2e4f"
+    },
+    "files": { "src/app.config.js": ["defaultLocale: \"en\""], "src/i18n/es.js": ["Agentes"] },
+    "entities": [
+      { "domain": "cognitive-infrastructure", "entity": "agent", "list": "cards", "actions": ["quickview", "copy-id"] }
+    ]
+  }
+}

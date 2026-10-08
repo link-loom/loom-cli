@@ -1,0 +1,22 @@
+{
+  "id": "etrune-id-admin-migration",
+  "reference": {
+    "app": "etrune-id-admin",
+    "url": null
+  },
+  "expect": {
+    "manifest": {
+      "type": "webapp",
+      "variant": "admin",
+      "name": "ÊTRUNE ID",
+      "layers": ["base", "stoneos", "command-center"],
+      "brand.colors.primary": "#563e2e",
+      "migration.from": "etrune.id.admin.webapp"
+    },
+    "files": {
+      "src/app.config.js": ["defaultLocale: \"es\""],
+      "MIGRATION.md": ["Pending"]
+    }
+  },
+  "allowWrites": ["migration.decisions.json"]
+}

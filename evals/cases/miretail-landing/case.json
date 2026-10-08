@@ -1,0 +1,26 @@
+{
+  "id": "miretail-landing",
+  "reference": { "app": "miretail-landpage", "url": "http://localhost:4577" },
+  "expect": {
+    "manifest": {
+      "type": "landing",
+      "name": "Mi Retail",
+      "url": "https://miretail.com.co",
+      "defaultLocale": "en",
+      "brand.palette.brand": "#3c4876",
+      "brand.palette.accent": "#f0655c"
+    },
+    "files": {
+      "src/data/site.ts": [
+        "https://app.miretail.com.co/login",
+        "https://app.miretail.com.co/signup",
+        "Blackwood Stone Holdings"
+      ],
+      "src/data/nav.ts": ["path: '/pricing'", "path: '/company'"],
+      "src/data/blog.ts": ["'operations'"],
+      "src/data/copy/en.ts": ["whole business"],
+      "src/data/copy/es.ts": ["todo tu negocio"],
+      "src/views/home/sections.ts": ["FinalCta"]
+    }
+  }
+}

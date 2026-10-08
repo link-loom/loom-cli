@@ -1,0 +1,26 @@
+# A local npm registry for agent evaluations: the packages of this monorepo and the SDK versions not published yet
+# live here only; everything else comes from npmjs. Start it with
+#   npx -y verdaccio@6 --config evals/registry/config.yaml --listen 4873
+storage: ./storage
+auth:
+  htpasswd:
+    file: ./htpasswd
+    max_users: 10
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+packages:
+  '@link-loom/cli': { access: $all, publish: $authenticated }
+  '@link-loom/devkit': { access: $all, publish: $authenticated }
+  '@link-loom/react-generators': { access: $all, publish: $authenticated }
+  '@link-loom/node-generators': { access: $all, publish: $authenticated }
+  '@link-loom/astro-generators': { access: $all, publish: $authenticated }
+  '@link-loom/migrate': { access: $all, publish: $authenticated }
+  '@link-loom/react-shell': { access: $all, publish: $authenticated }
+  '@link-loom/react-sdk': { access: $all, publish: $authenticated }
+  '@link-loom/cloud-sdk': { access: $all, publish: $authenticated }
+  '@veripass/react-sdk': { access: $all, publish: $authenticated }
+  '@sommatic/react-sdk': { access: $all, publish: $authenticated }
+  '**': { access: $all, proxy: npmjs }
+max_body_size: 200mb
+log: { type: stdout, format: pretty, level: warn }

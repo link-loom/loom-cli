@@ -1,0 +1,29 @@
+{
+  "id": "miretail-workspace",
+  "reference": { "app": "miretail-workspace-ref", "url": "http://localhost:3796" },
+  "expect": {
+    "manifest": {
+      "type": "webapp",
+      "variant": "client",
+      "name": "Mi Retail",
+      "layers": ["base", "signup", "stoneos", "command-center"],
+      "brand.colors.header": "#3c4876",
+      "brand.colors.logoArea": "#2f3a5f",
+      "brand.colors.primary": "#3c4876"
+    },
+    "files": {
+      "src/app.config.js": ["defaultLocale: \"es\""],
+      "src/components/layouts/sidebar/navigation.js": ["workspace-projects"],
+      "src/components/layouts/navbar/quick-add.registry.js": ["workspace-project"],
+      "src/i18n/es.js": ["Proyectos"]
+    },
+    "entities": [
+      {
+        "domain": "workspace",
+        "entity": "project",
+        "list": "standard",
+        "actions": ["quickview", "open-new-tab", "copy-link"]
+      }
+    ]
+  }
+}
