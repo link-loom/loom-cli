@@ -1,0 +1,6 @@
+{
+  "server": {
+    "name": "%LOOM%",
+    "port": 3601
+  }
+}

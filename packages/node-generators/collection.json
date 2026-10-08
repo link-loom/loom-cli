@@ -1,0 +1,11 @@
+{
+  "name": "@link-loom/node-generators",
+  "generators": {
+    "service": {
+      "factory": "./src/generators/service/index.js",
+      "schema": "./src/generators/service/schema.json",
+      "description": "A Link Loom backend service (monolith or microservice) on @link-loom/sdk",
+      "status": "available"
+    }
+  }
+}

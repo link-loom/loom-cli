@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/node-generators/service",
+  "title": "Backend service",
+  "description": "Creates a Link Loom backend service. Until node-generators ships its own layers, both shapes start from the loom-svc-js template.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name; also the folder name unless `directory` is given",
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]*$",
+      "x-prompt": {
+        "en": "Project name",
+        "es": "Nombre del proyecto"
+      },
+      "x-order": 1
+    },
+    "shape": {
+      "type": "string",
+      "enum": ["monolith", "microservice"],
+      "default": "monolith",
+      "description": "Monolith or microservice",
+      "x-prompt": {
+        "en": "Monolith or microservice",
+        "es": "Monolito o microservicio"
+      },
+      "x-order": 2
+    },
+    "directory": {
+      "type": "string",
+      "description": "Target folder, relative to the working directory (defaults to the name)"
+    },
+    "ref": {
+      "type": "string",
+      "default": "master",
+      "description": "Branch or tag of link-loom/loom-svc-js to start from"
+    }
+  },
+  "required": ["name"],
+  "examples": [
+    {
+      "name": "billing-svc",
+      "shape": "microservice"
+    }
+  ]
+}

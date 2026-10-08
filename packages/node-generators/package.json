@@ -1,0 +1,27 @@
+{
+  "name": "@link-loom/node-generators",
+  "version": "3.0.0-alpha.0",
+  "description": "Link Loom backend generators (monolith and microservice)",
+  "type": "module",
+  "main": "./collection.json",
+  "files": [
+    "collection.json",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@link-loom/devkit": "3.0.0-alpha.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/link-loom/loom-cli.git",
+    "directory": "packages/node-generators"
+  },
+  "license": "Apache-2.0"
+}
