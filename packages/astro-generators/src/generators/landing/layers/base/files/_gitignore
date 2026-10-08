@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+public/pagefind/
+.env.local
+.DS_Store
+# Image masters stay out of git: the optimized WebP in public/ is what ships.
+assets/img-source/*.png

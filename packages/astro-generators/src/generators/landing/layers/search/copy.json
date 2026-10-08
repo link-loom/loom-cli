@@ -1,0 +1,30 @@
+{
+  "en": {
+    "search": {
+      "label": "Search",
+      "placeholder": "Search {name}…",
+      "helper": "Search every page and post of {name}. Press ⌘K anytime.",
+      "suggestionsLabel": "Try",
+      "suggestions": ["{name}", "Contact"],
+      "close": "Close search",
+      "meta": { "title": "Search", "description": "Search the {name} site." },
+      "eyebrow": "Search",
+      "title": "Find anything on {name}.",
+      "deck": "Full-text search across every page and post."
+    }
+  },
+  "es": {
+    "search": {
+      "label": "Buscar",
+      "placeholder": "Busca en {name}…",
+      "helper": "Busca en todas las páginas y publicaciones de {name}. Presiona ⌘K cuando quieras.",
+      "suggestionsLabel": "Prueba",
+      "suggestions": ["{name}", "Contacto"],
+      "close": "Cerrar búsqueda",
+      "meta": { "title": "Buscar", "description": "Busca en el sitio de {name}." },
+      "eyebrow": "Buscar",
+      "title": "Encuentra lo que sea en {name}.",
+      "deck": "Búsqueda de texto completo en todas las páginas y publicaciones."
+    }
+  }
+}

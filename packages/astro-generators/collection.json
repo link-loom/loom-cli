@@ -1,0 +1,45 @@
+{
+  "name": "@link-loom/astro-generators",
+  "check": "./src/check/index.js",
+  "inventory": "./src/inventory.js",
+  "stack": "./src/stack.json",
+  "migrations": {},
+  "generators": {
+    "landing": {
+      "factory": "./src/generators/landing/index.js",
+      "schema": "./src/generators/landing/schema.json",
+      "description": "A Link Loom landing page (Astro, static) built from layers: the Mi Retail landing frame in English and Spanish, SEO and structured data, contact and legal pages, the image pipeline; the blog, full-text search and the development-only blog editor",
+      "status": "available"
+    },
+    "brand": {
+      "factory": "./src/generators/brand/index.js",
+      "schema": "./src/generators/brand/schema.json",
+      "description": "Changes the brand of a landing (colours, logo) and rebuilds the tokens, favicons and share images",
+      "status": "available"
+    },
+    "page": {
+      "factory": "./src/generators/page/index.js",
+      "schema": "./src/generators/page/schema.json",
+      "description": "Adds a page in both languages: its view with a hero and a closing call to action, its title for the breadcrumb, its copy and (optionally) its entry in the header menu or a footer column",
+      "status": "available"
+    },
+    "section": {
+      "factory": "./src/generators/section/index.js",
+      "schema": "./src/generators/section/schema.json",
+      "description": "Adds a section to a page from the standard kinds (hero, page-hero, logos, cards, split, faq, prose, final-cta, page-cta) with its copy in both languages",
+      "status": "available"
+    },
+    "blog-post": {
+      "factory": "./src/generators/blog-post/index.js",
+      "schema": "./src/generators/blog-post/schema.json",
+      "description": "Adds a blog post in English and Spanish, parallel by base_slug",
+      "status": "available"
+    },
+    "copy": {
+      "factory": "./src/generators/copy/index.js",
+      "schema": "./src/generators/copy/schema.json",
+      "description": "Adds or rewrites one text in both dictionaries (src/data/copy/en.ts and es.ts) under a dotted key",
+      "status": "available"
+    }
+  }
+}

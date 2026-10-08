@@ -1,0 +1,88 @@
+---
+import type { Locale } from '@data/site';
+import { BLOG_CATEGORY_LABELS, type BlogEntry } from '@utils/blog';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  locale: Locale;
+  posts: BlogEntry[];
+  selected?: string;
+}
+
+const { locale, posts, selected } = Astro.props as Props;
+
+const counts = posts.reduce<Record<string, number>>((acc, p) => {
+  acc[p.data.category] = (acc[p.data.category] ?? 0) + 1;
+  return acc;
+}, {});
+
+const t = getCopy(locale).blog;
+const totalLabel = t.all;
+const totalCount = posts.length;
+---
+
+<nav class="site-bnav" aria-label={t.categoriesLabel} data-blog-categories>
+  <a
+    href={`/${locale}/blog`}
+    class={`site-bnav__pill ${!selected ? 'is-active' : ''}`}
+    data-category=""
+  >
+    {totalLabel} <span class="site-bnav__count site-mono">{totalCount}</span>
+  </a>
+  {Object.entries(BLOG_CATEGORY_LABELS).map(([cat, labels]) => {
+    const n = counts[cat] ?? 0;
+    if (n === 0) return null;
+    return (
+      <a
+        href={`/${locale}/blog?category=${cat}`}
+        class={`site-bnav__pill ${selected === cat ? 'is-active' : ''}`}
+        data-category={cat}
+      >
+        {labels[locale]} <span class="site-bnav__count site-mono">{n}</span>
+      </a>
+    );
+  })}
+</nav>
+
+<style>
+  .site-bnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .site-bnav__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: var(--site-radius-pill);
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+    color: var(--site-ink-700);
+    font-size: var(--site-fs-body-sm);
+    font-weight: var(--site-fw-medium);
+    transition: border-color var(--site-transition-fast), color var(--site-transition-fast), background var(--site-transition-fast);
+  }
+  .site-bnav__pill:hover {
+    border-color: var(--site-accent);
+    color: var(--site-brand-primary);
+  }
+  .site-bnav__pill.is-active {
+    background: var(--site-brand-primary);
+    color: var(--site-white);
+    border-color: var(--site-brand-primary);
+  }
+  .site-bnav__count {
+    padding: 2px 8px;
+    border-radius: var(--site-radius-pill);
+    background: var(--site-cream);
+    color: var(--site-ink-500);
+    font-size: 10px !important;
+    font-weight: var(--site-fw-semibold);
+  }
+  .site-bnav__pill.is-active .site-bnav__count {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--site-white);
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import type { Locale } from '@data/site';
+import BlogPostCard from '@components/blog/BlogPostCard.astro';
+import Reveal from '@components/ui/Reveal.astro';
+import { type BlogEntry } from '@utils/blog';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  locale: Locale;
+  posts: BlogEntry[];
+}
+
+const { locale, posts } = Astro.props as Props;
+const t = getCopy(locale).blog;
+---
+
+<section class="site-brel">
+  <div class="site-container">
+    <Reveal class="site-brel__head">
+      <span class="site-brel__label site-mono">
+        {t.keepReading}
+      </span>
+      <h2 class="site-brel__title">
+        {t.moreFromBlog}
+      </h2>
+    </Reveal>
+
+    <div class="site-brel__grid">
+      {posts.map((p, i) => (
+        <BlogPostCard entry={p} locale={locale} delay={60 * (i + 1)} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-brel {
+    padding-block: var(--site-section-py);
+    background: var(--site-paper);
+  }
+  :global(.site-brel__head) {
+    display: grid;
+    gap: 10px;
+    text-align: center;
+    max-width: 44rem;
+    margin: 0 auto var(--site-space-4);
+  }
+  .site-brel__label {
+    font-size: 11px !important;
+    font-weight: var(--site-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--site-ink-500);
+  }
+  .site-brel__title {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h2);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+  }
+
+  .site-brel__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+  @media (max-width: 1023px) { .site-brel__grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .site-brel__grid { grid-template-columns: 1fr; } }
+</style>

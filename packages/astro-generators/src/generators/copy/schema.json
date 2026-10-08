@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/astro-generators/copy",
+  "title": "Copy",
+  "description": "Adds one text to both dictionaries of the landing (src/data/copy/en.ts and es.ts) under a dotted key, so a component reads it as getCopy(locale).<key>. With --replace it rewrites a text that already exists (a generated one included). Write the Spanish natively, in neutral Spanish with \"tú\".",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["key", "en", "es"],
+  "properties": {
+    "key": {
+      "type": "string",
+      "pattern": "^[a-zA-Z][a-zA-Z0-9]*(\\.[a-zA-Z][a-zA-Z0-9]*)+$",
+      "description": "Dotted key, camelCase segments (e.g. home.hero.deck)",
+      "x-prompt": { "en": "Key", "es": "Clave" },
+      "x-order": 1
+    },
+    "en": { "type": "string", "minLength": 1, "description": "The text in English", "x-order": 2 },
+    "es": { "type": "string", "minLength": 1, "description": "The text in Spanish", "x-order": 3 },
+    "replace": {
+      "type": "boolean",
+      "default": false,
+      "description": "Rewrite the key when it already exists, in both dictionaries (needs --yes, since it modifies them)"
+    }
+  }
+}

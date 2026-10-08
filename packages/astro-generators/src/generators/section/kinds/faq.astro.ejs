@@ -1,0 +1,120 @@
+---
+/*
+ * <%- name %>: the questions as an accessible accordion beside a sticky title. The answers are in the HTML even
+ * when collapsed, and the FAQPage structured data repeats them word for word. Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import FaqLD from '@components/seo/FaqLD.astro';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+---
+
+<section class="site-faq" id=<%- quote(id) %>>
+  <FaqLD items={t.items} />
+  <div class="site-container site-faq__inner">
+    <h2 class="site-faq__title">{t.title}</h2>
+    <div class="site-faq__list">
+      {t.items.map((item, index) => (
+        <details class="site-faq__item" open={index === 0}>
+          <summary class="site-faq__q">
+            <h3>{item.q}</h3>
+            <Icon name="ic:baseline-add" size={20} class="site-faq__icon" />
+          </summary>
+          <p class="site-faq__a">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-faq {
+    padding-block: var(--site-section-py);
+    background: var(--site-white);
+  }
+  .site-faq__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+    gap: clamp(32px, 6vw, 88px);
+    align-items: start;
+  }
+  .site-faq__title {
+    position: sticky;
+    top: 110px;
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h2);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--site-ink-900);
+    text-wrap: balance;
+  }
+  .site-faq__list {
+    border-top: 1px solid var(--site-ink-100);
+  }
+  .site-faq__item {
+    border-bottom: 1px solid var(--site-ink-100);
+  }
+  .site-faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  .site-faq__q::-webkit-details-marker {
+    display: none;
+  }
+  .site-faq__q:focus-visible {
+    outline: 2px solid var(--site-accent);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .site-faq__q h3 {
+    margin: 0;
+    font-family: var(--site-font-sans);
+    font-size: var(--site-fs-body-lg);
+    font-weight: var(--site-fw-semibold);
+    line-height: 1.4;
+    color: var(--site-ink-900);
+  }
+  :global(.site-faq__icon) {
+    flex-shrink: 0;
+    color: var(--site-ink-500);
+    transition: transform var(--site-transition-fast);
+  }
+  .site-faq__item[open] :global(.site-faq__icon) {
+    transform: rotate(45deg);
+  }
+  .site-faq__a {
+    margin: 0;
+    padding: 0 0 22px;
+    max-width: 44rem;
+    font-size: var(--site-fs-body);
+    line-height: 1.7;
+    color: var(--site-ink-700);
+  }
+  @media (max-width: 900px) {
+    .site-faq__inner {
+      grid-template-columns: 1fr;
+    }
+    .site-faq__title {
+      position: static;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.site-faq__icon) {
+      transition: none;
+    }
+  }
+</style>

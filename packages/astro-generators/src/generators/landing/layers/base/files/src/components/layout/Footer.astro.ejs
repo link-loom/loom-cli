@@ -1,0 +1,231 @@
+---
+/*
+ * Footer
+ * ======
+ * Ink band with the soft thread accent across its top edge: the logo and tagline beside the columns of
+ * data/nav.ts, then a bottom bar with the rights on the left and the company behind the product on the right.
+ */
+import { SITE, type Locale } from '@data/site';
+import { FOOTER_COLUMNS } from '@data/nav';
+import { getCopy } from '@utils/copy';
+import { localizedPath } from '@utils/i18n';
+import { isExternal, linkHref } from '@utils/links';
+<% if (layers.editor) { -%>
+import Icon from '@components/ui/Icon.astro';
+<% } -%>
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).footer;
+const rights = t.rights.replace('{year}', String(new Date().getFullYear()));
+<% if (layers.editor) { -%>
+/* The blog editor only exists under `astro dev`; import.meta.env.DEV is false in a build. */
+const isDev = import.meta.env.DEV;
+<% } -%>
+---
+
+<footer class="site-footer">
+  <div class="site-footer__accent" aria-hidden="true"></div>
+
+  <div class="site-container site-footer__inner">
+    <div class="site-footer__brand">
+      <a href={localizedPath(locale, '/')} class="site-footer__plate" aria-label={SITE.name}>
+        <img src={SITE.brand.logoOnDark} alt={SITE.name} class="site-footer__wordmark" />
+      </a>
+      <p class="site-footer__tagline">{t.tagline}</p>
+    </div>
+
+    <nav class="site-footer__grid" aria-label={t.navLabel}>
+      {FOOTER_COLUMNS.map((column) => (
+        <div class="site-footer__col">
+          <h2 class="site-footer__col-title">{column.title[locale]}</h2>
+          <ul class="site-footer__col-list">
+            {column.links.map((link) => {
+              const href = linkHref(link, locale);
+              return (
+                <li>
+                  <a
+                    href={href}
+                    class="site-footer__link"
+                    target={isExternal(href) ? '_blank' : undefined}
+                    rel={isExternal(href) ? 'noopener' : undefined}
+                  >{link.label[locale]}</a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  </div>
+
+  <div class="site-footer__bottom">
+    <div class="site-container site-footer__bottom-inner">
+      <span class="site-footer__rights">{rights}</span>
+      <div class="site-footer__bottom-right">
+<% if (layers.editor) { -%>
+        {isDev && (
+          <a href="/editor" class="site-footer__dev-link" title={t.editorHint}>
+            <Icon name="ic:baseline-settings" size={12} />
+            {t.editor}
+          </a>
+        )}
+<% } -%>
+        {SITE.parent.name && (
+          <a href={SITE.parent.url} class="site-footer__parent-line" target="_blank" rel="noopener noreferrer">
+            {SITE.parent.name}
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    background: var(--site-ink-900);
+    color: var(--site-white);
+    padding-block: var(--site-space-8) 0;
+    /* No margin-top: a transparent margin would show the body as a white band after a dark section. */
+  }
+  /* Soft thread accent across the footer's top edge */
+  .site-footer__accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--site-grad-thread);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 3fr);
+    gap: var(--site-space-6);
+    padding-bottom: var(--site-space-8);
+  }
+
+  /* ---------- brand block ---------- */
+  .site-footer__brand {
+    display: grid;
+    gap: var(--site-space-3);
+    align-content: start;
+    justify-items: start;
+  }
+  /* The logo for dark backgrounds, no larger than the header's, close to the tagline. */
+  .site-footer__plate {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+  }
+  .site-footer__wordmark {
+    display: block;
+    width: auto;
+    height: 100%;
+  }
+  .site-footer__tagline {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 28rem;
+    margin-top: 2px;
+  }
+
+  /* ---------- link columns ---------- */
+  .site-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--site-space-4);
+  }
+  .site-footer__col-title {
+    margin: 0 0 16px;
+    line-height: 1.3;
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--site-ls-wide);
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .site-footer__col-list {
+    display: grid;
+    gap: 10px;
+  }
+  .site-footer__link {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    transition: color var(--site-transition-fast);
+  }
+  .site-footer__link:hover {
+    color: var(--site-accent-soft);
+  }
+  /* ---------- bottom bar ---------- */
+  .site-footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .site-footer__bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: var(--site-space-3);
+    flex-wrap: wrap;
+  }
+  .site-footer__rights {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .site-footer__bottom-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  /* The company behind the product: quiet, on the right */
+  .site-footer__parent-line {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    transition: color var(--site-transition-fast);
+  }
+  .site-footer__parent-line:hover {
+    color: var(--site-accent-soft);
+  }
+  /* The blog editor, in development only: a discreet pill */
+  .site-footer__dev-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: var(--site-radius-pill);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11px;
+    font-weight: var(--site-fw-medium);
+    text-decoration: none;
+    transition: color var(--site-transition-fast), border-color var(--site-transition-fast);
+  }
+  .site-footer__dev-link:hover {
+    color: var(--site-accent-soft);
+    border-color: var(--site-accent-soft);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1023px) {
+    .site-footer__inner {
+      grid-template-columns: 1fr;
+    }
+    .site-footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  /* Stay 2×2 on mobile (never collapse to a single column) */
+  @media (max-width: 540px) {
+    .site-footer__grid {
+      gap: var(--site-space-3);
+    }
+  }
+</style>

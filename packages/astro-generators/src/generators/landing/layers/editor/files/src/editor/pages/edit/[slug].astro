@@ -1,0 +1,32 @@
+---
+import EditorLayout from '../../EditorLayout.astro';
+import PostEditor from '../../PostEditor';
+import { findSibling, listPosts, readPost } from '../../post-files';
+import { baseSlugOf } from '../../post';
+
+/* The site builds static pages, so even under `astro dev` a dynamic route lists its paths: one per post file. */
+export async function getStaticPaths() {
+  const posts = await listPosts();
+  return posts.map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const entry = slug ? await readPost(slug) : null;
+if (!entry) {
+  return new Response(`No post named "${slug}" in src/content/blog`, { status: 404 });
+}
+
+const sibling = await findSibling(entry);
+const { title, locale, base_slug: baseSlug, is_draft: isDraft } = entry.frontmatter;
+const language = locale.toUpperCase();
+/* Drafts have no public page yet: the link opens the blog of the post's language instead. */
+const view = isDraft
+  ? { href: `/${locale}/blog/`, label: `View blog (${language})` }
+  : { href: `/${locale}/blog/${baseSlug ?? baseSlugOf(entry.slug)}/`, label: `View post (${language})` };
+---
+
+<EditorLayout title={title || entry.slug} viewHref={view.href} viewLabel={view.label}>
+  <PostEditor client:only="react" entry={entry} sibling={sibling}>
+    <p slot="fallback" class="site-editor-loading">Loading the editor…</p>
+  </PostEditor>
+</EditorLayout>

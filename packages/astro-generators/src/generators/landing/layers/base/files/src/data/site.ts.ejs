@@ -1,0 +1,63 @@
+/*
+ * The site: name, address, languages, brand files and contacts. Every component reads it from here; change a value
+ * once and the header, the footer, the SEO tags and the structured data follow.
+ */
+
+export type Locale = 'en' | 'es';
+
+export const LOCALES: readonly Locale[] = ['en', 'es'] as const;
+
+export const SITE = {
+  name: <%- quote(name) %>,
+  legalName: <%- quote(legalName) %>,
+  url: <%- quote(url) %>,
+  defaultLocale: <%- quote(defaultLocale) %> as Locale,
+  locales: LOCALES,
+
+  slogan: {
+    en: <%- quote(slogan.en) %>,
+    es: <%- quote(slogan.es) %>,
+  },
+
+  description: {
+    en: <%- quote(description.en) %>,
+    es: <%- quote(description.es) %>,
+  },
+
+  brand: {
+    logo: '/brand/logo-light.svg',
+    logoOnDark: '/brand/logo-dark.svg',
+    mark: '/brand/favicon.svg',
+  },
+
+  ogImage: {
+    en: '/brand/og-default-en.jpg',
+    es: '/brand/og-default-es.jpg',
+  } as Record<Locale, string>,
+  themeColor: <%- quote(themeColor) %>,
+  fontsHref: <%- quote(fontsHref) %>,
+
+  social: {
+    twitterHandle: <%- quote(social.twitter) %>,
+    linkedin: <%- quote(social.linkedin) %>,
+  },
+
+  contact: {
+    salesEmail: <%- quote(contact.sales) %>,
+    supportEmail: <%- quote(contact.support) %>,
+    /* Where the contact form posts (a form service or your backend). Empty: the page lists the emails only. */
+    formAction: <%- quote(contact.formAction) %>,
+  },
+
+  /* The company behind the product, credited once in the footer. Empty name: no credit. */
+  parent: {
+    name: <%- quote(parent.name) %>,
+    url: <%- quote(parent.url) %>,
+  },
+
+  /* The product's sign-in and sign-up. Empty sign-up: every "get started" goes to the contact page. */
+  auth: {
+    signIn: <%- quote(auth.signIn) %>,
+    signUp: <%- quote(auth.signUp) %>,
+  },
+} as const;

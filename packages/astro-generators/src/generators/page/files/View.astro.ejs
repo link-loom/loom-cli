@@ -1,0 +1,25 @@
+---
+/*
+ * <%- title %>: its sections, top to bottom, come from ./sections.ts.
+ */
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { SECTIONS } from './sections';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- key %>.meta;
+---
+
+<MarketingLayout
+  locale={locale}
+  title={t.title}
+  description={t.description}
+  alternateLocales={{ en: <%- quote(`/en${path}`) %>, es: <%- quote(`/es${path}`) %> }}
+>
+  {SECTIONS.map(({ component: Section }) => <Section locale={locale} />)}
+</MarketingLayout>

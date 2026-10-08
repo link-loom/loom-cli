@@ -1,0 +1,16 @@
+/*
+ * The blog's categories (their ids are what a post's `category` says) and its default author.
+ */
+import type { Label } from './nav';
+
+export const BLOG_CATEGORIES = [<%- categories.map((category) => quote(category.id)).join(', ') %>] as const;
+
+export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
+
+export const BLOG_CATEGORY_LABELS: Record<BlogCategory, Label> = {
+<% categories.forEach((category) => { -%>
+  <%- /^[a-z][a-z0-9]*$/.test(category.id) ? category.id : quote(category.id) %>: { en: <%- quote(category.label.en) %>, es: <%- quote(category.label.es) %> },
+<% }) -%>
+};
+
+export const BLOG_AUTHOR = <%- quote(name) %>;

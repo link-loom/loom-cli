@@ -1,0 +1,19 @@
+@use '../mixins' as *;
+
+.site-container {
+  @include container;
+}
+
+.site-section {
+  @include section-spacing;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-section--paper {
+  background: var(--site-paper);
+}
+
+.site-section--clean {
+  background: var(--site-white);
+}

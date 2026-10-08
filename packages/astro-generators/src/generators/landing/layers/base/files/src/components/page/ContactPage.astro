@@ -1,0 +1,235 @@
+---
+/*
+ * ContactPage: the contact page of both locales. The form posts to SITE.contact.formAction (a form service or the
+ * backend); without one, the page offers the emails only.
+ */
+import { SITE, type Locale } from '@data/site';
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import PageHero from '@components/page/PageHero.astro';
+import PageSection from '@components/page/PageSection.astro';
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/ui/Icon.astro';
+import Reveal from '@components/ui/Reveal.astro';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).contact;
+const channels = [
+  { icon: 'ic:baseline-mail-outline', label: t.channels.sales, email: SITE.contact.salesEmail },
+  { icon: 'ic:baseline-support-agent', label: t.channels.support, email: SITE.contact.supportEmail },
+].filter((channel) => channel.email);
+---
+
+<MarketingLayout
+  locale={locale}
+  title={t.meta.title}
+  description={t.meta.description}
+  alternateLocales={{ en: '/en/contact', es: '/es/contact' }}
+  hideStickyCta={true}
+>
+  <PageHero eyebrow={t.eyebrow} title={t.title} deck={t.deck} />
+
+  <PageSection tone="paper">
+    <div class:list={['site-contact', !SITE.contact.formAction && 'site-contact--channels-only']}>
+      {SITE.contact.formAction && (
+        <Reveal class="site-contact__form-card">
+          <h2 class="site-contact__form-title">{t.formTitle}</h2>
+          <p class="site-contact__form-note">{t.formNote}</p>
+
+          <form class="site-contact__form" method="post" action={SITE.contact.formAction}>
+            <div class="site-contact__row">
+              <label class="site-contact__field">
+                <span class="site-contact__label">{t.fields.name} *</span>
+                <input type="text" name="name" required autocomplete="name" />
+              </label>
+              <label class="site-contact__field">
+                <span class="site-contact__label">{t.fields.email} *</span>
+                <input type="email" name="email" required autocomplete="email" />
+              </label>
+            </div>
+
+            <label class="site-contact__field">
+              <span class="site-contact__label">{t.fields.company}</span>
+              <input type="text" name="company" autocomplete="organization" />
+            </label>
+
+            <label class="site-contact__field">
+              <span class="site-contact__label">{t.fields.message} *</span>
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+
+            <div class="site-contact__submit">
+              <Button variant="primary" size="md" type="submit">{t.fields.submit}</Button>
+              <p class="site-contact__privacy">{t.fields.privacy}</p>
+            </div>
+          </form>
+        </Reveal>
+      )}
+
+      <aside class="site-contact__alt" aria-label={t.channels.label}>
+        <Reveal class="site-contact__alt-card" delay={120}>
+          <ul class="site-contact__alt-list">
+            {channels.map((channel) => (
+              <li class="site-contact__alt-item">
+                <span class="site-contact__alt-icon"><Icon name={channel.icon} size={18} /></span>
+                <div class="site-contact__alt-meta">
+                  <span class="site-contact__alt-label site-mono">{channel.label}</span>
+                  <a class="site-contact__alt-value" href={`mailto:${channel.email}`}>{channel.email}</a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      </aside>
+    </div>
+  </PageSection>
+</MarketingLayout>
+
+<style>
+  .site-contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 28px;
+  }
+  .site-contact--channels-only {
+    grid-template-columns: minmax(0, 32rem);
+    justify-content: center;
+  }
+  @media (max-width: 1023px) {
+    .site-contact { grid-template-columns: 1fr; }
+  }
+
+  .site-contact__form-card {
+    padding: clamp(28px, 3.5vw, 48px);
+    border-radius: var(--site-radius-xl);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--site-ink-100);
+    box-shadow: var(--site-shadow-sm);
+    display: grid;
+    gap: 24px;
+  }
+  .site-contact__form-title {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h3);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.015em;
+  }
+  .site-contact__form-note {
+    margin: 0;
+    color: var(--site-ink-500);
+    font-size: var(--site-fs-body-sm);
+    line-height: 1.55;
+  }
+
+  .site-contact__form {
+    display: grid;
+    gap: 18px;
+  }
+  .site-contact__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 540px) {
+    .site-contact__row { grid-template-columns: 1fr; }
+  }
+
+  .site-contact__field {
+    display: grid;
+    gap: 6px;
+  }
+  .site-contact__label {
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--site-ink-500);
+  }
+  .site-contact__field input,
+  .site-contact__field textarea {
+    padding: 12px 14px;
+    border: 1px solid var(--site-ink-100);
+    border-radius: var(--site-radius-md);
+    background: var(--site-white);
+    font-family: var(--site-font-sans);
+    font-size: var(--site-fs-body);
+    color: var(--site-ink-900);
+    transition: border-color var(--site-transition-fast), box-shadow var(--site-transition-fast);
+  }
+  .site-contact__field textarea { resize: vertical; min-height: 120px; }
+  .site-contact__field input:focus,
+  .site-contact__field textarea:focus {
+    outline: 0;
+    border-color: var(--site-accent);
+    box-shadow: 0 0 0 4px rgba(240, 101, 92, 0.18);
+  }
+
+  .site-contact__submit {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .site-contact__privacy {
+    margin: 0;
+    color: var(--site-ink-500);
+    font-size: var(--site-fs-body-sm);
+    max-width: 22rem;
+  }
+
+  .site-contact__alt {
+    display: grid;
+    align-content: start;
+  }
+  .site-contact__alt-card {
+    padding: 28px;
+    border-radius: var(--site-radius-lg);
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+  }
+  .site-contact__alt-list {
+    display: grid;
+    gap: 18px;
+  }
+  .site-contact__alt-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+  .site-contact__alt-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--site-radius-md);
+    background: var(--site-accent-tint);
+    color: var(--site-brand-primary);
+    border: 1px solid rgba(240, 101, 92, 0.3);
+  }
+  .site-contact__alt-meta {
+    display: grid;
+    gap: 2px;
+  }
+  .site-contact__alt-label {
+    font-size: 10px !important;
+    color: var(--site-ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .site-contact__alt-value {
+    color: var(--site-ink-900);
+    font-size: var(--site-fs-body-sm);
+    font-weight: var(--site-fw-medium);
+  }
+</style>

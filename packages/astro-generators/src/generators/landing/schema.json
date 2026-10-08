@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/astro-generators/landing",
+  "title": "Landing page",
+  "description": "Creates a Link Loom landing page (Astro, static) that looks and behaves like the Mi Retail landing: glass header with dropdowns, language switch, ink footer, sticky call to action, every page in English and Spanish under /en/ and /es/, SEO and structured data, the home hero and closing call to action, contact and legal pages, brand files and the image pipeline. Layers add the blog, full-text search and the development-only blog editor. Change any section later with `add section --page home --kind <kind> --id <id> --replace --yes`, and any text with `add copy --replace --yes`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40,
+      "description": "Product name people see: header, titles, share images (e.g. \"Acme\")",
+      "x-prompt": {
+        "en": "Product name",
+        "es": "Nombre del producto"
+      },
+      "x-order": 1
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Machine name: folder and package name. Defaults to the name in kebab-case",
+      "x-order": 2
+    },
+    "domain": {
+      "type": "string",
+      "pattern": "^([a-z0-9-]+\\.)+[a-z]{2,}$",
+      "description": "The site's domain without https:// (e.g. \"acme.com\"): canonical URLs, sitemap and structured data. Defaults to <slug>.com",
+      "x-prompt": {
+        "en": "Domain",
+        "es": "Dominio"
+      },
+      "x-order": 3
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 200,
+      "description": "One or two sentences about the product, in English: meta description, home deck and share image",
+      "x-prompt": {
+        "en": "Description (English)",
+        "es": "Descripción (inglés)"
+      },
+      "x-order": 4
+    },
+    "descriptionEs": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "The same description written natively in Spanish (neutral, with \"tú\"). Falls back to the English one with a warning",
+      "x-prompt": {
+        "en": "Description (Spanish)",
+        "es": "Descripción (español)"
+      },
+      "x-order": 5
+    },
+    "slogan": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Short tagline in English: page titles, footer and the home hero title. Defaults to the first sentence of the description",
+      "x-order": 6
+    },
+    "sloganEs": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "The tagline in Spanish",
+      "x-order": 7
+    },
+    "heroTitle": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "The home's h1 in English; *asterisks* mark the highlighted words (e.g. \"The operations center your *whole business* runs on.\"). Defaults to the slogan, its last word highlighted"
+    },
+    "heroTitleEs": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "The home's h1 in Spanish, with its *highlighted* words"
+    },
+    "legalName": {
+      "type": "string",
+      "description": "Company name for the structured data and the footer rights (defaults to the name)"
+    },
+    "directory": {
+      "type": "string",
+      "description": "Target folder, relative to the working directory (defaults to the slug); \".\" creates the site in the working folder itself, which must be empty"
+    },
+    "defaultLocale": {
+      "type": "string",
+      "enum": ["en", "es"],
+      "default": "en",
+      "description": "Language the root address opens",
+      "x-prompt": {
+        "en": "Default language",
+        "es": "Idioma por defecto"
+      },
+      "x-order": 8,
+      "x-enum-labels": {
+        "en": {
+          "en": "English",
+          "es": "Spanish"
+        },
+        "es": {
+          "en": "Inglés",
+          "es": "Español"
+        }
+      }
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 1024,
+      "maximum": 65535,
+      "default": 4321,
+      "description": "Dev server port"
+    },
+    "primaryColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "default": "#3c4876",
+      "description": "Brand colour: the mark, the generated logo, the browser's theme colour and share images",
+      "x-prompt": {
+        "en": "Brand colour",
+        "es": "Color de marca"
+      },
+      "x-order": 9
+    },
+    "secondaryColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "default": "#54c5eb",
+      "description": "Second brand colour, for brand moments"
+    },
+    "accentColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "default": "#f0655c",
+      "description": "Signature accent: the highlighted words of titles, focus rings, hover and current states",
+      "x-prompt": {
+        "en": "Accent colour",
+        "es": "Color de acento"
+      },
+      "x-order": 10
+    },
+    "ctaColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "default": "#131316",
+      "description": "Fill of the main call-to-action pills (near black by default)"
+    },
+    "displayFont": {
+      "type": "string",
+      "default": "Karla",
+      "description": "Google Fonts family for titles"
+    },
+    "bodyFont": {
+      "type": "string",
+      "default": "Roboto",
+      "description": "Google Fonts family for text"
+    },
+    "monoFont": {
+      "type": "string",
+      "default": "JetBrains Mono",
+      "description": "Google Fonts family for labels and data"
+    },
+    "logo": {
+      "type": "string",
+      "description": "Path to the logo for light backgrounds (SVG, or PNG of at least 512 px): the header. Without it a monogram and wordmark are generated"
+    },
+    "logoDark": {
+      "type": "string",
+      "description": "Path to the logo for dark backgrounds: the footer (defaults to `logo`)"
+    },
+    "mark": {
+      "type": "string",
+      "description": "Path to a square symbol for the favicons (defaults to a monogram)"
+    },
+    "signInUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "The product's sign-in address: a \"Sign in\" link in the header. Empty: no link"
+    },
+    "signUpUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "The product's sign-up address: every \"Get started\". Empty: they go to the contact page"
+    },
+    "salesEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Sales email: contact page and structured data (defaults to sales@<domain>)"
+    },
+    "supportEmail": {
+      "type": "string",
+      "format": "email",
+      "description": "Support email: contact page, legal pages and structured data (defaults to support@<domain>)"
+    },
+    "contactFormAction": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the contact form posts (a form service or your backend). Empty: the contact page lists the emails only"
+    },
+    "parentName": {
+      "type": "string",
+      "description": "The company behind the product, credited in the footer and the structured data. Empty: no credit"
+    },
+    "parentUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Address of the company behind the product"
+    },
+    "twitter": {
+      "type": "string",
+      "pattern": "^$|^@[A-Za-z0-9_]{1,15}$",
+      "description": "X (Twitter) handle with the @"
+    },
+    "linkedin": {
+      "type": "string",
+      "format": "uri",
+      "description": "LinkedIn page address"
+    },
+    "blog": {
+      "type": "boolean",
+      "default": true,
+      "description": "Blog layer: posts in both languages, categories, listing, post page with related posts and article structured data",
+      "x-prompt": {
+        "en": "Include the blog",
+        "es": "Incluir el blog"
+      },
+      "x-order": 11
+    },
+    "blogCategories": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*=[^|]+\\|[^|]+$"
+      },
+      "default": ["product=Product|Producto", "guides=Guides|Guías", "company=Company|Compañía"],
+      "description": "Blog categories as id=English|Spanish (e.g. guides=Guides|Guías)"
+    },
+    "search": {
+      "type": "boolean",
+      "default": true,
+      "description": "Search layer: ⌘K search over the whole site with Pagefind, and a search page",
+      "x-prompt": {
+        "en": "Include search",
+        "es": "Incluir el buscador"
+      },
+      "x-order": 12
+    },
+    "editor": {
+      "type": "boolean",
+      "default": true,
+      "description": "Blog editor layer: write and edit posts in the browser under `npm run dev` (never in the build). Needs the blog",
+      "x-prompt": {
+        "en": "Include the blog editor",
+        "es": "Incluir el editor del blog"
+      },
+      "x-order": 13
+    }
+  },
+  "examples": [
+    {
+      "name": "Acme",
+      "domain": "acme.com",
+      "description": "The operations center for your business.",
+      "descriptionEs": "El centro de operaciones de tu negocio."
+    },
+    {
+      "name": "Acme Labs",
+      "description": "Research you can run.",
+      "defaultLocale": "es",
+      "accentColor": "#2fb673",
+      "blog": false,
+      "editor": false,
+      "signUpUrl": "https://app.acme.com/signup"
+    }
+  ]
+}

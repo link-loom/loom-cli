@@ -1,0 +1,80 @@
+---
+/*
+ * Eyebrow
+ * =======
+ * Small uppercase tracked label above section headers.
+ *
+ * Default — pure typography. No dot, no rule. The accent comes from the
+ * brand-primary color + tight tracking + uppercase.
+ *
+ * `variant="dot"` opts in to the coral dot accent. Used sparingly
+ * (Hero, status indicators) — never on every section.
+ *
+ *   default:     ORGANIZATIONAL COGNITIVE LAYER
+ *   variant=dot: ●  ORGANIZATIONAL COGNITIVE LAYER
+ */
+interface Props {
+  as?: 'span' | 'p' | 'div';
+  align?: 'start' | 'center';
+  /**
+   * Visual variant. `default` (no accent) is correct for almost every section.
+   * `dot` is reserved for hero / live-status moments.
+   * Legacy `plain` is an alias for `default` kept for backwards compatibility.
+   */
+  variant?: 'default' | 'dot' | 'plain';
+  class?: string;
+}
+
+const {
+  as: Tag = 'span',
+  align = 'start',
+  variant = 'default',
+  class: className,
+} = Astro.props as Props;
+
+const showDot = variant === 'dot';
+
+const classes = [
+  'site-eyebrow',
+  align === 'center' && 'site-eyebrow--center',
+  showDot ? 'site-eyebrow--dot' : 'site-eyebrow--clean',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes}>
+  {showDot && <span class="site-eyebrow__dot" aria-hidden="true"></span>}
+  <span class="site-eyebrow__text"><slot /></span>
+</Tag>
+
+<style>
+  .site-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--site-font-sans);
+    font-size: var(--site-fs-eyebrow);
+    font-weight: var(--site-fw-bold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--site-brand-primary);
+  }
+  .site-eyebrow--center {
+    margin-inline: auto;
+  }
+  .site-eyebrow--dot {
+    color: var(--site-ink-500);
+  }
+  .site-eyebrow__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--site-accent);
+    box-shadow: 0 0 0 4px var(--site-accent-tint);
+    flex-shrink: 0;
+  }
+  .site-eyebrow__text { display: inline-block; }
+</style>

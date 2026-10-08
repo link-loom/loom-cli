@@ -1,0 +1,8 @@
+{
+  "sourceDir": "assets/img-source",
+  "outputDir": "public/images",
+  "styles": {
+    "house": "Editorial photography, natural light, sober colour, no text, no logos, no watermarks."
+  },
+  "slots": []
+}

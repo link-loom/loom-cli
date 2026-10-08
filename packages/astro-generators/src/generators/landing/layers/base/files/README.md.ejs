@@ -1,0 +1,43 @@
+# <%= name %>
+
+<%= description.en %>
+
+The landing page of <%= name %>, created with [`@link-loom/cli`](https://github.com/link-loom/loom-cli): Astro, static,
+English and Spanish under `/en/` and `/es/`, SEO and structured data on every page<%= layers.blog ? ', a blog' : '' %><%= layers.search ? ', full-text search (Pagefind)' : '' %><%= layers.editor ? ' and a blog editor that runs in development only' : '' %>.
+
+## Run it
+
+```bash
+npm install
+npm run dev
+```
+
+The site opens at `http://localhost:<%= port %>`.
+
+## Scripts
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server |
+| `npm run build` | Static build in `dist/`<%= layers.search ? ', with the search index' : '' %> |
+| `npm run preview` | Serves the build |
+| `npm run verify` | `link-loom check`, `astro check` and the build: run it before every push |
+| `npm run gen:images` | Generates image masters from `images.manifest.json` (needs `link-loom services add image-generation`) |
+| `npm run optimize:images` | Turns the masters into WebP in `public/images` |
+| `npm run og:compose` | Composes a page's share image in the brand: `npm run og:compose -- "Pricing"` |
+| `npm run version-patch` | Bumps the patch version, tags it and pushes the tag |
+
+## Add to it
+
+Use the CLI so every piece follows the same standard:
+
+```bash
+npx link-loom describe --project
+npx link-loom add page --path /company --title-en Company --title-es Compañía --nav footer:company
+npx link-loom add section --page home --kind cards --id benefits
+```
+
+## Deploy
+
+`npm run build` writes a static site to `dist/`; any static host serves it. On Cloudflare Pages:
+`npx wrangler pages deploy dist --project-name=<%= slug %>`. `public/_redirects` sends `/` to `/<%= defaultLocale %>/`.

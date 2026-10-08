@@ -1,0 +1,44 @@
+---
+/*
+ * The frame of the blog editor's pages: an ink bar with the site's logo and the editor's navigation. The editor is a
+ * developer tool that only exists under `astro dev`, so its words are English only and never reach a visitor.
+ */
+import BaseHead from '@components/seo/BaseHead.astro';
+import { SITE } from '@data/site';
+import '@styles/main.scss';
+import './editor.scss';
+
+interface Props {
+  title: string;
+  /** The site page behind what is being edited. Defaults to the blog in the site's default language. */
+  viewHref?: string;
+  viewLabel?: string;
+}
+
+const { title, viewHref = `/${SITE.defaultLocale}/blog/`, viewLabel = 'View blog' } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead locale="en" title={`${title} · Editor`} noindex />
+  </head>
+  <body class="site-editor">
+    <header class="site-editor-bar">
+      <a href="/editor/" class="site-editor-bar__brand">
+        <img src={SITE.brand.logoOnDark} alt={SITE.name} class="site-editor-bar__logo" />
+        <span class="site-editor-bar__label">Editor</span>
+      </a>
+
+      <nav class="site-editor-bar__nav" aria-label="Editor">
+        <a href="/editor/" class="site-editor-bar__link">Posts</a>
+        <a href="/editor/new" class="site-editor-bar__link">New post</a>
+        <a href={viewHref} class="site-editor-bar__link" target="_blank" rel="noopener">{viewLabel} →</a>
+      </nav>
+    </header>
+
+    <main class="site-editor-main">
+      <slot />
+    </main>
+  </body>
+</html>

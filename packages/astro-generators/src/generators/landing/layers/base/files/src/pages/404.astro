@@ -1,0 +1,73 @@
+---
+/* Not found: one page for both languages, since the address did not say which one. */
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import { SITE } from '@data/site';
+import { getCopy } from '@utils/copy';
+
+const en = getCopy('en').notFound;
+const es = getCopy('es').notFound;
+const t = getCopy(SITE.defaultLocale).notFound;
+---
+
+<MarketingLayout locale={SITE.defaultLocale} title={t.title} description={t.copy} noindex={true} skipBreadcrumb={true}>
+  <section class="site-section site-section--clean">
+    <div class="site-container">
+      <div class="nf">
+        <p class="nf__code">404</p>
+        <h1 class="nf__title">{en.title} · {es.title}</h1>
+        <p class="nf__copy">{en.copy} {es.copy}</p>
+        <div class="nf__actions">
+          <a href="/en/" class="nf__link" hreflang="en">{en.home}</a>
+          <a href="/es/" class="nf__link" hreflang="es">{es.home}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</MarketingLayout>
+
+<style>
+  .nf {
+    max-width: 520px;
+    margin-inline: auto;
+    text-align: center;
+    padding-block: clamp(80px, 14vw, 160px);
+  }
+  .nf__code {
+    font-family: var(--site-font-display);
+    font-size: clamp(64px, 8vw, 96px);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: var(--site-ls-display);
+    line-height: 1;
+    margin: 0 0 8px;
+    color: var(--site-brand-primary);
+  }
+  .nf__title {
+    font-size: var(--site-fs-h3);
+    font-weight: var(--site-fw-semibold);
+    margin: 0 0 16px;
+  }
+  .nf__copy {
+    color: var(--site-ink-500);
+    margin: 0 0 32px;
+  }
+  .nf__actions {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .nf__link {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: var(--site-radius-pill);
+    font-weight: var(--site-fw-medium);
+    font-size: var(--site-fs-body-sm);
+    color: var(--site-ink-900);
+    border: 1px solid var(--site-ink-100);
+    background: var(--site-white);
+    transition: border-color var(--site-transition-fast);
+  }
+  .nf__link:hover {
+    border-color: var(--site-accent);
+  }
+</style>

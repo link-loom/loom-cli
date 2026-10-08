@@ -1,0 +1,25 @@
+---
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import PageHero from '@components/page/PageHero.astro';
+import PageSection from '@components/page/PageSection.astro';
+import SearchPage from '@components/search/SearchPage.tsx';
+import { getCopy } from '@utils/copy';
+
+const locale = 'en' as const;
+const t = getCopy(locale).search;
+---
+
+<MarketingLayout
+  locale={locale}
+  title={t.meta.title}
+  description={t.meta.description}
+  alternateLocales={{ en: '/en/search', es: '/es/search' }}
+  hideStickyCta={true}
+  noindex={true}
+>
+  <PageHero eyebrow={t.eyebrow} title={t.title} deck={t.deck} variant="compact" />
+
+  <PageSection tone="white">
+    <SearchPage locale={locale} placeholder={t.placeholder} client:load />
+  </PageSection>
+</MarketingLayout>

@@ -1,0 +1,61 @@
+---
+import type { Locale } from '@data/site';
+import type { BlogEntry } from '@utils/blog';
+import { BLOG_CATEGORY_LABELS, formatDate, readingMinutes } from '@utils/blog';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  entry: BlogEntry;
+  locale: Locale;
+  /** Pre-rendered post body in plain text, for reading time estimation. */
+  body?: string;
+  variant?: 'default' | 'compact';
+}
+
+const { entry, locale, body, variant = 'default' } = Astro.props as Props;
+const catLabel = BLOG_CATEGORY_LABELS[entry.data.category][locale];
+const minutes = body ? readingMinutes(body) : undefined;
+const t = getCopy(locale).blog;
+---
+
+<div class={`site-bmeta site-bmeta--${variant}`}>
+  <span class="site-bmeta__cat site-mono">{catLabel}</span>
+  <span class="site-bmeta__sep" aria-hidden="true">·</span>
+  <time class="site-bmeta__date" datetime={entry.data.pub_date.toISOString()}>
+    {formatDate(entry.data.pub_date, locale)}
+  </time>
+  {minutes !== undefined && (
+    <>
+      <span class="site-bmeta__sep" aria-hidden="true">·</span>
+      <span class="site-bmeta__read site-mono">
+        {t.readingTime.replace('{minutes}', String(minutes))}
+      </span>
+    </>
+  )}
+</div>
+
+<style>
+  .site-bmeta {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--site-ink-500);
+    font-size: var(--site-fs-body-sm);
+  }
+  .site-bmeta__cat {
+    padding: 4px 10px;
+    border-radius: var(--site-radius-pill);
+    background: rgba(240, 101, 92, 0.16);
+    color: var(--site-brand-primary);
+    font-size: 10px !important;
+    font-weight: var(--site-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+  .site-bmeta__sep { color: var(--site-ink-300); }
+  .site-bmeta__date,
+  .site-bmeta__read { font-size: 12px; }
+  .site-bmeta__read { font-size: 11px !important; }
+</style>

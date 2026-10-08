@@ -1,0 +1,119 @@
+@use '../mixins' as *;
+
+.site-btn {
+  @include focus-ring;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-family: var(--site-font-sans);
+  font-weight: var(--site-fw-semibold);
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+
+  border: 0;
+  border-radius: var(--site-radius-pill);
+  transition:
+    transform var(--site-transition-base),
+    box-shadow var(--site-transition-base),
+    filter var(--site-transition-base),
+    background var(--site-transition-base),
+    border-color var(--site-transition-base),
+    color var(--site-transition-base);
+
+  &[aria-disabled='true'],
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ---------- sizes ---------- */
+.site-btn--sm {
+  font-size: var(--site-fs-body-sm);
+  padding: 10px 18px;
+}
+.site-btn--md {
+  font-size: var(--site-fs-body);
+  padding: 14px 28px;
+}
+.site-btn--lg {
+  font-size: var(--site-fs-body-lg);
+  padding: 16px 32px;
+}
+
+/* ---------- variants ---------- */
+/*
+ * Primary button — SOLID brand-primary on white canvas.
+ *
+ * Style rule for the whole site: the soft-gradient lives in the page
+ * background (aurora orbs), NOT in interactive elements. Buttons are
+ * solid color. References: WorkOS, Iconly, Ionic, Apple, MILKINSIDE.
+ */
+.site-btn--primary {
+  color: var(--site-white);
+  background: var(--site-brand-primary);
+  box-shadow:
+    0 12px 28px -10px rgba(19, 19, 22, 0.35),
+    0 4px 10px -4px rgba(19, 19, 22, 0.18);
+
+  &:hover {
+    background: var(--site-brand-primary-dark);
+    box-shadow:
+      0 18px 36px -10px rgba(19, 19, 22, 0.45),
+      0 6px 14px -4px rgba(19, 19, 22, 0.22);
+  }
+}
+
+.site-btn--secondary {
+  color: var(--site-brand-primary);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--site-ink-100);
+
+  &:hover {
+    background: var(--site-white);
+    border-color: var(--site-accent);
+  }
+}
+
+.site-btn--ghost {
+  color: var(--site-brand-primary);
+  background: transparent;
+  padding-inline: 4px;
+  border-radius: var(--site-radius-sm);
+
+  &:hover {
+    color: var(--site-accent);
+    transform: translateX(2px);
+  }
+
+  .site-btn__icon--right {
+    transition: transform var(--site-transition-base);
+  }
+  &:hover .site-btn__icon--right {
+    transform: translateX(2px);
+  }
+}
+
+/* ---------- icons ---------- */
+.site-btn__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.site-btn__label {
+  display: inline-block;
+}

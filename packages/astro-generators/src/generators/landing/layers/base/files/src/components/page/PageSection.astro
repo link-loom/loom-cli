@@ -1,0 +1,85 @@
+---
+/*
+ * PageSection — flexible content block for subpages.
+ */
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Reveal from '@components/ui/Reveal.astro';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  deck?: string;
+  align?: 'center' | 'start';
+  tone?: 'white' | 'paper';
+  narrow?: boolean;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  deck,
+  align = 'center',
+  tone = 'white',
+  narrow = false,
+  class: className,
+} = Astro.props as Props;
+---
+
+<section class={`site-pgs site-pgs--${tone} ${className ?? ''}`.trim()}>
+  <div class="site-container site-pgs__inner">
+    {(eyebrow || title || deck) && (
+      <Reveal class={`site-pgs__head site-pgs__head--${align}`}>
+        {eyebrow && <Eyebrow align={align === 'center' ? 'center' : 'start'}>{eyebrow}</Eyebrow>}
+        {title && <h2 class="site-pgs__title">{title}</h2>}
+        {deck && <p class="site-pgs__deck">{deck}</p>}
+      </Reveal>
+    )}
+
+    <div class={`site-pgs__body ${narrow ? 'site-pgs__body--narrow' : ''}`.trim()}>
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-pgs {
+    padding-block: var(--site-section-py);
+  }
+  .site-pgs--white { background: var(--site-white); }
+  .site-pgs--paper { background: var(--site-paper); }
+  .site-pgs__inner {
+    display: grid;
+    gap: clamp(40px, 5vw, 64px);
+  }
+  :global(.site-pgs__head) {
+    display: grid;
+    gap: 16px;
+    max-width: 56rem;
+  }
+  :global(.site-pgs__head--center) {
+    margin-inline: auto;
+    text-align: center;
+    justify-items: center;
+  }
+  :global(.site-pgs__title) {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h2);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+  }
+  :global(.site-pgs__deck) {
+    margin: 0;
+    color: var(--site-ink-500);
+    font-size: var(--site-fs-body-lg);
+    line-height: 1.55;
+    max-width: 46rem;
+  }
+  .site-pgs__body--narrow {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+</style>

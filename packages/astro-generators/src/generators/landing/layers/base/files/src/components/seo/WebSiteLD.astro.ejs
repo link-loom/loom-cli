@@ -1,0 +1,35 @@
+---
+import type { Locale } from '@data/site';
+import { SITE } from '@data/site';
+import { absoluteUrl } from '@utils/seo';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props as Props;
+
+<% if (layers.search) { -%>
+const searchUrl = absoluteUrl(`/${locale}/search?q={search_term_string}`);
+
+<% } -%>
+const payload = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.url,
+  inLanguage: locale === 'es' ? 'es-ES' : 'en-US',
+<% if (layers.search) { -%>
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: searchUrl },
+    'query-input': 'required name=search_term_string',
+  },
+<% } -%>
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    logo: { '@type': 'ImageObject', url: absoluteUrl(SITE.brand.mark) },
+  },
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(payload)}></script>

@@ -1,0 +1,27 @@
+---
+/*
+ * The home page: its sections, top to bottom, come from ./sections.ts.
+ */
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import OrganizationLD from '@components/seo/OrganizationLD.astro';
+import WebSiteLD from '@components/seo/WebSiteLD.astro';
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { SECTIONS } from './sections';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).home.meta;
+---
+
+<MarketingLayout locale={locale} title={t.title} description={t.description} alternateLocales={{ en: '/en/', es: '/es/' }}>
+  <Fragment slot="head-extra">
+    <OrganizationLD locale={locale} />
+    <WebSiteLD locale={locale} />
+  </Fragment>
+
+  {SECTIONS.map(({ component: Section }) => <Section locale={locale} />)}
+</MarketingLayout>

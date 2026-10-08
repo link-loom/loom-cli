@@ -1,0 +1,7 @@
+{
+  "id": "editor",
+  "requires": ["blog"],
+  "dependencies": ["@astrojs/react", "@link-loom/react-sdk", "gray-matter", "marked", "react", "react-dom"],
+  "devDependencies": ["@types/node", "@types/react", "@types/react-dom"],
+  "scripts": {}
+}

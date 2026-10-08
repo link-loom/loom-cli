@@ -1,0 +1,50 @@
+---
+import { SITE } from '@data/site';
+import { absoluteUrl } from '@utils/seo';
+
+interface Props {
+  headline: string;
+  description: string;
+  image?: string;
+  datePublished: string;
+  dateModified?: string;
+  author?: string;
+  url: string;
+  section?: string;
+  tags?: string[];
+}
+
+const {
+  headline,
+  description,
+  image,
+  datePublished,
+  dateModified,
+  author = SITE.legalName,
+  url,
+  section,
+  tags,
+} = Astro.props as Props;
+
+const payload = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline,
+  description,
+  ...(image ? { image: absoluteUrl(image) } : {}),
+  datePublished,
+  ...(dateModified ? { dateModified } : { dateModified: datePublished }),
+  author: { '@type': 'Organization', name: author, url: SITE.url },
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    logo: { '@type': 'ImageObject', url: absoluteUrl(SITE.brand.mark) },
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl(url) },
+  ...(section ? { articleSection: section } : {}),
+  ...(tags && tags.length ? { keywords: tags.join(', ') } : {}),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(payload)}></script>

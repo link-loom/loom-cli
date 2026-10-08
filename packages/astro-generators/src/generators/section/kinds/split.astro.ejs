@@ -1,0 +1,147 @@
+---
+/*
+ * <%- name %>: <%- image ? 'the image on one side and' : '' %> the head with its points as icon rows<%- image ? ' on the other' : '' %>.
+ * Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Icon from '@components/ui/Icon.astro';
+import Reveal from '@components/ui/Reveal.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+
+/* One icon and colour per point, in copy order. */
+const VISUALS = [<% visuals.forEach((visual) => { %>
+  { icon: <%- quote(visual.icon) %>, color: <%- quote(visual.color) %> },<% }) %>
+];
+---
+
+<section class="site-split site-split--<%- tone %>">
+  <div class:list={['site-container', 'site-split__inner', <%- image ? 'false' : "'site-split__inner--text'" %>]}>
+<% if (image) { -%>
+    <Reveal class="site-split__art" delay={60}>
+      <img src=<%- quote(image) %> alt={t.imageAlt} width="1200" height="900" loading="lazy" decoding="async" />
+    </Reveal>
+<% } -%>
+    <div class="site-split__text">
+      <Reveal class="site-split__head">
+        <Eyebrow>{t.eyebrow}</Eyebrow>
+        <h2 class="site-split__title">{t.title}</h2>
+        <p class="site-split__deck">{t.deck}</p>
+      </Reveal>
+      <ul class="site-split__points">
+        {t.items.map((item, index) => (
+          <Reveal as="li" class="site-split__point" delay={index * 80}>
+            <span class={`site-split__tile site-split__tile--${VISUALS[index % VISUALS.length].color}`}>
+              <Icon name={VISUALS[index % VISUALS.length].icon} size={18} />
+            </span>
+            <span class="site-split__point-text">
+              <strong class="site-split__point-title">{item.title}</strong>
+              <span class="site-split__point-body">{item.body}</span>
+            </span>
+          </Reveal>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-split {
+    padding-block: var(--site-section-py);
+    background: var(--site-white);
+  }
+  .site-split--paper { background: var(--site-paper); }
+  .site-split--cream { background: var(--site-cream); }
+  .site-split__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(40px, 6vw, 88px);
+    align-items: center;
+  }
+  .site-split__inner--text {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 56rem;
+  }
+  :global(.site-split__art) img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--site-radius-xl);
+    border: 1px solid var(--site-ink-100);
+    box-shadow: var(--site-shadow-md);
+  }
+  .site-split__text {
+    display: grid;
+    gap: 32px;
+  }
+  :global(.site-split__head) {
+    display: grid;
+    gap: 16px;
+  }
+  .site-split__title {
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h2);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+    color: var(--site-ink-900);
+    text-wrap: balance;
+  }
+  .site-split__deck {
+    margin: 0;
+    font-size: var(--site-fs-body-lg);
+    line-height: 1.55;
+    color: var(--site-ink-500);
+  }
+  .site-split__points {
+    display: grid;
+    gap: 18px;
+  }
+  :global(.site-split__point) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .site-split__tile {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--site-radius-sm);
+  }
+  .site-split__tile--coral { background: var(--site-c-coral-t); color: var(--site-c-coral); }
+  .site-split__tile--cyan { background: var(--site-c-cyan-t); color: var(--site-c-cyan); }
+  .site-split__tile--amber { background: var(--site-c-amber-t); color: var(--site-c-amber); }
+  .site-split__tile--green { background: var(--site-c-green-t); color: var(--site-c-green); }
+  .site-split__tile--purple { background: var(--site-c-purple-t); color: var(--site-c-purple); }
+  .site-split__tile--pink { background: var(--site-c-pink-t); color: var(--site-c-pink); }
+  .site-split__tile--blue { background: var(--site-c-blue-t); color: var(--site-c-blue); }
+  .site-split__tile--indigo { background: var(--site-c-indigo-t); color: var(--site-c-indigo); }
+  .site-split__point-text {
+    display: grid;
+    gap: 4px;
+  }
+  .site-split__point-title {
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h4);
+    font-weight: var(--site-fw-semibold);
+    color: var(--site-ink-900);
+  }
+  .site-split__point-body {
+    font-size: var(--site-fs-body);
+    line-height: var(--site-lh-base);
+    color: var(--site-ink-500);
+  }
+  @media (max-width: 960px) {
+    .site-split__inner { grid-template-columns: 1fr; }
+  }
+</style>

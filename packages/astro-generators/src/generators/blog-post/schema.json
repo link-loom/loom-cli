@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/astro-generators/blog-post",
+  "title": "Blog post",
+  "description": "Adds a blog post in both languages: src/content/blog/<slug>.md (English) and <slug>.es.md (Spanish), with the same base_slug so /en/blog/<slug> and /es/blog/<slug> are each other's translation. Write the Spanish natively, in neutral Spanish with \"tú\".",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug", "titleEn"],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Address of the post in both languages (e.g. why-one-board)",
+      "x-prompt": {
+        "en": "Slug",
+        "es": "Slug"
+      },
+      "x-order": 1
+    },
+    "titleEn": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Title in English",
+      "x-prompt": {
+        "en": "Title (English)",
+        "es": "Título (inglés)"
+      },
+      "x-order": 2
+    },
+    "titleEs": {
+      "type": "string",
+      "description": "Title in Spanish",
+      "x-prompt": {
+        "en": "Title (Spanish)",
+        "es": "Título (español)"
+      },
+      "x-order": 3
+    },
+    "descriptionEn": {
+      "type": "string",
+      "description": "One-sentence summary in English: listing card and meta description"
+    },
+    "descriptionEs": {
+      "type": "string",
+      "description": "The summary in Spanish"
+    },
+    "bodyEn": {
+      "type": "string",
+      "description": "Markdown body in English (## for sections). Defaults to a short placeholder to replace"
+    },
+    "bodyEs": {
+      "type": "string",
+      "description": "Markdown body in Spanish"
+    },
+    "category": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "One of the blog's categories (loom.json blog.categories); defaults to the first"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Tags, a,b,c"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author (defaults to the site's name)"
+    },
+    "pubDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Publication date YYYY-MM-DD (defaults to today)"
+    },
+    "draft": {
+      "type": "boolean",
+      "default": false,
+      "description": "Keep it out of the build until it is ready"
+    },
+    "coverImage": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Cover image under public/ (e.g. /images/blog/why-one-board.webp)"
+    },
+    "replace": {
+      "type": "boolean",
+      "default": false,
+      "description": "Write the post again when it exists, in both languages (needs --yes)"
+    }
+  },
+  "examples": [
+    {
+      "slug": "why-one-board",
+      "titleEn": "Why one board beats ten tools",
+      "titleEs": "Por qué un tablero le gana a diez herramientas",
+      "category": "guides",
+      "tags": ["operations"]
+    }
+  ]
+}

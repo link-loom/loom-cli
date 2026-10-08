@@ -1,0 +1,48 @@
+---
+/*
+ * Icon
+ * ====
+ * Thin wrapper over astro-icon. Use `@iconify-json/ic` names so we stay
+ * 1:1 with the @mui/icons-material set used in the product UI.
+ *
+ *   <Icon name="ic:baseline-auto-awesome" size={24} />
+ *   <Icon name="ic:outline-shield" size={20} class="my-class" />
+ *
+ * Strict rule: pick the variant (baseline / outline / round / sharp) that
+ * matches the variant used in the real product. Do not mix variants.
+ */
+import { Icon as AstroIcon } from 'astro-icon/components';
+
+interface Props {
+  name: string;
+  size?: number;
+  class?: string;
+  'aria-hidden'?: boolean;
+  title?: string;
+}
+
+const {
+  name,
+  size = 24,
+  class: className,
+  'aria-hidden': ariaHidden = true,
+  title,
+} = Astro.props as Props;
+---
+
+<AstroIcon
+  name={name}
+  width={size}
+  height={size}
+  class={`site-icon ${className ?? ''}`.trim()}
+  aria-hidden={ariaHidden ? 'true' : undefined}
+  title={title}
+/>
+
+<style is:global>
+  .site-icon {
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+  }
+</style>

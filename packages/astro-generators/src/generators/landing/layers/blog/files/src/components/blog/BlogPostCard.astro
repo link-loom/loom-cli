@@ -1,0 +1,108 @@
+---
+import type { Locale } from '@data/site';
+import Reveal from '@components/ui/Reveal.astro';
+import Icon from '@components/ui/Icon.astro';
+import BlogPostMeta from '@components/blog/BlogPostMeta.astro';
+import { type BlogEntry, postHref } from '@utils/blog';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  entry: BlogEntry;
+  locale: Locale;
+  delay?: number;
+  variant?: 'card' | 'compact';
+}
+
+const { entry, locale, delay = 0, variant = 'card' } = Astro.props as Props;
+const href = postHref(entry, locale);
+const t = getCopy(locale).blog;
+---
+
+<Reveal as="article" class={`site-bcard site-bcard--${variant}`} delay={delay} data-category={entry.data.category}>
+  <a class="site-bcard__link" href={href}>
+    {entry.data.cover_image && (
+      <div class="site-bcard__cover">
+        <img src={entry.data.cover_image} alt="" loading="lazy" />
+      </div>
+    )}
+    <div class="site-bcard__body">
+      <BlogPostMeta entry={entry} locale={locale} variant="compact" />
+      <h3 class="site-bcard__title">{entry.data.title}</h3>
+      <p class="site-bcard__desc">{entry.data.description}</p>
+      <span class="site-bcard__cta site-mono" aria-hidden="true">
+        {t.read}
+        <Icon name="ic:baseline-arrow-forward" size={14} />
+      </span>
+    </div>
+  </a>
+</Reveal>
+
+<style>
+  :global(.site-bcard) {
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+    border-radius: var(--site-radius-lg);
+    overflow: hidden;
+    transition: transform var(--site-transition-base), border-color var(--site-transition-base), box-shadow var(--site-transition-base);
+  }
+  :global(.site-bcard:hover) {
+    transform: translateY(-4px);
+    border-color: var(--site-accent);
+    box-shadow: var(--site-shadow-md);
+  }
+  .site-bcard__link {
+    display: grid;
+    color: inherit;
+    height: 100%;
+  }
+  .site-bcard__cover {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--site-cream);
+  }
+  .site-bcard__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--site-ease-out);
+  }
+  :global(.site-bcard:hover) .site-bcard__cover img { transform: scale(1.04); }
+  .site-bcard__body {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+    align-content: start;
+  }
+  .site-bcard__title {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h4);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .site-bcard__desc {
+    margin: 0;
+    color: var(--site-ink-700);
+    font-size: var(--site-fs-body-sm);
+    line-height: 1.6;
+    /* clamp to 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .site-bcard__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    color: var(--site-brand-primary);
+    font-size: 11px !important;
+    font-weight: var(--site-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  :global(.site-bcard:hover) .site-bcard__cta { color: var(--site-accent); }
+</style>

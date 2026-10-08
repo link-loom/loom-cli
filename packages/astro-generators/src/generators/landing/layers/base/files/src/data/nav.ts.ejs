@@ -1,0 +1,50 @@
+/*
+ * Navigation: the header menu and the footer columns, one list each. Links name a page of the site by its path
+ * without the locale ('/pricing'), or an outside address with `href`. `npx link-loom add page --nav header|footer`
+ * adds entries here; `id` keeps each entry unique.
+ */
+import type { Locale } from '@data/site';
+
+export type Label = Record<Locale, string>;
+
+export interface NavLink {
+  id: string;
+  label: Label;
+  path?: string;
+  href?: string;
+  description?: Label;
+}
+
+export interface NavGroup {
+  id: string;
+  label: Label;
+  children: NavLink[];
+}
+
+export interface HeaderNavItem extends NavLink {
+  /* A dropdown: one column of links with descriptions. */
+  children?: NavLink[];
+  /* A mega menu: grouped columns and a row of footer links. */
+  groups?: NavGroup[];
+  footerLinks?: NavLink[];
+}
+
+export interface FooterColumn {
+  id: string;
+  title: Label;
+  links: NavLink[];
+}
+
+export const HEADER_NAV: HeaderNavItem[] = [<% headerNav.forEach((item) => { %>
+  { id: <%- quote(item.id) %>, label: { en: <%- quote(item.label.en) %>, es: <%- quote(item.label.es) %> }, path: <%- quote(item.path) %> },<% }) %>
+];
+
+export const FOOTER_COLUMNS: FooterColumn[] = [<% footerColumns.forEach((column) => { %>
+  {
+    id: <%- quote(column.id) %>,
+    title: { en: <%- quote(column.title.en) %>, es: <%- quote(column.title.es) %> },
+    links: [<% column.links.forEach((link) => { %>
+      { id: <%- quote(link.id) %>, label: { en: <%- quote(link.label.en) %>, es: <%- quote(link.label.es) %> }, path: <%- quote(link.path) %> },<% }) %>
+    ],
+  },<% }) %>
+];

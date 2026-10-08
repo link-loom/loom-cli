@@ -1,0 +1,140 @@
+---
+/*
+ * MobileNav
+ * =========
+ * Full-screen drawer opened by the header's menu button ([data-menu-toggle]). It lists the top-level entries of
+ * the header menu; a dropdown without its own page lists its links instead.
+ */
+import type { Locale } from '@data/site';
+import { HEADER_NAV } from '@data/nav';
+import { getCopy } from '@utils/copy';
+import { linkHref, signUpHref } from '@utils/links';
+import LangSwitcher from '@components/layout/LangSwitcher.astro';
+<% if (layers.search) { -%>
+import SearchTrigger from '@components/search/SearchTrigger.astro';
+<% } -%>
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).nav;
+const links = HEADER_NAV.flatMap((item) =>
+  item.path || item.href ? [item] : [...(item.children ?? []), ...(item.groups ?? []).flatMap((group) => group.children)],
+).map((link) => ({ label: link.label[locale], href: linkHref(link, locale) }));
+---
+
+<div
+  id="site-mobile-nav"
+  class="site-mnav"
+  role="dialog"
+  aria-modal="true"
+  aria-label={t.openMenu}
+  hidden
+  data-mobile-nav
+>
+  <div class="site-mnav__head">
+    <div class="site-mnav__head-left">
+<% if (layers.search) { -%>
+      <SearchTrigger locale={locale} class="site-mnav__search" />
+<% } -%>
+      <LangSwitcher locale={locale} />
+    </div>
+    <button
+      type="button"
+      class="site-mnav__close"
+      aria-label={t.closeMenu}
+      data-menu-close
+    >
+      <Icon name="ic:baseline-close" size={28} />
+    </button>
+  </div>
+
+  <nav class="site-mnav__body" aria-label={t.primaryNav}>
+    <ul class="site-mnav__list">
+      {links.map((link) => (
+        <li>
+          <a href={link.href} class="site-mnav__link">{link.label}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <div class="site-mnav__foot">
+    <Button href={signUpHref(locale)} variant="primary" size="lg" class="site-mnav__cta">
+      {t.getStarted}
+    </Button>
+  </div>
+</div>
+
+<style>
+  .site-mnav {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--site-white);
+    padding: var(--site-space-3);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: var(--site-space-4);
+
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 240ms var(--site-ease-out), transform 240ms var(--site-ease-out);
+  }
+  .site-mnav[data-open='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .site-mnav[hidden] { display: none; }
+
+  .site-mnav__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 8px;
+  }
+  .site-mnav__head-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .site-mnav__close {
+    color: var(--site-ink-900);
+    padding: 8px;
+    border-radius: var(--site-radius-sm);
+  }
+  .site-mnav__close:hover { background: var(--site-cream); }
+
+  .site-mnav__body {
+    align-self: start;
+    margin-top: var(--site-space-4);
+  }
+  .site-mnav__list {
+    display: grid;
+    gap: 4px;
+  }
+  .site-mnav__link {
+    display: block;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h3);
+    font-weight: var(--site-fw-semibold);
+    color: var(--site-ink-900);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--site-cream-deep);
+  }
+  .site-mnav__link:hover { color: var(--site-brand-primary); }
+
+  .site-mnav__foot {
+    display: grid;
+    padding-bottom: var(--site-space-3);
+  }
+  .site-mnav__cta { width: 100%; }
+</style>
+
+<script>
+  import '@scripts/nav-mobile.ts';
+</script>

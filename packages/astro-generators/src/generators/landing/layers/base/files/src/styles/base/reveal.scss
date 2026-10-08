@@ -1,0 +1,9 @@
+@use '../mixins' as *;
+
+[data-reveal] {
+  @include reveal-hidden;
+
+  &.is-revealed {
+    @include reveal-visible;
+  }
+}

@@ -1,0 +1,45 @@
+# <%= name %>: instructions for agents
+
+This is a Link Loom landing page (Astro, static), created with `@link-loom/cli`. `loom.json` records its type,
+layers and conventions. Every page exists in English (`src/pages/en/`) and Spanish (`src/pages/es/`).
+
+## The rules
+
+1. **Create pieces with the CLI, never by hand.** Pages, sections, blog posts, navigation entries and copy keys come
+   from `npx link-loom add … --json`. Run `npx link-loom describe --project --json` to see what exists and
+   `npx link-loom schema <generator>` for the exact input. The same commands are MCP tools (`.mcp.json` starts
+   `npx link-loom mcp`). If the CLI cannot do something, say so: do not imitate its output.
+2. **Every visible text lives in the copy** (`src/data/copy/en.ts` and `src/data/copy/es.ts`, same keys). Write the
+   Spanish natively, in neutral Spanish with "tú", never a literal translation.
+3. **Pages are thin.** `src/pages/<locale>/…` only renders a view of `src/views/<page>/` for its language; a view is a
+   list of sections (`src/views/<page>/sections.ts`). Navigation is data (`src/data/nav.ts`), and so are the page
+   titles the breadcrumb uses (`src/data/pages.ts`).
+4. **Colours are tokens** of `src/styles/_tokens.scss` (`var(--site-…)`). No hex values in components.
+5. **Icons come from `ic:` (Material Design Icons) through `@components/ui/Icon.astro`.** No emojis.
+6. **Semantic HTML5** (`section`, `header`, `nav`, `article`, `footer`), one `h1` per page, headings in order.
+7. **Secrets live only in `.env.local`.** Never print them, never write them to a versioned file.
+8. **Before you finish, run `npm run verify`** (`link-loom check`, `astro check` and the build). It must pass;
+   `npx link-loom check --json` lists every rule that fails, with the file and the fix.
+
+## Long runs
+
+Installing dependencies takes minutes (`npm install`, `npx link-loom update`). With `--json`, `update` reports its
+progress on stderr, one JSON event per line (`{"event":"progress","step","progress":0-100,"message"}`); over MCP, a
+call with a `progressToken` gets `notifications/progress`. To keep working meanwhile, run `update --no-install`, then
+`npm install` in the background, and go on with `npx link-loom add … --json`: generators only write files.
+`npm run verify` waits for the install to finish.
+
+## Where things go
+
+| What | Where |
+| --- | --- |
+| A page in one language | `src/pages/<en|es>/<path>.astro` (renders its view) |
+| What a page shows | `src/views/<page>/<Name>Page.astro` and its sections in `src/views/<page>/sections/` |
+| Shared page blocks | `src/components/page/` (hero, section, closing call to action, legal, contact) |
+| Header, footer, language | `src/components/layout/` (read `src/data/nav.ts`) |
+| Site name, address, contacts | `src/data/site.ts` |
+| Copy | `src/data/copy/{en,es}.ts` |
+<% if (layers.blog) { -%>
+| Blog posts | `src/content/blog/<slug>.md` and `<slug>.es.md` (`npx link-loom add blog-post`) |
+<% } -%>
+| Images | `images.manifest.json` → `npm run gen:images` → `npm run optimize:images` |

@@ -1,0 +1,82 @@
+---
+/*
+ * <%- name %>: a quiet band with a short label and a row of small logo tiles; names live in the alt and title.
+ * Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+
+const LOGOS = [<% logos.forEach((logo) => { %>
+  { name: <%- quote(logo.name) %>, src: <%- quote(logo.src) %> },<% }) %>
+];
+---
+
+<section class="site-logos" aria-label={t.label}>
+  <div class="site-container site-logos__inner">
+    <span class="site-logos__label">{t.label}</span>
+    <ul class="site-logos__row">
+      {LOGOS.map((logo) => (
+        <li class="site-logos__tile" title={logo.name}>
+          <img src={logo.src} alt={logo.name} width="28" height="28" loading="lazy" />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .site-logos {
+    background: var(--site-cream);
+    padding-block: 30px;
+  }
+  .site-logos__inner {
+    min-height: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 28px;
+    row-gap: 12px;
+  }
+  .site-logos__label {
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: var(--site-ls-wide);
+    color: var(--site-ink-500);
+    white-space: nowrap;
+  }
+  .site-logos__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .site-logos__tile {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .site-logos__tile img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  @media (max-width: 560px) {
+    .site-logos__label {
+      flex-basis: 100%;
+      text-align: center;
+      white-space: normal;
+    }
+  }
+</style>

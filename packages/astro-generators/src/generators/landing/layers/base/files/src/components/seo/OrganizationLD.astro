@@ -1,0 +1,33 @@
+---
+import { SITE, type Locale } from '@data/site';
+import { absoluteUrl } from '@utils/seo';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const contactPoint = [
+  { contactType: 'sales', email: SITE.contact.salesEmail },
+  { contactType: 'customer support', email: SITE.contact.supportEmail },
+]
+  .filter((point) => point.email)
+  .map((point) => ({ '@type': 'ContactPoint', ...point, availableLanguage: ['English', 'Spanish'] }));
+
+const payload = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  legalName: SITE.legalName,
+  url: SITE.url,
+  logo: absoluteUrl(SITE.brand.mark),
+  description: SITE.description[locale],
+  sameAs: [SITE.social.linkedin].filter(Boolean),
+  contactPoint,
+  ...(SITE.parent.name
+    ? { parentOrganization: { '@type': 'Organization', name: SITE.parent.name, url: SITE.parent.url } }
+    : {}),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(payload)} />

@@ -1,0 +1,26 @@
+---
+/*
+ * The root sends people to the default language, three ways: public/_redirects (HTTP 301 at the edge), a meta
+ * refresh for browsers without JavaScript, and a script for the rest.
+ */
+import { SITE } from '@data/site';
+
+const target = `/${SITE.defaultLocale}/`;
+---
+
+<!doctype html>
+<html lang={SITE.defaultLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={target} />
+    <title>{SITE.name}</title>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </head>
+  <body>
+    <p><a href={target}>{SITE.name}</a></p>
+  </body>
+</html>

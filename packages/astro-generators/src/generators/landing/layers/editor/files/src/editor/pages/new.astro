@@ -1,0 +1,10 @@
+---
+import EditorLayout from '../EditorLayout.astro';
+import PostEditor from '../PostEditor';
+---
+
+<EditorLayout title="New post">
+  <PostEditor client:only="react" entry={null}>
+    <p slot="fallback" class="site-editor-loading">Loading the editor…</p>
+  </PostEditor>
+</EditorLayout>

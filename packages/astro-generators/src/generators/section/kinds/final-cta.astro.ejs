@@ -1,0 +1,244 @@
+---
+/*
+ * <%- name %>: the ink closing band. A small recap thread (where you start, a soft wire, where you end) above a
+ * large white headline with its highlighted words, the deck, a white pill and an outline link.
+ * Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { localizedPath } from '@utils/i18n';
+import { signUpHref } from '@utils/links';
+import Reveal from '@components/ui/Reveal.astro';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+const secondaryHref = localizedPath(locale, <%- quote(secondaryPath) %>);
+---
+
+<section class="site-fcta">
+  <div class="site-container site-fcta__inner">
+    <Reveal class="site-fcta__block">
+      <div class="site-fcta__recap" aria-hidden="true">
+        <span class="site-fcta__chip">
+          <span class="site-fcta__chip-flag"><Icon name="ic:baseline-flag" size={14} /></span>
+          {t.recapFrom}
+        </span>
+        <svg class="site-fcta__wire" viewBox="0 0 200 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="site-fcta-wire-grad" gradientUnits="userSpaceOnUse" x1="3" y1="0" x2="197" y2="0">
+              <stop offset="0" class="site-fcta__stop-start" />
+              <stop offset="1" class="site-fcta__stop-end" />
+            </linearGradient>
+          </defs>
+          <path pathLength="1" class="site-fcta__wire-path" d="M 3 19 L 76 19 Q 92 19 92 14 Q 92 9 108 9 L 197 9" />
+          <circle class="site-fcta__wire-dot site-fcta__wire-dot--start" cx="3" cy="19" r="3" />
+          <circle class="site-fcta__wire-dot site-fcta__wire-dot--end" cx="197" cy="9" r="3" />
+        </svg>
+        <span class="site-fcta__chip">
+          <span class="site-fcta__chip-check"><Icon name="ic:baseline-check" size={11} /></span>
+          {t.recapTo}
+        </span>
+      </div>
+
+      <h2 class="site-fcta__title">
+        {t.titleLead}<span class="site-fcta__title-accent">{t.titleAccent}</span>{t.titleTail}
+      </h2>
+      <p class="site-fcta__deck">{t.deck}</p>
+      <div class="site-fcta__actions">
+        <a href={signUpHref(locale)} class="site-fcta__btn site-fcta__btn--primary">{t.primary}</a>
+        <a href={secondaryHref} class="site-fcta__btn site-fcta__btn--ghost">
+          {t.secondary}
+          <Icon name="ic:baseline-arrow-forward" size={18} />
+        </a>
+      </div>
+    </Reveal>
+  </div>
+</section>
+
+<style>
+  .site-fcta {
+    position: relative;
+    overflow: hidden;
+    background: var(--site-ondark);
+    color: var(--site-white);
+    padding-block: var(--site-section-py);
+  }
+  .site-fcta__inner {
+    position: relative;
+  }
+  :global(.site-fcta__block) {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 22px;
+    justify-items: center;
+    text-align: center;
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  /* Recap thread */
+  .site-fcta__recap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    margin-bottom: 6px;
+  }
+  .site-fcta__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 28px;
+    padding: 0 12px;
+    background: var(--site-white);
+    color: var(--site-ink-900);
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: var(--site-fw-regular);
+    white-space: nowrap;
+    box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+  }
+  .site-fcta__chip-flag {
+    display: inline-grid;
+    place-items: center;
+    color: var(--site-accent);
+  }
+  .site-fcta__chip-check {
+    display: inline-grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--site-c-green);
+    color: var(--site-white);
+  }
+  .site-fcta__wire {
+    width: clamp(48px, 20vw, 200px);
+    height: auto;
+    flex: 0 1 auto;
+  }
+  .site-fcta__stop-start { stop-color: var(--site-thread-2); }
+  .site-fcta__stop-end { stop-color: var(--site-thread-6); }
+  /* pathLength="1" normalizes the dash, so the draw-in never lands in a gap */
+  .site-fcta__wire-path {
+    stroke: url(#site-fcta-wire-grad);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+  .site-fcta__wire-dot {
+    opacity: 0;
+  }
+  .site-fcta__wire-dot--start { fill: var(--site-thread-2); }
+  .site-fcta__wire-dot--end { fill: var(--site-thread-6); }
+  :global(.site-fcta__block.is-revealed) .site-fcta__wire-path {
+    animation: site-fcta-draw 0.9s var(--site-ease-out) 0.15s forwards;
+  }
+  :global(.site-fcta__block.is-revealed) .site-fcta__wire-dot--start {
+    animation: site-fcta-dot 0.3s var(--site-ease-out) 0.15s forwards;
+  }
+  :global(.site-fcta__block.is-revealed) .site-fcta__wire-dot--end {
+    animation: site-fcta-dot 0.3s var(--site-ease-out) 0.95s forwards;
+  }
+  @keyframes site-fcta-draw {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes site-fcta-dot {
+    to { opacity: 1; }
+  }
+
+  /* Headline, deck and actions */
+  .site-fcta__title {
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-display-lg);
+    font-weight: var(--site-fw-regular);
+    line-height: var(--site-lh-tight);
+    letter-spacing: var(--site-ls-display);
+    color: var(--site-white);
+    text-wrap: balance;
+  }
+  .site-fcta__title-accent {
+    color: var(--site-thread-2);
+  }
+  .site-fcta__deck {
+    margin: 0;
+    font-size: var(--site-fs-body-lg);
+    line-height: var(--site-lh-base);
+    color: var(--site-ondark-soft);
+    max-width: 36rem;
+  }
+  .site-fcta__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 6px;
+  }
+  .site-fcta__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 32px;
+    border-radius: var(--site-radius-pill);
+    font-family: var(--site-font-sans);
+    font-size: var(--site-fs-body-lg);
+    font-weight: var(--site-fw-semibold);
+    text-decoration: none;
+    transition: transform var(--site-transition-fast), background var(--site-transition-fast);
+  }
+  .site-fcta__btn:hover {
+    transform: translateY(-2px);
+  }
+  .site-fcta__btn--primary {
+    background: var(--site-white);
+    color: var(--site-ink-900);
+    box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.4);
+  }
+  .site-fcta__btn--primary:hover {
+    background: var(--site-paper);
+  }
+  .site-fcta__btn--ghost {
+    background: transparent;
+    color: var(--site-white);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+  }
+  .site-fcta__btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  @media (max-width: 480px) {
+    .site-fcta__chip {
+      font-size: 12px;
+      padding: 0 10px;
+      gap: 6px;
+    }
+    .site-fcta__wire {
+      width: clamp(36px, 12vw, 60px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-fcta__btn:hover {
+      transform: none;
+    }
+    .site-fcta__wire-path,
+    :global(.site-fcta__block.is-revealed) .site-fcta__wire-path {
+      animation: none;
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+    }
+    .site-fcta__wire-dot,
+    :global(.site-fcta__block.is-revealed) .site-fcta__wire-dot {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>

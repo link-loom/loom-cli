@@ -1,0 +1,14 @@
+/*
+ * Global stylesheet. Order matters: tokens, reset, base (typography, reveal, containers), shared primitives.
+ * Section styles are scoped inside each section's .astro <style> block.
+ */
+
+@use 'tokens';
+@use 'reset';
+@use 'base/typography';
+@use 'base/reveal';
+@use 'base/containers';
+@use 'components/button';
+<% if (layers.search) { -%>
+@use 'components/search';
+<% } -%>

@@ -1,0 +1,14 @@
+{
+  "en": {
+    "footer": {
+      "editor": "Blog editor",
+      "editorHint": "Development only: write and edit the blog posts"
+    }
+  },
+  "es": {
+    "footer": {
+      "editor": "Editor del blog",
+      "editorHint": "Solo en desarrollo: escribe y edita las publicaciones del blog"
+    }
+  }
+}

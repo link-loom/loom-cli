@@ -1,0 +1,186 @@
+---
+/*
+ * LangSwitcher: a dropdown like the header's. The trigger shows the current language; the panel lists EN and ES
+ * with their native names. Clicks are handled by header-dropdown.ts.
+ */
+import type { Locale } from '@data/site';
+import { switchLocalePath } from '@utils/i18n';
+import { getCopy } from '@utils/copy';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className } = Astro.props as Props;
+const t = getCopy(locale).langSwitcher;
+
+const pathname = Astro.url.pathname;
+const enHref = switchLocalePath(pathname, 'en');
+const esHref = switchLocalePath(pathname, 'es');
+
+const options = [
+  { code: 'en', label: t.en, native: 'English', href: enHref },
+  { code: 'es', label: t.es, native: 'Español', href: esHref },
+] as const;
+---
+
+<div class={`site-lang ${className ?? ''}`.trim()} data-dropdown>
+  <button
+    type="button"
+    class="site-lang__trigger"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls="site-lang-dropdown"
+    aria-label={t.label}
+    data-dropdown-trigger
+  >
+    <Icon name="ic:outline-language" size={16} class="site-lang__globe" />
+    <span class="site-lang__current">{locale === 'es' ? t.es : t.en}</span>
+    <Icon name="ic:baseline-keyboard-arrow-down" size={14} class="site-lang__chevron" />
+  </button>
+
+  <div
+    id="site-lang-dropdown"
+    class="site-lang__dropdown"
+    role="menu"
+    data-dropdown-panel
+    aria-label={t.label}
+  >
+    {options.map((opt) => (
+      <a
+        class={`site-lang__item ${opt.code === locale ? 'is-current' : ''}`}
+        role="menuitem"
+        href={opt.href}
+        hreflang={opt.code}
+        aria-current={opt.code === locale ? 'true' : undefined}
+      >
+        <span class="site-lang__item-code">{opt.label}</span>
+        <span class="site-lang__item-native">{opt.native}</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .site-lang {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .site-lang::after {
+    /* Invisible hover bridge, as in the header dropdowns */
+    content: '';
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    top: 100%;
+    height: 14px;
+    pointer-events: none;
+  }
+  .site-lang:hover::after,
+  .site-lang:focus-within::after {
+    pointer-events: auto;
+  }
+
+  /* ---------- trigger ---------- */
+  .site-lang__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 4px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-family: var(--site-font-sans);
+    font-size: 13px;
+    font-weight: var(--site-fw-medium);
+    color: var(--site-ink-700);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition: color var(--site-transition-fast);
+  }
+  .site-lang__trigger:hover {
+    color: var(--site-brand-primary);
+  }
+  .site-lang__globe {
+    color: currentColor;
+    opacity: 0.7;
+  }
+  .site-lang__chevron {
+    opacity: 0.5;
+    transition: transform var(--site-transition-fast);
+  }
+
+  /* ---------- dropdown panel ---------- */
+  .site-lang__dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 180px;
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px -12px rgba(19, 19, 22, 0.18);
+    padding: 0;
+    overflow: hidden;
+    display: grid;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    z-index: 5;
+    transition: opacity 200ms var(--site-ease-out), transform 240ms var(--site-ease-out);
+  }
+  .site-lang__item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 0;
+    text-decoration: none;
+    color: var(--site-ink-900);
+    transition: background var(--site-transition-fast);
+  }
+  .site-lang__item + .site-lang__item {
+    border-top: 1px solid var(--site-ink-100);
+  }
+  .site-lang__item:hover {
+    background: var(--site-cream);
+  }
+  .site-lang__item.is-current {
+    background: var(--site-accent-tint);
+  }
+  .site-lang__item-code {
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: 0.08em;
+    color: var(--site-ink-500);
+    text-transform: uppercase;
+  }
+  .site-lang__item.is-current .site-lang__item-code {
+    color: var(--site-brand-primary);
+  }
+  .site-lang__item-native {
+    font-family: var(--site-font-sans);
+    font-size: 14px;
+    font-weight: var(--site-fw-medium);
+    color: var(--site-ink-900);
+  }
+
+  /* ---------- open state (hover + focus + JS click toggle) ---------- */
+  .site-lang:hover .site-lang__dropdown,
+  .site-lang:focus-within .site-lang__dropdown,
+  .site-lang.is-open .site-lang__dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .site-lang:hover .site-lang__chevron,
+  .site-lang:focus-within .site-lang__chevron,
+  .site-lang.is-open .site-lang__chevron {
+    transform: rotate(180deg);
+  }
+</style>

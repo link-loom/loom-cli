@@ -1,0 +1,25 @@
+---
+/*
+ * <%- name %>: the page's quiet closing call to action. Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { localizedPath } from '@utils/i18n';
+import PageFinalCta from '@components/page/PageFinalCta.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+---
+
+<PageFinalCta
+  locale={locale}
+  title={t.title}
+  deck={t.deck}
+  primaryLabel={t.primary}
+  secondaryLabel={t.secondary}
+  secondaryHref={localizedPath(locale, <%- quote(secondaryPath) %>)}
+/>

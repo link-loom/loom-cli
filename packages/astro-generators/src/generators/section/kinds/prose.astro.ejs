@@ -1,0 +1,34 @@
+---
+/*
+ * <%- name %>: a narrow column of running text under an optional head. Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import PageSection from '@components/page/PageSection.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+---
+
+<PageSection eyebrow={t.eyebrow} title={t.title} narrow={true} tone=<%- quote(tone === 'paper' ? 'paper' : 'white') %>>
+  <div class="site-prose">
+    {t.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+</PageSection>
+
+<style>
+  .site-prose {
+    display: grid;
+    gap: 20px;
+  }
+  .site-prose p {
+    margin: 0;
+    font-size: var(--site-fs-body-lg);
+    line-height: 1.7;
+    color: var(--site-ink-700);
+  }
+</style>

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/astro-generators/page",
+  "title": "Page",
+  "description": "Adds a page of the landing in English and Spanish: src/pages/en/<path>.astro and src/pages/es/<path>.astro render its view (src/views/<id>/), which starts with a page hero and ends with a quiet call to action. Registers its title for the breadcrumb (src/data/pages.ts) and, with --nav, an entry in the header menu or a footer column (src/data/nav.ts). Add more sections with `add section --page <id>`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["path", "titleEn"],
+  "properties": {
+    "path": {
+      "type": "string",
+      "pattern": "^(/[a-z0-9][a-z0-9-]*)+$",
+      "description": "Address without the locale (e.g. /company, /product/integrations)",
+      "x-prompt": {
+        "en": "Path",
+        "es": "Ruta"
+      },
+      "x-order": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Folder of its view and key of its copy (defaults to the path's segments joined with -)"
+    },
+    "titleEn": {
+      "type": "string",
+      "minLength": 2,
+      "description": "The page's name in English: menu, breadcrumb, browser title and its h1",
+      "x-prompt": {
+        "en": "Title (English)",
+        "es": "Título (inglés)"
+      },
+      "x-order": 2
+    },
+    "titleEs": {
+      "type": "string",
+      "description": "The page's name in Spanish",
+      "x-prompt": {
+        "en": "Title (Spanish)",
+        "es": "Título (español)"
+      },
+      "x-order": 3
+    },
+    "headlineEn": {
+      "type": "string",
+      "description": "The h1 of its hero in English, when it should say more than the title"
+    },
+    "headlineEs": {
+      "type": "string",
+      "description": "The h1 in Spanish"
+    },
+    "descriptionEn": {
+      "type": "string",
+      "description": "Meta description and hero deck, in English (search results show it)"
+    },
+    "descriptionEs": {
+      "type": "string",
+      "description": "Meta description and hero deck, in Spanish"
+    },
+    "nav": {
+      "type": "string",
+      "pattern": "^(none|header|footer:[a-z][a-z0-9-]*)$",
+      "default": "none",
+      "description": "Where it is linked: none, header (the main menu) or footer:<column id> (e.g. footer:company)",
+      "x-order": 4
+    },
+    "navBefore": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "With --nav, the id of the entry the page goes before (e.g. contact); without it, it goes last"
+    }
+  },
+  "examples": [
+    {
+      "path": "/company",
+      "titleEn": "Company",
+      "titleEs": "Compañía",
+      "nav": "footer:company"
+    },
+    {
+      "path": "/pricing",
+      "titleEn": "Pricing",
+      "titleEs": "Precios",
+      "nav": "header",
+      "descriptionEn": "Plans for every size of team."
+    }
+  ]
+}

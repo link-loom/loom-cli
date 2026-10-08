@@ -1,0 +1,361 @@
+---
+/*
+ * SearchOverlay — full-viewport search overlay (Pagefind + ghost autocomplete).
+ * Triggered via:
+ *   - SearchTrigger button click
+ *   - ⌘K / Ctrl+K shortcut
+ * Closed via:
+ *   - Close button
+ *   - Backdrop click
+ *   - Escape key
+ *
+ * Listens for `site:search:open` and `site:search:close` custom events on document.
+ * Emits `site:search:opened` after opening (used by the panel to focus the input).
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import SearchOverlayPanel from '@components/search/SearchOverlayPanel.tsx';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).search;
+---
+
+<div class="site-search-overlay" data-search-overlay aria-hidden="true" role="dialog" aria-modal="true" aria-label={t.label}>
+  <div class="site-search-overlay__backdrop" data-search-backdrop></div>
+  <div class="site-search-overlay__container">
+    <SearchOverlayPanel
+      client:load
+      locale={locale}
+      placeholder={t.placeholder}
+      helper={t.helper}
+      suggestionsLabel={t.suggestionsLabel}
+      suggestions={[...t.suggestions]}
+      closeLabel={t.close}
+    />
+  </div>
+</div>
+
+<style>
+  .site-search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-block: clamp(80px, 12vh, 140px) 40px;
+    padding-inline: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--site-ease-out);
+  }
+  .site-search-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .site-search-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(245, 244, 250, 0.72);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+  }
+  .site-search-overlay__container {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    transform: translateY(-14px);
+    transition: transform 240ms var(--site-ease-out);
+  }
+  .site-search-overlay.is-open .site-search-overlay__container {
+    transform: translateY(0);
+  }
+
+  /* ---------- panel (rendered by React) ---------- */
+  :global(.site-search-overlay__panel) {
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--site-ink-100);
+    border-radius: var(--site-radius-xl);
+    box-shadow: 0 24px 60px -20px rgba(19, 19, 22, 0.28), 0 8px 24px -8px rgba(19, 19, 22, 0.12);
+    overflow: hidden;
+  }
+
+  /* ---------- input row ---------- */
+  :global(.site-search-overlay__input-wrap) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 18px 18px 24px;
+    border-bottom: 1px solid var(--site-ink-100);
+  }
+  :global(.site-search-overlay__search-icon) {
+    color: var(--site-ink-500);
+    flex-shrink: 0;
+    z-index: 2;
+  }
+  :global(.site-search-overlay__input-inner) {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  :global(.site-search-overlay__input) {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: var(--site-font-sans);
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--site-ink-900);
+    padding-block: 4px;
+    position: relative;
+    z-index: 2;
+  }
+  :global(.site-search-overlay__input::placeholder) {
+    color: var(--site-ink-300);
+  }
+  :global(.site-search-overlay__close) {
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--site-cream);
+    color: var(--site-ink-500);
+    border: 0;
+    cursor: pointer;
+    transition: background var(--site-transition-fast), color var(--site-transition-fast);
+  }
+  :global(.site-search-overlay__close:hover) {
+    background: var(--site-ink-100);
+    color: var(--site-ink-900);
+  }
+
+  /* ---------- ghost autocomplete layer ---------- */
+  /* Lives inside .site-search-overlay__input-inner so it shares the exact same
+     box as the input — guarantees alignment of typed text + ghost suggestion. */
+  :global(.site-search-overlay__ghost) {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    font-family: var(--site-font-sans);
+    font-size: 18px;
+    line-height: 1.4;
+    letter-spacing: normal;
+    white-space: pre;
+    overflow: hidden;
+    z-index: 1;
+    padding-block: 4px;
+  }
+  :global(.site-search-overlay__ghost-typed) {
+    color: transparent;
+  }
+  :global(.site-search-overlay__ghost-suggestion) {
+    color: var(--site-ink-300);
+  }
+
+  /* ---------- helper line ---------- */
+  :global(.site-search-overlay__helper) {
+    margin: 14px 24px 0;
+    font-family: var(--site-font-sans);
+    font-size: 12px;
+    color: var(--site-ink-500);
+    line-height: 1.5;
+  }
+
+  /* ---------- suggestions (empty state) ---------- */
+  :global(.site-search-overlay__suggestions) {
+    padding: 22px 24px 26px;
+  }
+  :global(.site-search-overlay__suggestions-label) {
+    display: block;
+    font-family: var(--site-font-mono);
+    font-size: 10px;
+    font-weight: var(--site-fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--site-ink-500);
+    margin-bottom: 12px;
+  }
+  :global(.site-search-overlay__chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  :global(.site-search-overlay__chip) {
+    font-family: inherit;
+    font-size: 13px;
+    background: var(--site-cream);
+    color: var(--site-ink-700);
+    border: 1px solid var(--site-ink-100);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background var(--site-transition-fast), color var(--site-transition-fast), border-color var(--site-transition-fast), transform var(--site-transition-fast);
+  }
+  :global(.site-search-overlay__chip:hover) {
+    background: var(--site-brand-primary);
+    color: var(--site-white);
+    border-color: var(--site-brand-primary);
+    transform: translateY(-1px);
+  }
+
+  /* ---------- results ---------- */
+  :global(.site-search-overlay__results) {
+    padding: 14px 14px 18px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  :global(.site-search-overlay__results ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  :global(.site-search-overlay__row a) {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    color: var(--site-ink-900);
+    text-decoration: none;
+    border-radius: var(--site-radius-sm);
+    transition: background var(--site-transition-fast);
+    position: relative;
+  }
+  :global(.site-search-overlay__row a::after) {
+    content: '→';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+    color: var(--site-ink-300);
+    opacity: 0;
+    transition: opacity var(--site-transition-fast), transform var(--site-transition-fast);
+    font-size: 14px;
+  }
+  :global(.site-search-overlay__row.is-highlighted a),
+  :global(.site-search-overlay__row a:hover) {
+    background: var(--site-cream);
+  }
+  :global(.site-search-overlay__row.is-highlighted a::after),
+  :global(.site-search-overlay__row a:hover::after) {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+  :global(.site-search-overlay__row-title) {
+    font-family: var(--site-font-sans);
+    font-size: 14px;
+    font-weight: var(--site-fw-semibold);
+    line-height: 1.4;
+    color: var(--site-ink-900);
+  }
+  :global(.site-search-overlay__row-title mark) {
+    background: transparent;
+    color: var(--site-brand-primary);
+    font-weight: var(--site-fw-semibold);
+    padding: 0;
+  }
+  :global(.site-search-overlay__row-url) {
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    color: var(--site-ink-500);
+    letter-spacing: 0.02em;
+  }
+  :global(.site-search-overlay__empty) {
+    padding: 14px;
+    color: var(--site-ink-500);
+    font-size: 14px;
+    margin: 0;
+  }
+  :global(.site-search-overlay__see-all a) {
+    display: block;
+    padding: 14px 14px;
+    color: var(--site-ink-500);
+    text-decoration: none;
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--site-ink-100);
+    border-radius: 0 0 var(--site-radius-sm) var(--site-radius-sm);
+    transition: background var(--site-transition-fast), color var(--site-transition-fast);
+  }
+  :global(.site-search-overlay__see-all.is-highlighted a),
+  :global(.site-search-overlay__see-all a:hover) {
+    background: var(--site-cream);
+    color: var(--site-brand-primary);
+  }
+  :global(.site-search-overlay__see-all-alone) {
+    padding: 14px;
+  }
+  :global(.site-search-overlay__see-all-alone a) {
+    color: var(--site-ink-500);
+    text-decoration: none;
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--site-transition-fast);
+  }
+  :global(.site-search-overlay__see-all-alone a:hover) {
+    color: var(--site-brand-primary);
+  }
+
+  @media (max-width: 540px) {
+    .site-search-overlay {
+      padding-block: 40px 24px;
+      padding-inline: 16px;
+    }
+    :global(.site-search-overlay__input) {
+      font-size: 16px;
+    }
+    :global(.site-search-overlay__ghost) {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<script>
+  /* Open/close orchestration. Listens for custom events emitted by SearchTrigger. */
+  (() => {
+    const found = document.querySelector<HTMLElement>('[data-search-overlay]');
+    if (!found) return;
+    const overlay: HTMLElement = found;
+    const backdrop = overlay.querySelector<HTMLElement>('[data-search-backdrop]');
+
+    function open() {
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // Let the React panel focus its input.
+      window.setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('site:search:opened'));
+      }, 30);
+    }
+    function close() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('site:search:open', open);
+    document.addEventListener('site:search:close', close);
+    backdrop?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+    });
+  })();
+</script>

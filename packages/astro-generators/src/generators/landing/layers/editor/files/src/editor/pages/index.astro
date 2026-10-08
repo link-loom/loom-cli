@@ -1,0 +1,73 @@
+---
+/*
+ * The editor's index: every post, one row per post across its languages, drafts first.
+ */
+import EditorLayout from '../EditorLayout.astro';
+import { listPostGroups } from '../post-files';
+import { BLOG_CATEGORY_LABELS } from '@data/blog';
+import { LOCALES } from '@data/site';
+
+const groups = await listPostGroups();
+const drafts = groups.filter((group) => group.canonical.is_draft);
+const published = groups.filter((group) => !group.canonical.is_draft);
+const sections = [
+  { id: 'draft', title: 'Drafts', badge: 'Draft', groups: drafts },
+  { id: 'published', title: 'Published', badge: 'Published', groups: published },
+].filter((section) => section.groups.length > 0);
+---
+
+<EditorLayout title="Posts">
+  <header class="site-editor-index__head">
+    <div>
+      <h1 class="site-editor-index__title">Blog posts</h1>
+      <p class="site-editor-index__meta">
+        {groups.length} total · {drafts.length} drafts · {published.length} published
+      </p>
+    </div>
+    <a class="site-btn site-btn--primary site-btn--sm" href="/editor/new">New post</a>
+  </header>
+
+  {sections.map((section) => (
+    <section class="site-editor-index__section">
+      <h2 class={`site-editor-index__section-title site-editor-index__section-title--${section.id}`}>
+        {section.title} · {section.groups.length}
+      </h2>
+      <ul class="site-editor-index__list">
+        {section.groups.map(({ canonical, variants }) => (
+          <li>
+            <a class="site-editor-row" href={`/editor/edit/${canonical.slug}`}>
+              <div class="site-editor-row__main">
+                <span class="site-editor-row__title">{canonical.title || 'Untitled'}</span>
+                <span class="site-editor-row__meta">
+                  {[
+                    `/${canonical.locale}/blog/${canonical.baseSlug}`,
+                    BLOG_CATEGORY_LABELS[canonical.category].en,
+                    canonical.pub_date,
+                  ].join(' · ')}
+                </span>
+              </div>
+              <div class="site-editor-row__aside">
+                {LOCALES.map((locale) => (
+                  <span
+                    class:list={['site-editor-row__locale', { 'site-editor-row__locale--written': variants[locale] }]}
+                  >
+                    {locale.toUpperCase()}
+                  </span>
+                ))}
+                <span class={`site-editor-row__badge site-editor-row__badge--${section.id}`}>{section.badge}</span>
+              </div>
+              {canonical.description && <p class="site-editor-row__description">{canonical.description}</p>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  {groups.length === 0 && (
+    <div class="site-editor-index__empty">
+      <p>No posts yet.</p>
+      <a class="site-btn site-btn--primary site-btn--sm" href="/editor/new">Write the first one</a>
+    </div>
+  )}
+</EditorLayout>

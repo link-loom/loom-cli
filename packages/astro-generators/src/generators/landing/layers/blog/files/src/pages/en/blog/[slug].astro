@@ -1,0 +1,41 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BlogDetail from '@components/blog/BlogDetail.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) =>
+    !data.is_draft && data.locale === 'en',
+  );
+
+  return posts.map((entry) => {
+    const slug = entry.data.base_slug ?? entry.slug;
+    const sameCategory = posts
+      .filter((p) => p.slug !== entry.slug && p.data.category === entry.data.category)
+      .slice(0, 3);
+    const related = sameCategory.length > 0
+      ? sameCategory
+      : posts.filter((p) => p.slug !== entry.slug).slice(0, 3);
+
+    return {
+      params: { slug },
+      props: { entry, related, bodyText: entry.body },
+    };
+  });
+}
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  related: CollectionEntry<'blog'>[];
+  bodyText: string;
+}
+
+const { entry, related, bodyText } = Astro.props;
+const locale = 'en' as const;
+---
+
+<BlogDetail
+  locale={locale}
+  entry={entry}
+  body={bodyText}
+  related={related}
+/>

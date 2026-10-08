@@ -1,0 +1,8 @@
+---
+import LegalPage from '@components/page/LegalPage.astro';
+import { getCopy } from '@utils/copy';
+
+const document = getCopy('es').legal.terms;
+---
+
+<LegalPage locale="es" document={document} alternateLocales={{ en: '/en/legal/terms', es: '/es/legal/terms' }} />

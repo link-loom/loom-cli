@@ -1,0 +1,6 @@
+{
+  "id": "search",
+  "dependencies": ["@astrojs/react", "astro-pagefind", "pagefind", "react", "react-dom"],
+  "devDependencies": ["@types/react", "@types/react-dom"],
+  "scripts": {}
+}

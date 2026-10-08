@@ -1,0 +1,174 @@
+{
+  "en": {
+    "nav": {
+      "home": "Home",
+      "skipToContent": "Skip to content",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "primaryNav": "Main menu",
+      "signIn": "Sign in",
+      "signUp": "Get started",
+      "getStarted": "Get started"
+    },
+    "langSwitcher": { "label": "Change language", "en": "EN", "es": "ES" },
+    "stickyCta": { "label": "Get started" },
+    "finalCta": {
+      "h2": "Ready to see {name} at work?",
+      "deck": "{description}",
+      "primary": "Get started",
+      "secondary": "Talk to us"
+    },
+    "footer": {
+      "tagline": "{slogan}",
+      "rights": "© {year} {name}. All rights reserved.",
+      "navLabel": "Site map"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "copy": "The page you were looking for doesn't exist.",
+      "home": "English home"
+    },
+    "home": {
+      "meta": { "title": "{name}: {slogan}", "description": "{description}" }
+    },
+    "contact": {
+      "meta": { "title": "Contact", "description": "Talk to the {name} team." },
+      "eyebrow": "Contact",
+      "title": "Let's talk",
+      "deck": "Tell us what you need and the right person will answer.",
+      "formTitle": "Send us a note",
+      "formNote": "We reply within one business day.",
+      "fields": {
+        "name": "Name",
+        "email": "Work email",
+        "company": "Company",
+        "message": "How can we help?",
+        "submit": "Send",
+        "privacy": "By sending this you accept our privacy policy. We never share your data."
+      },
+      "channels": { "label": "Write to us", "sales": "Sales", "support": "Support" }
+    },
+    "legal": {
+      "privacy": {
+        "meta": { "title": "Privacy", "description": "How {name} handles your data." },
+        "eyebrow": "Legal",
+        "title": "Privacy policy",
+        "lastUpdated": "Last updated: {date}",
+        "body": [
+          {
+            "h": "What we collect",
+            "p": "The information you give us when you sign up or write to us (name, work email, company) and the usage data needed to run the service."
+          },
+          {
+            "h": "How we use it",
+            "p": "To provide and improve {name}, answer your requests and keep the service secure. We do not sell your data."
+          },
+          { "h": "Your rights", "p": "You can ask to see, correct or delete your data by writing to {supportEmail}." }
+        ]
+      },
+      "terms": {
+        "meta": { "title": "Terms", "description": "The terms of using {name}." },
+        "eyebrow": "Legal",
+        "title": "Terms of use",
+        "lastUpdated": "Last updated: {date}",
+        "body": [
+          {
+            "h": "Using the service",
+            "p": "Use {name} lawfully and within the plan you chose. You are responsible for the accounts of your organization."
+          },
+          {
+            "h": "Your content",
+            "p": "What you put into {name} stays yours. We process it only to provide the service."
+          },
+          { "h": "Contact", "p": "Questions about these terms: {supportEmail}." }
+        ]
+      }
+    }
+  },
+  "es": {
+    "nav": {
+      "home": "Inicio",
+      "skipToContent": "Ir al contenido",
+      "openMenu": "Abrir menú",
+      "closeMenu": "Cerrar menú",
+      "primaryNav": "Menú principal",
+      "signIn": "Iniciar sesión",
+      "signUp": "Empieza ahora",
+      "getStarted": "Empieza ahora"
+    },
+    "langSwitcher": { "label": "Cambiar idioma", "en": "EN", "es": "ES" },
+    "stickyCta": { "label": "Empieza ahora" },
+    "finalCta": {
+      "h2": "¿Listo para ver {name} en acción?",
+      "deck": "{description}",
+      "primary": "Empieza ahora",
+      "secondary": "Habla con nosotros"
+    },
+    "footer": {
+      "tagline": "{slogan}",
+      "rights": "© {year} {name}. Todos los derechos reservados.",
+      "navLabel": "Mapa del sitio"
+    },
+    "notFound": {
+      "title": "Página no encontrada",
+      "copy": "La página que buscas no existe.",
+      "home": "Inicio en español"
+    },
+    "home": {
+      "meta": { "title": "{name}: {slogan}", "description": "{description}" }
+    },
+    "contact": {
+      "meta": { "title": "Contacto", "description": "Habla con el equipo de {name}." },
+      "eyebrow": "Contacto",
+      "title": "Hablemos",
+      "deck": "Cuéntanos qué necesitas y te responderá la persona indicada.",
+      "formTitle": "Escríbenos",
+      "formNote": "Respondemos en un día hábil.",
+      "fields": {
+        "name": "Nombre",
+        "email": "Correo de trabajo",
+        "company": "Empresa",
+        "message": "¿En qué te podemos ayudar?",
+        "submit": "Enviar",
+        "privacy": "Al enviar aceptas nuestra política de privacidad. Nunca compartimos tus datos."
+      },
+      "channels": { "label": "Escríbenos", "sales": "Ventas", "support": "Soporte" }
+    },
+    "legal": {
+      "privacy": {
+        "meta": { "title": "Privacidad", "description": "Cómo trata {name} tus datos." },
+        "eyebrow": "Legal",
+        "title": "Política de privacidad",
+        "lastUpdated": "Última actualización: {date}",
+        "body": [
+          {
+            "h": "Qué recopilamos",
+            "p": "La información que nos das al registrarte o escribirnos (nombre, correo de trabajo, empresa) y los datos de uso necesarios para operar el servicio."
+          },
+          {
+            "h": "Para qué la usamos",
+            "p": "Para prestar y mejorar {name}, responder tus solicitudes y mantener el servicio seguro. No vendemos tus datos."
+          },
+          { "h": "Tus derechos", "p": "Puedes pedir ver, corregir o eliminar tus datos escribiendo a {supportEmail}." }
+        ]
+      },
+      "terms": {
+        "meta": { "title": "Términos", "description": "Los términos de uso de {name}." },
+        "eyebrow": "Legal",
+        "title": "Términos de uso",
+        "lastUpdated": "Última actualización: {date}",
+        "body": [
+          {
+            "h": "Uso del servicio",
+            "p": "Usa {name} de forma lícita y dentro del plan que elegiste. Eres responsable de las cuentas de tu organización."
+          },
+          {
+            "h": "Tu contenido",
+            "p": "Lo que pones en {name} sigue siendo tuyo. Solo lo procesamos para prestar el servicio."
+          },
+          { "h": "Contacto", "p": "Preguntas sobre estos términos: {supportEmail}." }
+        ]
+      }
+    }
+  }
+}

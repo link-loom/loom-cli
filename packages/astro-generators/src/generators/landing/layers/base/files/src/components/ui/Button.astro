@@ -1,0 +1,76 @@
+---
+/*
+ * Button
+ * ======
+ * Polymorphic: renders <a> when `href` is set, otherwise <button>.
+ *
+ * Variants:
+ *   - primary  → gradient fill (Cognitive Flow), white type
+ *   - secondary → glass pill (white 70% + cloud border)
+ *   - ghost    → no bg, no border, ink type + arrow
+ *
+ * Sizes: sm / md (default) / lg
+ */
+import Icon from '@components/ui/Icon.astro';
+
+type Variant = 'primary' | 'secondary' | 'ghost';
+type Size = 'sm' | 'md' | 'lg';
+
+interface Props {
+  variant?: Variant;
+  size?: Size;
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  target?: string;
+  rel?: string;
+  ariaLabel?: string;
+  iconRight?: string;
+  iconLeft?: string;
+  class?: string;
+  id?: string;
+  disabled?: boolean;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  target,
+  rel,
+  ariaLabel,
+  iconRight,
+  iconLeft,
+  class: className,
+  id,
+  disabled = false,
+} = Astro.props as Props;
+
+const isLink = typeof href === 'string';
+const Tag = isLink ? 'a' : 'button';
+const classes = [
+  'site-btn',
+  `site-btn--${variant}`,
+  `site-btn--${size}`,
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+const computedRel = target === '_blank' ? rel ?? 'noopener noreferrer' : rel;
+---
+
+<Tag
+  class={classes}
+  id={id}
+  href={isLink ? href : undefined}
+  type={!isLink ? type : undefined}
+  target={isLink ? target : undefined}
+  rel={isLink ? computedRel : undefined}
+  aria-label={ariaLabel}
+  aria-disabled={disabled ? 'true' : undefined}
+>
+  {iconLeft && <Icon name={iconLeft} size={18} class="site-btn__icon site-btn__icon--left" />}
+  <span class="site-btn__label"><slot /></span>
+  {iconRight && <Icon name={iconRight} size={18} class="site-btn__icon site-btn__icon--right" />}
+</Tag>

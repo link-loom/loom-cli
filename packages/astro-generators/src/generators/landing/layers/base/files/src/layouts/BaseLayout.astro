@@ -1,0 +1,26 @@
+---
+import BaseHead from '@components/seo/BaseHead.astro';
+import { htmlLang } from '@utils/i18n';
+import { SITE, type Locale } from '@data/site';
+import type { SeoProps } from '@utils/seo';
+import '@styles/main.scss';
+
+interface Props extends SeoProps {
+  locale?: Locale;
+  bodyClass?: string;
+}
+
+const { locale = SITE.defaultLocale, bodyClass, ...seoProps } = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang={htmlLang(locale)}>
+  <head>
+    <BaseHead locale={locale} {...seoProps}>
+      <slot name="head-extra" slot="head-extra" />
+    </BaseHead>
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

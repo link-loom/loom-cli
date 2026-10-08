@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/astro-generators/section",
+  "title": "Section",
+  "description": "Adds a section to a page of a landing, from the standard kinds: hero, page-hero, logos, cards, split, faq, prose, final-cta, page-cta. Writes the section component in src/views/<page>/sections/, its copy in both languages under <page>.<id>, and lists it in the page (before the closing call to action). Mark the highlighted words of a hero or final-cta title with *asterisks*.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page", "kind"],
+  "properties": {
+    "page": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "default": "home",
+      "description": "The page (its folder in src/views): home, or one made with `add page`",
+      "x-prompt": {
+        "en": "Page",
+        "es": "Página"
+      },
+      "x-order": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["hero", "page-hero", "logos", "cards", "split", "faq", "prose", "final-cta", "page-cta"],
+      "description": "hero: the home's h1 with two calls to action. page-hero: a subpage's h1. logos: a band of logo tiles. cards: a grid of cards with icon dots. split: an image beside points with icons. faq: questions and answers with FAQPage data. prose: running text. final-cta: the ink closing band. page-cta: a subpage's quiet closing card",
+      "x-prompt": {
+        "en": "Kind of section",
+        "es": "Tipo de sección"
+      },
+      "x-order": 2
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Unique in the page: names the component and the copy key (defaults to the kind)",
+      "x-order": 3
+    },
+    "eyebrowEn": {
+      "type": "string",
+      "description": "Small label above the title, in English"
+    },
+    "eyebrowEs": {
+      "type": "string",
+      "description": "The label in Spanish"
+    },
+    "titleEn": {
+      "type": "string",
+      "description": "Title in English; in a hero or final-cta, *asterisks* mark the highlighted words",
+      "x-prompt": {
+        "en": "Title (English)",
+        "es": "Título (inglés)"
+      },
+      "x-order": 4
+    },
+    "titleEs": {
+      "type": "string",
+      "description": "Title in Spanish, written natively",
+      "x-prompt": {
+        "en": "Title (Spanish)",
+        "es": "Título (español)"
+      },
+      "x-order": 5
+    },
+    "deckEn": {
+      "type": "string",
+      "description": "The sentence under the title, in English"
+    },
+    "deckEs": {
+      "type": "string",
+      "description": "The sentence under the title, in Spanish"
+    },
+    "itemsEn": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "cards and split: \"Title|Body\" per item; faq: \"Question|Answer\"; prose: one paragraph per item. One quoted value per item (commas stay in the text): --items-en \"Fast|Set up in a day, not a month.\" \"Clear|One place.\"",
+      "x-split": false
+    },
+    "itemsEs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The same items in Spanish, in the same order",
+      "x-split": false
+    },
+    "primaryEn": {
+      "type": "string",
+      "description": "Label of the main button (hero, final-cta, page-cta), in English"
+    },
+    "primaryEs": {
+      "type": "string",
+      "description": "Label of the main button, in Spanish"
+    },
+    "secondaryEn": {
+      "type": "string",
+      "description": "Label of the second button, in English"
+    },
+    "secondaryEs": {
+      "type": "string",
+      "description": "Label of the second button, in Spanish"
+    },
+    "secondaryPath": {
+      "type": "string",
+      "pattern": "^/",
+      "default": "/contact",
+      "description": "Page the second button opens, without the locale (e.g. /pricing)"
+    },
+    "icons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "description": "Material icons of the items, in order, as in Google's catalog in kebab-case (e.g. verified-user, receipt-long)"
+    },
+    "tone": {
+      "type": "string",
+      "enum": ["white", "paper", "cream", "dark"],
+      "default": "white",
+      "description": "Background of cards, split and prose (dark only for cards)"
+    },
+    "image": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Image under public/ for hero, page-hero and split (e.g. /images/hero.webp, made with `npm run gen:images`)"
+    },
+    "imageAltEn": {
+      "type": "string",
+      "description": "What the image shows, in English"
+    },
+    "imageAltEs": {
+      "type": "string",
+      "description": "What the image shows, in Spanish"
+    },
+    "logos": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[^=]+=/.+"
+      },
+      "description": "logos: \"Name=/path/under/public.svg\" per tile"
+    },
+    "replace": {
+      "type": "boolean",
+      "default": false,
+      "description": "Write the section again when it exists: component and copy (needs --yes)"
+    }
+  },
+  "examples": [
+    {
+      "page": "home",
+      "kind": "cards",
+      "id": "governance",
+      "tone": "dark",
+      "titleEn": "Attributable, reconstructible, auditable.",
+      "titleEs": "Atribuible, reconstruible, auditable.",
+      "itemsEn": [
+        "Who|Every action has an author.",
+        "What|Every change leaves evidence.",
+        "Why|Every decision keeps its reason."
+      ],
+      "itemsEs": [
+        "Quién|Cada acción tiene autor.",
+        "Qué|Cada cambio deja evidencia.",
+        "Por qué|Cada decisión guarda su razón."
+      ],
+      "icons": ["verified-user", "receipt-long", "visibility"]
+    }
+  ]
+}

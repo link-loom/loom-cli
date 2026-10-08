@@ -1,0 +1,20 @@
+---
+import { absoluteUrl } from '@utils/seo';
+
+interface Item { label: string; href: string }
+interface Props { items: Item[] }
+
+const { items } = Astro.props as Props;
+const payload = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((it, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: it.label,
+    item: absoluteUrl(it.href),
+  })),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(payload)}></script>

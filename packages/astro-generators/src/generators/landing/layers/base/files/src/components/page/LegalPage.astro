@@ -1,0 +1,83 @@
+---
+/*
+ * LegalPage — shared template for /legal/privacy and /legal/terms.
+ */
+import type { Locale } from '@data/site';
+import MarketingLayout from '@layouts/MarketingLayout.astro';
+import PageHero from '@components/page/PageHero.astro';
+import PageSection from '@components/page/PageSection.astro';
+
+interface Props {
+  locale: Locale;
+  document: {
+    meta: { title: string; description: string };
+    eyebrow: string;
+    title: string;
+    lastUpdated: string;
+    body: Array<{ h: string; p: string }>;
+  };
+  alternateLocales: Partial<Record<Locale, string>>;
+}
+
+const { locale, document: doc, alternateLocales } = Astro.props as Props;
+---
+
+<MarketingLayout
+  locale={locale}
+  title={doc.meta.title}
+  description={doc.meta.description}
+  alternateLocales={alternateLocales}
+  hideStickyCta={true}
+>
+  <PageHero
+    eyebrow={doc.eyebrow}
+    title={doc.title}
+    variant="compact"
+    align="start"
+  >
+    <p class="site-legal__updated site-mono">{doc.lastUpdated}</p>
+  </PageHero>
+
+  <PageSection narrow={true} tone="white">
+    <div class="site-legal__body">
+      {doc.body.map((sec) => (
+        <section class="site-legal__section">
+          <h2 class="site-legal__h">{sec.h}</h2>
+          <p class="site-legal__p">{sec.p}</p>
+        </section>
+      ))}
+    </div>
+  </PageSection>
+</MarketingLayout>
+
+<style>
+  .site-legal__updated {
+    color: var(--site-ink-500);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+  }
+  .site-legal__body {
+    display: grid;
+    gap: clamp(28px, 3vw, 40px);
+  }
+  .site-legal__section {
+    display: grid;
+    gap: 12px;
+  }
+  .site-legal__h {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h4);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.01em;
+  }
+  .site-legal__p {
+    margin: 0;
+    color: var(--site-ink-700);
+    font-size: var(--site-fs-body);
+    line-height: 1.7;
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+/*
+ * PageHero — shared hero for subpages
+ * ===================================
+ * Lighter than the landing Hero. Eyebrow + h1 + deck centered,
+ * crisp white background, full-contrast ink type.
+ */
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Reveal from '@components/ui/Reveal.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  deck?: string;
+  align?: 'center' | 'start';
+  variant?: 'default' | 'compact';
+  image?: { src: string; alt: string; width?: number; height?: number };
+}
+
+const {
+  eyebrow,
+  title,
+  deck,
+  align = 'center',
+  variant = 'default',
+  image,
+} = Astro.props as Props;
+---
+
+<section class={`site-pgh site-pgh--${variant} site-pgh--${align}`}>
+  <div class="site-container">
+    <Reveal class="site-pgh__block">
+      <Eyebrow align={align === 'center' ? 'center' : 'start'}>{eyebrow}</Eyebrow>
+      <h1 class="site-pgh__title">{title}</h1>
+      {deck && <p class="site-pgh__deck">{deck}</p>}
+      <slot />
+    </Reveal>
+    {image && (
+      <Reveal class="site-pgh__visual" delay={120}>
+        <img
+          src={image.src}
+          alt={image.alt}
+          width={image.width ?? 1600}
+          height={image.height ?? 900}
+          loading="eager"
+          decoding="async"
+        />
+      </Reveal>
+    )}
+  </div>
+</section>
+
+<style>
+  .site-pgh {
+    padding-block: clamp(96px, 12vw, 144px) clamp(72px, 8vw, 96px);
+    background: var(--site-white);
+  }
+  .site-pgh--compact {
+    padding-block: clamp(72px, 9vw, 112px) clamp(48px, 6vw, 72px);
+  }
+  :global(.site-pgh__block) {
+    display: grid;
+    gap: 20px;
+    max-width: 56rem;
+  }
+  .site-pgh--center :global(.site-pgh__block) {
+    margin-inline: auto;
+    text-align: center;
+    justify-items: center;
+  }
+  .site-pgh--start :global(.site-pgh__block) {
+    text-align: left;
+  }
+  :global(.site-pgh__title) {
+    margin: 0;
+    color: var(--site-ink-900);
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-display-lg);
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+  }
+  :global(.site-pgh__deck) {
+    margin: 0;
+    color: var(--site-ink-500);
+    font-size: var(--site-fs-body-lg);
+    line-height: 1.55;
+    max-width: 44rem;
+  }
+  :global(.site-pgh__visual) {
+    margin-top: clamp(40px, 5vw, 64px);
+    display: block;
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+  :global(.site-pgh__visual img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--site-radius-xl);
+    box-shadow: var(--site-shadow-md);
+    border: 1px solid var(--site-ink-100);
+    background: var(--site-white);
+  }
+</style>

@@ -1,0 +1,95 @@
+@use '../mixins' as *;
+
+body {
+  font-family: var(--site-font-sans);
+  font-size: var(--site-fs-body);
+  line-height: var(--site-lh-loose);
+  font-weight: var(--site-fw-regular);
+  color: var(--site-ink-900);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--site-font-display);
+  font-weight: var(--site-fw-semibold);
+  color: var(--site-ink-900);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--site-fs-h1);
+  letter-spacing: var(--site-ls-heading);
+  line-height: var(--site-lh-snug);
+}
+
+h2 {
+  font-size: var(--site-fs-h2);
+  letter-spacing: -0.02em;
+  line-height: var(--site-lh-snug);
+}
+
+h3 {
+  font-size: var(--site-fs-h3);
+  letter-spacing: var(--site-ls-tight);
+  line-height: 1.25;
+}
+
+h4 {
+  font-size: var(--site-fs-h4);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+p {
+  font-size: var(--site-fs-body);
+  line-height: var(--site-lh-loose);
+  color: var(--site-ink-700);
+}
+
+.site-display-xl {
+  font-family: var(--site-font-display);
+  font-size: var(--site-fs-display-xl);
+  font-weight: var(--site-fw-semibold);
+  letter-spacing: var(--site-ls-display);
+  line-height: var(--site-lh-tight);
+  color: var(--site-ink-900);
+}
+
+.site-display-lg {
+  font-family: var(--site-font-display);
+  font-size: var(--site-fs-display-lg);
+  font-weight: var(--site-fw-semibold);
+  letter-spacing: -0.03em;
+  line-height: var(--site-lh-tight);
+  color: var(--site-ink-900);
+}
+
+.site-body-lg {
+  font-size: var(--site-fs-body-lg);
+  line-height: var(--site-lh-base);
+  color: var(--site-ink-700);
+}
+
+.site-body-sm {
+  font-size: var(--site-fs-body-sm);
+  line-height: 1.55;
+  color: var(--site-ink-500);
+}
+
+.site-accent {
+  font-family: var(--site-font-display);
+  font-style: italic;
+  font-weight: var(--site-fw-regular);
+  color: var(--site-brand-primary);
+}
+
+.site-mono {
+  font-family: var(--site-font-mono);
+  font-size: var(--site-fs-mono-sm);
+  font-weight: var(--site-fw-medium);
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--site-accent);
+  color: var(--site-white);
+}

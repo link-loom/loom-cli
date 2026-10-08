@@ -1,0 +1,152 @@
+---
+/*
+ * <%- name %>: a centered head (eyebrow, title, deck) over a grid of cards, each with a coloured icon dot, a title
+ * and a body. Tone: <%- tone %>. Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import Eyebrow from '@components/ui/Eyebrow.astro';
+import Icon from '@components/ui/Icon.astro';
+import Reveal from '@components/ui/Reveal.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+
+/* One icon and colour per card, in copy order. */
+const VISUALS = [<% visuals.forEach((visual) => { %>
+  { icon: <%- quote(visual.icon) %>, color: <%- quote(visual.color) %> },<% }) %>
+];
+---
+
+<section class="site-cards site-cards--<%- tone %>">
+  <div class="site-container site-cards__inner">
+    <Reveal class="site-cards__head">
+      <Eyebrow variant="dot" align="center">{t.eyebrow}</Eyebrow>
+      <h2 class="site-cards__title">{t.title}</h2>
+      <p class="site-cards__deck">{t.deck}</p>
+    </Reveal>
+    <div class="site-cards__grid">
+      {t.items.map((item, index) => (
+        <Reveal as="article" class="site-cards__card" delay={index * 90}>
+          <span class="site-cards__dot" style={`background: var(--site-c-${VISUALS[index % VISUALS.length].color})`}>
+            <Icon name={VISUALS[index % VISUALS.length].icon} size={20} />
+          </span>
+          <h3 class="site-cards__card-title">{item.title}</h3>
+          <p class="site-cards__card-body">{item.body}</p>
+        </Reveal>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .site-cards {
+    padding-block: var(--site-section-py);
+    background: var(--site-white);
+  }
+  .site-cards--paper { background: var(--site-paper); }
+  .site-cards--cream { background: var(--site-cream); }
+  .site-cards--dark {
+    background: var(--site-ondark);
+    color: var(--site-white);
+  }
+  .site-cards__inner {
+    display: grid;
+    gap: clamp(36px, 5vw, 56px);
+  }
+  /* The eyebrow ships in brand ink; on the dark band it takes the accent. */
+  .site-cards--dark :global(.site-eyebrow) { color: var(--site-accent); }
+  :global(.site-cards__head) {
+    display: grid;
+    gap: 16px;
+    justify-items: center;
+    text-align: center;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+  .site-cards__title {
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h2);
+    font-weight: var(--site-fw-light);
+    line-height: var(--site-lh-snug);
+    letter-spacing: var(--site-ls-heading);
+    color: var(--site-ink-900);
+    text-wrap: balance;
+  }
+  .site-cards__deck {
+    margin: 0;
+    font-size: var(--site-fs-body-lg);
+    line-height: var(--site-lh-base);
+    color: var(--site-ink-500);
+    max-width: 42rem;
+  }
+  .site-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  :global(.site-cards__card) {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    justify-items: start;
+    padding: 28px;
+    border-radius: var(--site-radius-lg);
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+    box-shadow: var(--site-shadow-xs);
+    transition: transform var(--site-transition-fast), box-shadow var(--site-transition-fast);
+  }
+  :global(.site-cards__card:hover) {
+    transform: translateY(-4px);
+    box-shadow: var(--site-shadow-hover);
+  }
+  .site-cards__dot {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--site-white);
+  }
+  .site-cards__card-title {
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-h4);
+    font-weight: var(--site-fw-semibold);
+    color: var(--site-ink-900);
+  }
+  .site-cards__card-body {
+    margin: 0;
+    font-size: var(--site-fs-body-sm);
+    line-height: var(--site-lh-base);
+    color: var(--site-ink-500);
+  }
+
+  /* Dark band: white type and glassy cards */
+  .site-cards--dark .site-cards__title,
+  .site-cards--dark .site-cards__card-title { color: var(--site-white); }
+  .site-cards--dark .site-cards__deck,
+  .site-cards--dark .site-cards__card-body { color: var(--site-ondark-soft); }
+  .site-cards--dark :global(.site-cards__card) {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--site-ondark-border);
+    box-shadow: none;
+  }
+  .site-cards--dark :global(.site-cards__card:hover) {
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+  }
+
+  @media (max-width: 860px) {
+    .site-cards__grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :global(.site-cards__card:hover) { transform: none; }
+  }
+</style>

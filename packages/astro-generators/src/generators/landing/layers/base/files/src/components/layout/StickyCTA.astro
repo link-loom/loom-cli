@@ -1,0 +1,86 @@
+---
+/*
+ * StickyCTA
+ * =========
+ * Glass pill bottom-right that slides in after 30% scroll.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { signUpHref } from '@utils/links';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).stickyCta;
+const href = signUpHref(locale);
+---
+
+<a
+  href={href}
+  class="site-sticky-cta"
+  data-sticky-cta
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <span class="site-sticky-cta__dot" aria-hidden="true"></span>
+  <span class="site-sticky-cta__label">{t.label}</span>
+</a>
+
+<style>
+  .site-sticky-cta {
+    position: fixed;
+    right: clamp(16px, 3vw, 32px);
+    bottom: clamp(16px, 3vw, 32px);
+    z-index: var(--site-z-sticky-cta);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+
+    color: var(--site-white);
+    background: var(--site-brand-primary);
+    border-radius: var(--site-radius-pill);
+    font-family: var(--site-font-sans);
+    font-size: var(--site-fs-body-sm);
+    font-weight: var(--site-fw-semibold);
+    text-decoration: none;
+    box-shadow:
+      0 18px 40px -16px rgba(19, 19, 22, 0.4),
+      0 6px 16px -6px rgba(19, 19, 22, 0.22);
+
+    transform: translateX(140%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 400ms var(--site-ease-out),
+      opacity 400ms var(--site-ease-out),
+      background 240ms var(--site-ease-out);
+  }
+  .site-sticky-cta[data-visible='true'] {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .site-sticky-cta:hover {
+    background: var(--site-brand-primary-dark);
+  }
+  .site-sticky-cta__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--site-white);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+    animation: site-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes site-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25); }
+    50%      { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.10); }
+  }
+</style>
+
+<script>
+  import '@scripts/sticky-cta.ts';
+</script>

@@ -1,0 +1,21 @@
+---
+/*
+ * <%- name %>: the page's h1 with its eyebrow and deck<%- image ? ', and its image' : '' %>. Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import PageHero from '@components/page/PageHero.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+---
+
+<% if (image) { -%>
+<PageHero eyebrow={t.eyebrow} title={t.title} deck={t.deck} image={{ src: <%- quote(image) %>, alt: t.imageAlt }} />
+<% } else { -%>
+<PageHero eyebrow={t.eyebrow} title={t.title} deck={t.deck} />
+<% } -%>

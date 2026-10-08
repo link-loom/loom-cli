@@ -1,0 +1,112 @@
+---
+/*
+ * <%- name %>: the page's h1 with its highlighted words, the deck and two calls to action<%- image ? ', over the art' : '' %>.
+ * Copy: <%- accessor %>.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import { localizedPath } from '@utils/i18n';
+import { signUpHref } from '@utils/links';
+import Button from '@components/ui/Button.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).<%- accessor %>;
+const secondaryHref = localizedPath(locale, <%- quote(secondaryPath) %>);
+---
+
+<section class:list={['site-hero', <%- image ? "'site-hero--art'" : 'false' %>]}>
+  <div class="site-container site-hero__inner">
+    <h1 class="site-hero__title">
+      {t.titleLead}<span class="site-hero__accent">{t.titleAccent}</span>{t.titleTail}
+    </h1>
+    <p class="site-hero__deck">{t.deck}</p>
+    <div class="site-hero__actions">
+      <Button href={signUpHref(locale)} variant="primary" size="lg">{t.primaryCta}</Button>
+      <Button href={secondaryHref} variant="secondary" size="lg">{t.secondaryCta}</Button>
+    </div>
+  </div>
+<% if (image) { -%>
+  <div class="site-container">
+    <figure class="site-hero__art">
+      <img src=<%- quote(image) %> alt={t.imageAlt} width="1600" height="900" loading="eager" decoding="async" />
+    </figure>
+  </div>
+<% } -%>
+</section>
+
+<style>
+  .site-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--site-white);
+    /* Fits above the fold: never taller than the viewport minus the header. */
+    min-height: min(1080px, calc(100vh - 80px));
+    display: grid;
+    align-items: center;
+    padding-block: clamp(56px, 6vw, 96px);
+  }
+  .site-hero--art {
+    min-height: 0;
+    gap: clamp(40px, 5vw, 64px);
+  }
+  .site-hero__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 26px;
+    justify-items: center;
+    text-align: center;
+    max-width: 48rem;
+  }
+  /* Large screens: a wider box so the headline sits on two lines. */
+  @media (min-width: 1600px) {
+    .site-hero__inner { max-width: 51rem; }
+  }
+  .site-hero__title {
+    margin: 0;
+    font-family: var(--site-font-display);
+    font-size: var(--site-fs-display-xl);
+    font-weight: var(--site-fw-regular);
+    line-height: 1.12;
+    letter-spacing: var(--site-ls-display);
+    color: var(--site-ink-900);
+    text-wrap: balance;
+  }
+  .site-hero__accent {
+    color: var(--site-accent);
+    font-weight: var(--site-fw-regular);
+  }
+  .site-hero__deck {
+    margin: 0;
+    font-size: clamp(17px, 1.4vw, 20px);
+    line-height: 1.45;
+    color: var(--site-ink-500);
+  }
+  .site-hero__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .site-hero__art {
+    max-width: 72rem;
+    margin: 0 auto;
+  }
+  .site-hero__art img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--site-radius-xl);
+    border: 1px solid var(--site-ink-100);
+    box-shadow: var(--site-shadow-md);
+  }
+  /* Tablets and phones: the hero takes its content height. */
+  @media (max-width: 960px) {
+    .site-hero { min-height: 0; }
+  }
+</style>

@@ -1,0 +1,15 @@
+/*
+ * Every page of the site with its title in both languages: the breadcrumb (and its structured data) names each step
+ * of a path from here. `npx link-loom add page` registers new pages.
+ */
+import type { Label } from '@data/nav';
+
+export interface PageEntry {
+  id: string;
+  path: string;
+  title: Label;
+}
+
+export const PAGES: PageEntry[] = [<% pages.forEach((page) => { %>
+  { id: <%- quote(page.id) %>, path: <%- quote(page.path) %>, title: { en: <%- quote(page.title.en) %>, es: <%- quote(page.title.es) %> } },<% }) %>
+];

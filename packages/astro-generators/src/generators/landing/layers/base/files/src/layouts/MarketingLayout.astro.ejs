@@ -1,0 +1,74 @@
+---
+/*
+ * MarketingLayout
+ * ===============
+ * Every public page: header, mobile drawer, footer, the sticky CTA and the breadcrumb's structured data.
+ */
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Header from '@components/layout/Header.astro';
+import MobileNav from '@components/layout/MobileNav.astro';
+import Footer from '@components/layout/Footer.astro';
+import StickyCTA from '@components/layout/StickyCTA.astro';
+<% if (layers.search) { -%>
+import SearchOverlay from '@components/search/SearchOverlay.astro';
+<% } -%>
+import BreadcrumbLD from '@components/seo/BreadcrumbLD.astro';
+import type { Locale } from '@data/site';
+import type { SeoProps } from '@utils/seo';
+import { buildBreadcrumb } from '@utils/breadcrumb';
+
+interface Props extends SeoProps {
+  locale: Locale;
+  bodyClass?: string;
+  /** Hide the sticky CTA on pages like /contact where it would be redundant. */
+  hideStickyCta?: boolean;
+  /** Override the final breadcrumb label (e.g. post title for blog detail). */
+  breadcrumbFinalLabel?: string;
+  /** Skip BreadcrumbLD injection (rare). */
+  skipBreadcrumb?: boolean;
+}
+
+const {
+  locale,
+  bodyClass,
+  hideStickyCta = false,
+  breadcrumbFinalLabel,
+  skipBreadcrumb = false,
+  ...seoProps
+} = Astro.props as Props;
+
+const breadcrumb = skipBreadcrumb
+  ? null
+  : buildBreadcrumb(locale, Astro.url.pathname, breadcrumbFinalLabel);
+---
+
+<BaseLayout locale={locale} bodyClass={bodyClass} {...seoProps}>
+  <Fragment slot="head-extra">
+    {breadcrumb && breadcrumb.length > 1 && <BreadcrumbLD items={breadcrumb} />}
+    <slot name="head-extra" />
+  </Fragment>
+
+  <Header locale={locale} />
+  <MobileNav locale={locale} />
+<% if (layers.search) { -%>
+  <SearchOverlay locale={locale} />
+<% } -%>
+
+  <main
+    id="main"
+    data-pagefind-body
+    data-pagefind-filter={`locale:${locale}`}
+    data-pagefind-meta={`locale:${locale}`}
+  >
+    <slot />
+  </main>
+
+  <Footer locale={locale} />
+
+  {!hideStickyCta && <StickyCTA locale={locale} />}
+</BaseLayout>
+
+<script>
+  /* The reveal observer runs on every page, so no Reveal block stays hidden. */
+  import '@scripts/reveal.ts';
+</script>

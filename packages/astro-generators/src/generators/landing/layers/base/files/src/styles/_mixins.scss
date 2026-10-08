@@ -1,0 +1,34 @@
+/* Shared mixins for the global layers; section styles live in each component's <style> block. */
+
+@mixin container {
+  width: 100%;
+  max-width: var(--site-container-max);
+  margin-inline: auto;
+  padding-inline: var(--site-container-px);
+}
+
+@mixin section-spacing {
+  padding-block: var(--site-section-py);
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--site-accent);
+    outline-offset: 2px;
+    border-radius: var(--site-radius-sm);
+  }
+}
+
+@mixin reveal-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 380ms var(--site-ease-out),
+    transform 380ms var(--site-ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@mixin reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}

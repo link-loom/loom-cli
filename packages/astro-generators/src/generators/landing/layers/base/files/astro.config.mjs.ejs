@@ -1,0 +1,61 @@
+// @ts-check
+import { defineConfig } from 'astro/config';
+import { fileURLToPath } from 'node:url';
+<% if (layers.react) { -%>
+import react from '@astrojs/react';
+<% } -%>
+import sitemap from '@astrojs/sitemap';
+import icon from 'astro-icon';
+<% if (layers.search) { -%>
+import pagefind from 'astro-pagefind';
+<% } -%>
+<% if (layers.editor) { -%>
+import blogEditor from './integrations/blog-editor.mjs';
+<% } -%>
+
+/** @param {string} relative */
+const fromRoot = (relative) => fileURLToPath(new URL(relative, import.meta.url));
+
+export default defineConfig({
+  site: <%- quote(url) %>,
+  output: 'static',
+  trailingSlash: 'ignore',
+  i18n: {
+    defaultLocale: <%- quote(defaultLocale) %>,
+    locales: ['en', 'es'],
+    routing: { prefixDefaultLocale: true, redirectToDefaultLocale: false },
+  },
+  integrations: [
+<% if (layers.react) { -%>
+    react(),
+<% } -%>
+<% if (layers.editor) { -%>
+    blogEditor(),
+<% } -%>
+    icon({ include: { ic: ['*'] } }),
+    sitemap({
+      i18n: { defaultLocale: <%- quote(defaultLocale) %>, locales: { en: 'en-US', es: 'es-ES' } },
+      // The editor exists only in development, and search results are not pages worth indexing.
+      filter: (page) => !/\/(editor|api)\//.test(page) && !/\/(en|es)\/search\/?$/.test(page),
+    }),
+<% if (layers.search) { -%>
+    pagefind(),
+<% } -%>
+  ],
+  server: { port: <%- port %> },
+  vite: {
+    resolve: {
+      alias: {
+        '@': fromRoot('./src'),
+        '@components': fromRoot('./src/components'),
+        '@layouts': fromRoot('./src/layouts'),
+        '@views': fromRoot('./src/views'),
+        '@data': fromRoot('./src/data'),
+        '@utils': fromRoot('./src/utils'),
+        '@styles': fromRoot('./src/styles'),
+        '@scripts': fromRoot('./src/scripts'),
+      },
+    },
+    css: { preprocessorOptions: { scss: { api: 'modern-compiler' } } },
+  },
+});

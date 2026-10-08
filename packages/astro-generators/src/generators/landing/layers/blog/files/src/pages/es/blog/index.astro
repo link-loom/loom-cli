@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+import BlogListing from '@components/blog/BlogListing.astro';
+
+const locale = 'es' as const;
+const posts = await getCollection('blog', ({ data }) =>
+  !data.is_draft && data.locale === locale,
+);
+---
+
+<BlogListing locale={locale} posts={posts} />

@@ -1,0 +1,26 @@
+---
+/*
+ * Reveal
+ * ======
+ * Applies `data-reveal` and an optional stagger delay; src/scripts/reveal.ts reveals it when it enters the viewport.
+ * data-* attributes pass through.
+ *
+ *   <Reveal>...</Reveal>
+ *   <Reveal delay={120}>...</Reveal>
+ *   <Reveal as="article" class="something" data-category="guides">...</Reveal>
+ */
+interface Props {
+  delay?: number;
+  as?: 'div' | 'article' | 'section' | 'header' | 'span' | 'li';
+  class?: string;
+  [data: `data-${string}`]: string;
+}
+
+const { delay = 0, as: Tag = 'div', class: className, ...attributes } = Astro.props as Props;
+const classes = ['site-reveal', className].filter(Boolean).join(' ');
+const style = delay > 0 ? `--reveal-delay:${delay}ms` : undefined;
+---
+
+<Tag class={classes} data-reveal style={style} {...attributes}>
+  <slot />
+</Tag>

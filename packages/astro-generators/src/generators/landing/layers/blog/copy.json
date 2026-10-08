@@ -1,0 +1,34 @@
+{
+  "en": {
+    "blog": {
+      "meta": { "title": "Blog", "description": "Notes from the team behind {name}." },
+      "eyebrow": "Blog",
+      "title": "Notes from the team behind {name}.",
+      "deck": "Ideas, guides and news about {name}.",
+      "empty": "More posts on the way.",
+      "all": "All",
+      "categoriesLabel": "Blog categories",
+      "read": "Read",
+      "readingTime": "{minutes} min read",
+      "keepReading": "Keep reading",
+      "moreFromBlog": "More from the blog",
+      "back": "Blog"
+    }
+  },
+  "es": {
+    "blog": {
+      "meta": { "title": "Blog", "description": "Notas del equipo detrás de {name}." },
+      "eyebrow": "Blog",
+      "title": "Notas del equipo detrás de {name}.",
+      "deck": "Ideas, guías y novedades sobre {name}.",
+      "empty": "Pronto habrá más publicaciones.",
+      "all": "Todo",
+      "categoriesLabel": "Categorías del blog",
+      "read": "Leer",
+      "readingTime": "{minutes} min de lectura",
+      "keepReading": "Sigue leyendo",
+      "moreFromBlog": "Más del blog",
+      "back": "Blog"
+    }
+  }
+}

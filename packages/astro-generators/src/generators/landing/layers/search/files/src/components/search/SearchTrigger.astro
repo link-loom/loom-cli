@@ -1,0 +1,66 @@
+---
+/*
+ * SearchTrigger — opens the global SearchOverlay (no navigation).
+ * Icon-only button; pairs with ⌘K / Ctrl+K shortcut.
+ */
+import type { Locale } from '@data/site';
+import { getCopy } from '@utils/copy';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+  class?: string;
+}
+
+const { locale, class: className } = Astro.props as Props;
+const t = getCopy(locale).search;
+---
+
+<button
+  type="button"
+  class={`site-search-trigger ${className ?? ''}`.trim()}
+  aria-label={t.label}
+  data-search-trigger
+>
+  <Icon name="ic:baseline-search" size={20} class="site-search-trigger__icon" />
+</button>
+
+<style>
+  .site-search-trigger {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 50%;
+    color: var(--site-ink-700);
+    cursor: pointer;
+    transition: background var(--site-transition-fast), color var(--site-transition-fast);
+  }
+  .site-search-trigger:hover {
+    background: var(--site-cream);
+    color: var(--site-brand-primary);
+  }
+</style>
+
+<script>
+  /* Cmd/Ctrl+K opens the overlay (via custom event handled in search-overlay.ts).
+     Multiple SearchTrigger instances can render on the same page (e.g. Header
+     desktop + MobileNav), so wire every trigger, not just the first. */
+  (() => {
+    const triggers = document.querySelectorAll<HTMLButtonElement>('[data-search-trigger]');
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('site:search:open'));
+      });
+    });
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('site:search:open'));
+      }
+    });
+  })();
+</script>

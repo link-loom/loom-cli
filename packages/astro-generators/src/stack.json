@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.2",
+    "@iconify-json/ic": "^1.2.4",
+    "@link-loom/react-sdk": "^1.1.79",
+    "astro": "^5.18.1",
+    "astro-icon": "^1.1.5",
+    "astro-pagefind": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.4",
+    "pagefind": "^1.5.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@link-loom/cli": "^3.0.0-alpha.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "sass": "^1.100.0",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,174 @@
+/*
+ * <%- name %> design tokens
+ * <%- '='.repeat(name.length + 14) %>
+ * Crisp white and warm cream bands, near-black type at full contrast, a solid pill CTA, one signature accent
+ * (thread, keyword, highlights) and a playful multicolor set for graphic elements (icon tiles, dots, chips). The
+ * brand colors live in the logo and brand moments. Every color of the site is a token here: components never
+ * carry a hex value. `link-loom brand colors` rewrites the brand and accent block.
+ */
+
+:root {
+  /* Ink and canvas: the contrast engine */
+  --site-ink-900: #131316;
+  --site-ink-700: #33353a;
+  --site-ink-500: #4c4f56;
+  --site-ink-300: #9a9da3;
+  --site-ink-100: #e9e6e0;
+
+  --site-white: #ffffff;
+  --site-black: #000000;
+  --site-paper: #fdfcfa;
+  --site-cream: #faf5ee;
+  --site-cream-deep: #f4ede3;
+
+  /* On dark: the ink bands (closing call to action, dark cards, footer) */
+  --site-ondark: #131316;
+  --site-ondark-soft: rgba(255, 255, 255, 0.75);
+  --site-ondark-border: rgba(255, 255, 255, 0.14);
+
+  /* Brand and signature accent */
+  --site-brand: <%- palette.brand %>;
+  --site-brand-alt: <%- palette.brandAlt %>;
+  --site-accent: <%- palette.accent %>;
+  --site-accent-deep: <%- palette.accentDeep %>;
+  --site-accent-soft: <%- palette.accentSoft %>;
+  --site-accent-tint: <%- palette.accentTint %>;
+
+  /* Primary action: the solid pill of every main CTA */
+  --site-brand-primary: <%- palette.cta %>;
+  --site-brand-primary-dark: <%- palette.ctaDark %>;
+
+  /* Playful set, for graphic elements only */
+  --site-c-coral: #f0655c;
+  --site-c-cyan: #37b6e0;
+  --site-c-amber: #ffb020;
+  --site-c-green: #2fb673;
+  --site-c-purple: #8b5cf6;
+  --site-c-pink: #ef5ba1;
+  --site-c-blue: #4f8df5;
+  --site-c-indigo: #3c4876;
+  --site-c-coral-t: #fde5e3;
+  --site-c-cyan-t: #dcf3fb;
+  --site-c-amber-t: #ffefd1;
+  --site-c-green-t: #d8f3e6;
+  --site-c-purple-t: #ece5fd;
+  --site-c-pink-t: #fce0ef;
+  --site-c-blue-t: #e2edfe;
+  --site-c-indigo-t: #e6ebfa;
+
+  /* Thread: the soft line palette of connectors and accent rules */
+  --site-thread-1: #ffb08a;
+  --site-thread-2: #f7a29b;
+  --site-thread-3: #f5a3cb;
+  --site-thread-4: #c3aefa;
+  --site-thread-5: #a3c3f9;
+  --site-thread-6: #96d9b9;
+  --site-thread-muted: #a39c92;
+  --site-grad-thread: linear-gradient(
+    90deg,
+    var(--site-thread-1) 0%,
+    var(--site-thread-2) 20%,
+    var(--site-thread-3) 40%,
+    var(--site-thread-4) 60%,
+    var(--site-thread-5) 80%,
+    var(--site-thread-6) 100%
+  );
+
+  /* States */
+  --site-success: #2fb673;
+  --site-success-deep: #0e7e7d;
+  --site-success-tint: #e4f4f1;
+  --site-warning: #ffb020;
+  --site-warning-deep: #b45309;
+  --site-warning-tint: #fef3c7;
+  --site-danger: #e5484d;
+  --site-danger-deep: #8a2020;
+  --site-danger-tint: #fad4d4;
+  --site-info: #37b6e0;
+
+  /* Code blocks */
+  --site-code-bg: #1e1e1e;
+  --site-code-fg: #d4d4d4;
+
+  /* Typography */
+  --site-font-display: '<%- fonts.display %>', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --site-font-sans: '<%- fonts.body %>', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --site-font-mono: '<%- fonts.mono %>', ui-monospace, 'SF Mono', Consolas, monospace;
+
+  --site-fs-display-xl: clamp(36px, 4vw, 60px);
+  --site-fs-display-lg: clamp(38px, 4.8vw, 64px);
+  --site-fs-h1: clamp(34px, 4vw, 48px);
+  --site-fs-h2: clamp(28px, 3.2vw, 42px);
+  --site-fs-h3: clamp(21px, 2.2vw, 26px);
+  --site-fs-h4: clamp(18px, 1.6vw, 20px);
+  --site-fs-body-lg: clamp(17px, 1.3vw, 19px);
+  --site-fs-body: 16px;
+  --site-fs-body-sm: 14px;
+  --site-fs-eyebrow: 12px;
+  --site-fs-mono-sm: 12px;
+
+  --site-lh-tight: 1.02;
+  --site-lh-snug: 1.12;
+  --site-lh-base: 1.5;
+  --site-lh-loose: 1.62;
+
+  --site-ls-display: -0.025em;
+  --site-ls-heading: -0.015em;
+  --site-ls-tight: -0.01em;
+  --site-ls-normal: 0;
+  --site-ls-wide: 0.08em;
+
+  --site-fw-light: 300;
+  --site-fw-regular: 400;
+  --site-fw-medium: 500;
+  --site-fw-semibold: 600;
+  --site-fw-bold: 700;
+
+  /* Radius */
+  --site-radius-xs: 6px;
+  --site-radius-sm: 10px;
+  --site-radius-md: 16px;
+  --site-radius-lg: 22px;
+  --site-radius-xl: 30px;
+  --site-radius-2xl: 40px;
+  --site-radius-pill: 999px;
+
+  /* Shadows: neutral and crisp */
+  --site-shadow-xs: 0 1px 2px rgba(19, 19, 22, 0.06);
+  --site-shadow-sm: 0 4px 14px -4px rgba(19, 19, 22, 0.08), 0 1px 2px rgba(19, 19, 22, 0.05);
+  --site-shadow-md: 0 12px 32px -12px rgba(19, 19, 22, 0.16), 0 4px 10px -4px rgba(19, 19, 22, 0.06);
+  --site-shadow-lg: 0 28px 64px -24px rgba(19, 19, 22, 0.22);
+  --site-shadow-card: 0 14px 40px -14px rgba(19, 19, 22, 0.12), 0 4px 12px -4px rgba(19, 19, 22, 0.05);
+  --site-shadow-hover: 0 22px 50px -16px rgba(19, 19, 22, 0.2), 0 8px 20px -6px rgba(19, 19, 22, 0.08);
+
+  /* Layout */
+  --site-container-max: 1280px;
+  --site-container-max-wide: 1440px;
+  --site-container-px: clamp(20px, 3.6vw, 44px);
+  --site-section-py: clamp(72px, 9vw, 112px);
+  --site-section-py-tight: clamp(56px, 6vw, 80px);
+
+  --site-space-1: 8px;
+  --site-space-2: 16px;
+  --site-space-3: 24px;
+  --site-space-4: 32px;
+  --site-space-6: 48px;
+  --site-space-8: 64px;
+  --site-space-12: 96px;
+  --site-space-16: 128px;
+
+  /* Motion: snappy; the hero never fades in */
+  --site-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --site-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --site-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --site-transition-fast: 180ms var(--site-ease-out);
+  --site-transition-base: 240ms var(--site-ease-out);
+  --site-transition-slow: 420ms var(--site-ease-out);
+
+  /* Z-index */
+  --site-z-base: 1;
+  --site-z-nav: 50;
+  --site-z-sticky-cta: 60;
+  --site-z-modal: 100;
+  --site-z-toast: 200;
+}

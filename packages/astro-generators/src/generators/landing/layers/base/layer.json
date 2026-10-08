@@ -1,0 +1,16 @@
+{
+  "id": "base",
+  "dependencies": ["@astrojs/sitemap", "@iconify-json/ic", "astro", "astro-icon"],
+  "devDependencies": ["@astrojs/check", "@link-loom/cli", "sass", "sharp", "typescript"],
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "verify": "link-loom check && astro check && astro build",
+    "gen:images": "link-loom images generate",
+    "optimize:images": "link-loom images optimize",
+    "og:compose": "link-loom images og",
+    "version-patch": "npm version patch && git push --tags"
+  }
+}

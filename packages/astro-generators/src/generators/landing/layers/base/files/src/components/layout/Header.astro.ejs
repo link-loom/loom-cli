@@ -1,0 +1,500 @@
+---
+/*
+ * Header
+ * ======
+ * Glass strip: the logo, the menu of data/nav.ts in the middle (links, dropdowns, mega menus) and the actions on
+ * the right (search, get started, sign in, language). Below 1024px a menu button opens MobileNav.
+ */
+import { SITE, type Locale } from '@data/site';
+import { HEADER_NAV } from '@data/nav';
+import { getCopy } from '@utils/copy';
+import { localizedPath } from '@utils/i18n';
+import { linkHref, signUpHref } from '@utils/links';
+import LangSwitcher from '@components/layout/LangSwitcher.astro';
+<% if (layers.search) { -%>
+import SearchTrigger from '@components/search/SearchTrigger.astro';
+<% } -%>
+import Button from '@components/ui/Button.astro';
+import Icon from '@components/ui/Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props as Props;
+const t = getCopy(locale).nav;
+const currentPath = Astro.url.pathname;
+const homeHref = localizedPath(locale, '/');
+const signInHref = SITE.auth.signIn;
+const getStartedHref = signUpHref(locale);
+
+/* Every candidate href (top-level links and every dropdown child); only the LONGEST one that matches the current
+   path is "current", so a deep route lights up its most specific entry and not its parent. */
+const candidateHrefs: string[] = [];
+for (const item of HEADER_NAV) {
+  if (item.path || item.href) candidateHrefs.push(linkHref(item, locale));
+  const nested = [
+    ...(item.children ?? []),
+    ...(item.groups ?? []).flatMap((group) => group.children),
+    ...(item.footerLinks ?? []),
+  ];
+  for (const child of nested) candidateHrefs.push(linkHref(child, locale));
+}
+
+function matchesPath(href: string): boolean {
+  if (href === homeHref) return currentPath === homeHref;
+  return currentPath === href || currentPath.startsWith(`${href}/`);
+}
+
+const bestMatchHref = candidateHrefs.filter(matchesPath).sort((a, b) => b.length - a.length)[0] ?? '';
+
+function isCurrent(href: string): boolean {
+  if (href === homeHref) return currentPath === homeHref;
+  return href === bestMatchHref;
+}
+---
+
+<a href="#main" class="site-skip">{t.skipToContent}</a>
+
+<header class="site-header" data-header>
+  <div class="site-header__inner">
+    <a class="site-header__brand" href={homeHref} aria-label={SITE.name}>
+      <span class="site-header__brand-mark" aria-hidden="true">
+        <img src={SITE.brand.logo} alt="" height="30" />
+      </span>
+    </a>
+
+    <nav class="site-header__nav" aria-label={t.primaryNav}>
+      {HEADER_NAV.map((item, index) => {
+        const isMega = !!item.groups?.length;
+        const hasChildren = isMega || !!(item.children && item.children.length);
+        const dropdownId = `site-dropdown-${index}`;
+        const itemHref = item.path || item.href ? linkHref(item, locale) : '#';
+
+        /* Disclosure pattern: a button with aria-expanded that shows plain links. */
+        return hasChildren ? (
+          <div class="site-header__nav-item has-dropdown" data-dropdown>
+            <button
+              type="button"
+              class="site-header__nav-link site-header__nav-link--trigger"
+              aria-expanded="false"
+              aria-controls={dropdownId}
+              data-dropdown-trigger
+            >
+              {item.label[locale]}
+              <Icon name="ic:baseline-keyboard-arrow-down" size={14} class="site-header__nav-chevron" />
+            </button>
+
+            <div
+              id={dropdownId}
+              class:list={['site-header__dropdown', isMega && 'site-header__dropdown--mega']}
+              data-dropdown-panel
+            >
+              {isMega ? (
+                <div class="site-header__mega">
+                  <div class="site-header__mega-groups">
+                    {item.groups!.map((group) => (
+                      <div class="site-header__mega-group">
+                        <h3 class="site-header__mega-label">{group.label[locale]}</h3>
+                        <ul>
+                          {group.children.map((child) => {
+                            const childHref = linkHref(child, locale);
+                            return (
+                              <li>
+                                <a
+                                  class:list={['site-header__mega-link', isCurrent(childHref) && 'is-current']}
+                                  href={childHref}
+                                  aria-current={isCurrent(childHref) ? 'page' : undefined}
+                                >{child.label[locale]}</a>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  {item.footerLinks && item.footerLinks.length > 0 && (
+                    <div class="site-header__mega-foot">
+                      {item.footerLinks.map((child) => {
+                        const childHref = linkHref(child, locale);
+                        return (
+                          <a
+                            class:list={['site-header__mega-foot-link', isCurrent(childHref) && 'is-current']}
+                            href={childHref}
+                          >
+                            {child.label[locale]}
+                            <Icon name="ic:baseline-arrow-forward" size={14} />
+                          </a>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div class="site-header__dropdown-inner">
+                  {item.children!.map((child) => {
+                    const childHref = linkHref(child, locale);
+                    return (
+                      <a
+                        class={`site-header__dropdown-item ${isCurrent(childHref) ? 'is-current' : ''}`}
+                        href={childHref}
+                        aria-current={isCurrent(childHref) ? 'page' : undefined}
+                      >
+                        <span class="site-header__dropdown-label">{child.label[locale]}</span>
+                        {child.description && (
+                          <span class="site-header__dropdown-desc">{child.description[locale]}</span>
+                        )}
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <a
+            class={`site-header__nav-link ${isCurrent(itemHref) ? 'is-current' : ''}`}
+            href={itemHref}
+            aria-current={isCurrent(itemHref) ? 'page' : undefined}
+          >{item.label[locale]}</a>
+        );
+      })}
+    </nav>
+
+    <div class="site-header__actions">
+<% if (layers.search) { -%>
+      <SearchTrigger locale={locale} class="site-header__search" />
+<% } -%>
+      <Button href={getStartedHref} variant="primary" size="sm" class="site-header__cta">
+        {t.signUp}
+      </Button>
+      {signInHref && <a href={signInHref} class="site-header__sign-in">{t.signIn}</a>}
+      <span class="site-header__divider" aria-hidden="true"></span>
+      <LangSwitcher locale={locale} class="site-header__lang" />
+      <button
+        type="button"
+        class="site-header__menu-toggle"
+        aria-label={t.openMenu}
+        aria-expanded="false"
+        aria-controls="site-mobile-nav"
+        data-menu-toggle
+      >
+        <Icon name="ic:baseline-menu" size={24} />
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-skip {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    transform: translateY(-150%);
+    background: var(--site-ink-900);
+    color: var(--site-white);
+    padding: 12px 20px;
+    border-radius: var(--site-radius-sm);
+    font-weight: var(--site-fw-medium);
+    z-index: 999;
+    transition: transform var(--site-transition-base);
+  }
+  .site-skip:focus {
+    transform: translateY(0);
+  }
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--site-z-nav);
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid transparent;
+    transition: background var(--site-transition-base), border-color var(--site-transition-base), box-shadow var(--site-transition-base);
+  }
+  .site-header[data-scrolled='true'] {
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom-color: var(--site-ink-100);
+    box-shadow: 0 4px 20px -8px rgba(19, 19, 22, 0.08);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: var(--site-container-max-wide);
+    margin-inline: auto;
+    padding-inline: var(--site-container-px);
+    height: 72px;
+  }
+
+  /* ---------- brand ---------- */
+  .site-header__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--site-brand-primary);
+    font-family: var(--site-font-display);
+    font-weight: var(--site-fw-semibold);
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .site-header__brand-mark {
+    display: inline-flex;
+    height: 30px;
+  }
+  .site-header__brand-mark img { height: 100%; width: auto; display: block; }
+
+  /* ---------- nav ---------- */
+  .site-header__nav {
+    display: none;
+    align-items: center;
+    gap: 36px;
+  }
+  .site-header__nav-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .site-header__nav-item.has-dropdown::after {
+    /* Invisible hover bridge between trigger and panel */
+    content: '';
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    top: 100%;
+    height: 18px;
+    pointer-events: none;
+  }
+  .site-header__nav-item.has-dropdown:hover::after,
+  .site-header__nav-item.has-dropdown:focus-within::after {
+    pointer-events: auto;
+  }
+  .site-header__nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    font-family: var(--site-font-sans);
+    font-size: 14px;
+    font-weight: var(--site-fw-medium);
+    color: var(--site-ink-700);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    transition: color var(--site-transition-fast);
+  }
+  .site-header__nav-link:hover {
+    color: var(--site-brand-primary);
+  }
+  .site-header__nav-link.is-current {
+    color: var(--site-brand-primary);
+    font-weight: var(--site-fw-semibold);
+  }
+  .site-header__nav-chevron {
+    opacity: 0.6;
+    transition: transform var(--site-transition-fast);
+  }
+
+  /* ---------- dropdown panel ---------- */
+  .site-header__dropdown {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: 50%;
+    transform: translate(-50%, -8px);
+    min-width: 360px;
+    max-width: 420px;
+    background: var(--site-white);
+    border: 1px solid var(--site-ink-100);
+    border-radius: var(--site-radius-lg);
+    box-shadow: 0 16px 40px -12px rgba(19, 19, 22, 0.18);
+    padding: 10px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 200ms var(--site-ease-out), transform 240ms var(--site-ease-out);
+  }
+  .site-header__dropdown-inner {
+    display: grid;
+    gap: 2px;
+  }
+  .site-header__dropdown-item {
+    display: grid;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: var(--site-radius-sm);
+    text-decoration: none;
+    color: var(--site-ink-900);
+    transition: background var(--site-transition-fast);
+  }
+  .site-header__dropdown-item:hover {
+    background: var(--site-cream);
+  }
+  .site-header__dropdown-item.is-current {
+    background: var(--site-accent-tint);
+  }
+  .site-header__dropdown-label {
+    display: block;
+    font-family: var(--site-font-sans);
+    font-size: 14px;
+    font-weight: var(--site-fw-semibold);
+    color: var(--site-ink-900);
+    letter-spacing: -0.005em;
+  }
+  .site-header__dropdown-desc {
+    display: block;
+    font-family: var(--site-font-sans);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--site-ink-500);
+  }
+
+  /* ---------- mega-menu (Solutions) ---------- */
+  .site-header__dropdown--mega {
+    min-width: 0;
+    max-width: none;
+    width: min(620px, calc(100vw - 48px));
+    padding: 0;
+  }
+  .site-header__mega-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 24px;
+    padding: 20px 22px 14px;
+  }
+  .site-header__mega-label {
+    margin: 0 0 6px;
+    padding-inline: 10px;
+    font-family: var(--site-font-mono);
+    font-size: 11px;
+    font-weight: var(--site-fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--site-ink-500);
+  }
+  .site-header__mega-group ul {
+    display: grid;
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .site-header__mega-link {
+    display: block;
+    padding: 8px 10px;
+    border-radius: var(--site-radius-sm);
+    font-size: 14px;
+    font-weight: var(--site-fw-medium);
+    color: var(--site-ink-900);
+    text-decoration: none;
+    transition: background var(--site-transition-fast);
+  }
+  .site-header__mega-link:hover {
+    background: var(--site-cream);
+  }
+  .site-header__mega-link.is-current {
+    background: var(--site-accent-tint);
+  }
+  .site-header__mega-foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+    padding: 12px 32px;
+    border-top: 1px solid var(--site-ink-100);
+    background: var(--site-cream);
+    border-radius: 0 0 var(--site-radius-lg) var(--site-radius-lg);
+  }
+  .site-header__mega-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: var(--site-fw-semibold);
+    color: var(--site-ink-900);
+    text-decoration: none;
+  }
+  .site-header__mega-foot-link:hover {
+    color: var(--site-accent);
+  }
+
+  /* Open state — driven by JS toggle on click, hover/focus on desktop */
+  .site-header__nav-item.has-dropdown:hover .site-header__dropdown,
+  .site-header__nav-item.has-dropdown:focus-within .site-header__dropdown,
+  .site-header__nav-item.has-dropdown.is-open .site-header__dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+  .site-header__nav-item.has-dropdown:hover .site-header__nav-chevron,
+  .site-header__nav-item.has-dropdown:focus-within .site-header__nav-chevron,
+  .site-header__nav-item.has-dropdown.is-open .site-header__nav-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ---------- actions ---------- */
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .site-header__divider {
+    display: none;
+    width: 1px;
+    height: 22px;
+    background: var(--site-ink-100);
+    margin-inline: 2px;
+  }
+  @media (min-width: 1024px) {
+    .site-header__divider { display: block; }
+  }
+  .site-header__sign-in {
+    font-size: 14px;
+    font-weight: var(--site-fw-medium);
+    color: var(--site-ink-700);
+    padding: 8px 4px;
+    white-space: nowrap;
+    transition: color var(--site-transition-fast);
+  }
+  .site-header__sign-in:hover {
+    color: var(--site-brand-primary);
+  }
+
+  .site-header__menu-toggle {
+    display: none;
+    color: var(--site-ink-900);
+    padding: 8px;
+    border-radius: var(--site-radius-sm);
+  }
+  .site-header__menu-toggle:hover {
+    background: var(--site-cream);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (min-width: 1024px) {
+    .site-header__nav { display: flex; }
+  }
+  @media (max-width: 1023px) {
+    .site-header__sign-in { display: none; }
+    /* :global() because these classes are passed into child components
+       (LangSwitcher / SearchTrigger), and the rule from this file's
+       scoped <style> would otherwise be filtered out by Astro's data-cid. */
+    :global(.site-header__lang)   { display: none !important; }
+    :global(.site-header__search) { display: none !important; }
+    .site-header__menu-toggle { display: inline-flex; }
+  }
+  @media (max-width: 540px) {
+    .site-header__cta { display: none; }
+  }
+</style>
+
+<script>
+  import '@scripts/header-scroll.ts';
+  import '@scripts/header-dropdown.ts';
+</script>

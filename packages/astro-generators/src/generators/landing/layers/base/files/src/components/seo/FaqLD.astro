@@ -1,0 +1,19 @@
+---
+/* FAQPage JSON-LD — must mirror, word for word, the FAQ rendered on the page. */
+interface Props {
+  items: { q: string; a: string }[];
+}
+
+const { items } = Astro.props as Props;
+const payload = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(payload)}></script>
