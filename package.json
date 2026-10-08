@@ -19,7 +19,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "version-patch": "node scripts/release.mjs patch"
+    "version-patch": "node scripts/release.mjs patch",
+    "version-tag": "node scripts/release.mjs tag"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

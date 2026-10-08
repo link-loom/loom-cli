@@ -174,6 +174,10 @@ node packages/cli/bin/link-loom.js describe
 
 All packages share one version. `npm run version-patch` bumps every package, commits, tags `v<version>` and pushes the
 tag; GitHub Actions then publishes to npm with trusted publishing (no token). Prerelease versions go to the `next` tag.
+A release also moves the `@link-loom/cli` range that generated projects get to the new version; `node
+scripts/release.mjs patch --no-push` does all of it but the push. `npm run version-tag` tags the version already in
+`package.json` on the current commit, without bumping or pushing (for a version committed without its tag);
+`git push origin v<version>` then publishes it.
 
 ## License
 
