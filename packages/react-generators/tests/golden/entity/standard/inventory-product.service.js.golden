@@ -1,0 +1,58 @@
+import { BaseApi } from "@link-loom/react-sdk";
+
+import { pageOf, recordOf, resultOf } from "@utils/response.utils";
+
+const ENDPOINT = "/inventory/product";
+
+/**
+ * Product records on the app's backend, by the Link Loom contract: GET /inventory/product/<queryselector>, POST,
+ * PATCH and DELETE /inventory/product. Every method answers the data or throws with the backend's message.
+ */
+export default class InventoryProductService extends BaseApi {
+  constructor(args) {
+    super(args);
+
+    this.serviceEndpoints = {
+      baseUrl: import.meta.env.VITE_APP_BACKEND_URL,
+      get: `${ENDPOINT}/`,
+      create: ENDPOINT,
+      update: ENDPOINT,
+      delete: ENDPOINT,
+    };
+  }
+
+  /** One page of records, narrowed by `search` when there is one: `{ items, totalItems }`. */
+  async list({ search = "", page = 1, pageSize = 25 } = {}) {
+    const response = await this.getByParameters({
+      queryselector: search ? "search" : "all",
+      search,
+      exclude_status: "deleted",
+      page,
+      pageSize,
+    });
+    return pageOf(resultOf(response));
+  }
+
+  /** One record by id, as the kit's record reads it: `{ record }` (null when it does not exist). */
+  async read(id) {
+    const response = await this.getByParameters({ queryselector: "id", search: id });
+    return { record: recordOf(resultOf(response)) };
+  }
+
+  async add(payload) {
+    return resultOf(await this.create(payload));
+  }
+
+  async edit(id, payload) {
+    return resultOf(await this.update({ ...payload, id }));
+  }
+
+  async remove(id) {
+    return resultOf(await this.delete({ id }));
+  }
+
+  /** Archive: POST { id } to /inventory/product/archive. */
+  async archive(id) {
+    return resultOf(await this.post({ id }, { endpoint: `${ENDPOINT}/archive` }));
+  }
+}

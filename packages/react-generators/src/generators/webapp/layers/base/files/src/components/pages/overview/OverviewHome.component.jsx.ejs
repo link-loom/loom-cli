@@ -1,0 +1,33 @@
+import { useCopy } from "@i18n/index";
+import { CARD_COLORS } from "@constants/theme";
+import { iconFor } from "@constants/iconLibrary";
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+import { appPath } from "@utils/paths.utils";
+import appConfig from "@app-config";
+import HubCards from "@components/shared/hub-cards/HubCards.component";
+
+/** The door every role comes in through: a greeting and the places to go next. */
+export default function OverviewHomeComponent() {
+  const copy = useCopy();
+  const { firstName } = useCurrentUser();
+
+  const cards = [
+<%_ if (layers.stoneos) { _%>
+    { id: "apps", href: appPath("/stoneos/apps"), title: copy.overview.cards.apps.title, description: copy.overview.cards.apps.description, Icon: iconFor("apps"), color: CARD_COLORS.brand },
+    { id: "store", href: appPath("/stoneos/store"), title: copy.overview.cards.store.title, description: copy.overview.cards.store.description, Icon: iconFor("store"), color: CARD_COLORS.cyan },
+<%_ } _%>
+    { id: "manage-app", href: appPath(`/${appConfig.slug}/home`), title: copy.manageApp.title, description: copy.overview.cards.manageApp.description, Icon: iconFor("manageApp"), color: CARD_COLORS.purple },
+    { id: "management", href: appPath("/management"), title: copy.management.title, description: copy.overview.cards.management.description, Icon: iconFor("settings"), color: CARD_COLORS.blue },
+<%_ if (layers.stoneos) { _%>
+    { id: "help", href: appPath("/help-center"), title: copy.helpCenter.title, description: copy.overview.cards.help.description, Icon: iconFor("support"), color: CARD_COLORS.green },
+<%_ } _%>
+  ];
+
+  return (
+    <HubCards
+      title={firstName ? copy.overview.greeting.replace("{firstName}", firstName) : copy.overview.title}
+      subtitle={copy.overview.subtitle}
+      cards={cards}
+    />
+  );
+}

@@ -1,0 +1,41 @@
+<%_
+  const EMPTY = { text: '""', longtext: '""', email: '""', url: '""', number: '""', date: '""', boolean: "false", options: '""' };
+_%>
+// A saved <%- text.singular %> as the backend answers it, and the values and payload the record makes of it.
+
+export const RECORD = Object.freeze({
+  id: "<%- entityType %>-1",
+<%_ fields.forEach((field) => { _%>
+  <%- field.name %>: <%- field.sample.record %>,
+<%_ }) _%>
+});
+
+export const EMPTY_VALUES = Object.freeze({
+<%_ editableFields.forEach((field) => { _%>
+  <%- field.name %>: <%- EMPTY[field.type] %>,
+<%_ }) _%>
+});
+
+export const VALUES = Object.freeze({
+<%_ editableFields.forEach((field) => { _%>
+  <%- field.name %>: <%- field.sample.value %>,
+<%_ }) _%>
+});
+
+export const PAYLOAD = Object.freeze({
+<%_ editableFields.forEach((field) => { _%>
+  <%- field.name %>: <%- field.sample.payload %>,
+<%_ }) _%>
+});
+
+/** A stand-in for <%- serviceClass %>: every method a Jest mock. */
+export const serviceMock = () => ({
+  list: jest.fn(),
+  read: jest.fn(),
+  add: jest.fn(),
+  edit: jest.fn(),
+  remove: jest.fn(),
+<%_ customActions.filter((action) => action.kind === "call").forEach((action) => { _%>
+  <%- action.key %>: jest.fn(),
+<%_ }) _%>
+});

@@ -1,0 +1,70 @@
+import { fireEvent, screen } from "@testing-library/react";
+import { useAuth } from "@veripass/react-sdk";
+
+import appConfig from "@app-config";
+import Navbar from "@components/layouts/navbar/Navbar.component";
+import { lastProps } from "@tests/support/sdk-stubs";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@veripass/react-sdk", () => ({ useAuth: jest.fn() }));
+// The real SDK, with the overlay pieces stubbed: the Omnisearch registry also imports the entities' services.
+jest.mock("@link-loom/react-sdk", () => ({
+  ...jest.requireActual("@link-loom/react-sdk"),
+  ...jest.requireActual("@tests/support/sdk-stubs").stubs(["NavbarBreadcrumb", "OmniSearch"]),
+  useGlobalShortcuts: () => {},
+}));
+<%_ if (layers.stoneos) { _%>
+jest.mock("@link-loom/cloud-sdk", () => ({
+  ...jest.requireActual("@link-loom/cloud-sdk"),
+  useAppSearchCategory: () => null,
+}));
+<%_ } _%>
+<%_ if (layers.commandCenter) { _%>
+jest.mock("@components/layouts/extensions/command-center.hooks", () => ({
+  useCommandCenterSearch: () => ({ categories: [], commands: [] }),
+}));
+<%_ } _%>
+
+describe("Navbar", () => {
+  beforeEach(() => {
+    useAuth.mockReturnValue({ user: { identity: "user-1", payload: { profile: { display_name: "Ada Lovelace", primary_email_address: "ada@example.test" } } } });
+  });
+
+  it("links the logo to the overview", () => {
+    renderWithProviders(<Navbar />);
+
+    expect(screen.getByRole("link", { name: appConfig.name })).toHaveAttribute("href", `${appConfig.basePath}/overview`);
+  });
+
+  it("offers exactly the person's data, My profile, Security, Settings, Lock screen and Sign out", () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Your account" }));
+
+    expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
+    expect(screen.getByText("ada@example.test")).toBeInTheDocument();
+    expect(screen.getAllByRole("menuitem").map((item) => item.textContent)).toEqual([
+      "My profile",
+      "Security",
+      "Settings",
+      "Lock screen",
+      "Sign out",
+    ]);
+    expect(screen.getByRole("menuitem", { name: "Security" })).toHaveAttribute("href", `${appConfig.basePath}/security/api-keys`);
+  });
+
+  it("opens the + menu with what people create often", () => {
+    renderWithProviders(<Navbar />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(screen.getByText("API key")).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: /Your next shortcut/ })).toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("gives Omnisearch the app's commands", () => {
+    renderWithProviders(<Navbar />);
+
+    expect(lastProps.OmniSearch.staticCommands.map((command) => command.id)).toContain("nav-overview");
+  });
+});

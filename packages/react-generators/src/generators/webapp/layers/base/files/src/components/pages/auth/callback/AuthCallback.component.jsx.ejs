@@ -1,0 +1,69 @@
+import { useCallback, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AUTH_DECISIONS, useAuth, VeripassFederatedCallback } from "@veripass/react-sdk";
+
+import { useCopy } from "@i18n/index";
+import { appPath } from "@utils/paths.utils";
+
+const FEDERATED_PARAMS = ["token", "session", "error", "decision"];
+
+/**
+ * Where every sign-in lands. A federated (OIDC) return carries the session in the URL and Veripass reads it; a
+ * standard sign-in arrives with the session already stored. Either way the backend's decision routes the person:
+ * in, to <%= layers.signup ? 'the organization setup' : 'sign-in with the reason' %>, or back to sign-in.
+ */
+export default function AuthCallbackComponent() {
+  const copy = useCopy();
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const { user, getAuthDecision } = useAuth();
+  const isFederatedReturn = useMemo(() => {
+    const params = new URLSearchParams(search);
+    return FEDERATED_PARAMS.some((name) => params.has(name));
+  }, [search]);
+
+  const routeByDecision = useCallback(
+    (decision, session) => {
+      if (decision === AUTH_DECISIONS.DENY) {
+        navigate(`/auth/login?error=${encodeURIComponent(session?.authorization?.reason?.message || "")}`, { replace: true });
+        return;
+      }
+
+      if (decision === AUTH_DECISIONS.NEEDS_ORGANIZATION_JOIN || decision === AUTH_DECISIONS.NEEDS_APP_REGISTRATION) {
+<%_ if (layers.signup) { _%>
+        navigate("/setup/workspace#view=hub", { replace: true });
+<%_ } else { _%>
+        navigate(`/auth/login?error=${encodeURIComponent(copy.auth.callback.notAdmitted)}`, { replace: true });
+<%_ } _%>
+        return;
+      }
+
+      navigate(appPath("/overview"), { replace: true });
+    },
+<%_ if (layers.signup) { _%>
+    [navigate]
+<%_ } else { _%>
+    [navigate, copy]
+<%_ } _%>
+  );
+
+  useEffect(() => {
+    if (isFederatedReturn || !user) {
+      return;
+    }
+
+    routeByDecision(getAuthDecision(), user);
+  }, [isFederatedReturn, user, getAuthDecision, routeByDecision]);
+
+  const waiting = (
+    <section className="d-flex justify-content-center align-items-center vh-100">
+      <p className="text-muted">{copy.auth.callback.entering}</p>
+    </section>
+  );
+
+  if (!isFederatedReturn) {
+    return waiting;
+  }
+
+  return <VeripassFederatedCallback onDecision={routeByDecision} loadingComponent={waiting} />;
+}

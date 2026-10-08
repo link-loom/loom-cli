@@ -1,0 +1,10 @@
+node_modules
+coverage
+.git
+.DS_Store
+src
+public
+tests
+npm-debug.log*
+.env.local
+.env.*.local

@@ -1,0 +1,111 @@
+<%_
+  const confirmable = customActions.filter((action) => action.kind === "replace" || action.kind === "call");
+  const needsUser = scoped && has.replace;
+_%>
+<%_ if (has.quickActions) { _%>
+import { useMemo, useState } from "react";
+import { Typography } from "@mui/material";
+import { ConfirmDialog } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+<%_ if (needsUser) { _%>
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+<%_ } _%>
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+<%_ if (has.replace) { _%>
+import { createPayloadOf, valuesOf } from "../<%- utilsFile %>";
+<%_ } _%>
+
+/**
+ * The actions of a <%- entity %> that ask before they run: <%- [has.delete && "delete", ...confirmable.map((action) => action.id)].filter(Boolean).join(", ") %>. `pending` is
+ * `{ action, record }`; `onDone({ deleted, created })` tells the list or the record what changed.
+ */
+export default function <%- Prefix %>QuickActions({ pending, onClose, onDone }) {
+  const copy = useCopy();
+  const entityCopy = copy.<%- copyPath %>;
+<%_ if (needsUser) { _%>
+  const { organizationId } = useCurrentUser();
+<%_ } _%>
+  const service = useMemo(() => new <%- serviceClass %>(), []);
+  const [busy, setBusy] = useState(false);
+  const [failure, setFailure] = useState("");
+  const record = pending?.record;
+
+  const confirmations = {
+<%_ if (has.delete) { _%>
+    delete: {
+      ...entityCopy.deleteConfirm,
+      confirmLabel: entityCopy.deleteConfirm.action,
+      danger: true,
+      run: async () => {
+        await service.remove(record.id);
+        return { deleted: true };
+      },
+    },
+<%_ } _%>
+<%_ confirmable.forEach((action) => { _%>
+    "<%- action.id %>": {
+      ...entityCopy.<%- action.key %>Confirm,
+      confirmLabel: entityCopy.actions.<%- action.key %>,
+<%_ if (action.kind === "replace") { _%>
+      danger: true,
+      // A rotation: the new <%- entity %> exists before the old one stops working.
+      run: async () => {
+        const created = await service.add(createPayloadOf(valuesOf(record)<%- scoped ? ", { organizationId }" : "" %>));
+        await service.remove(record.id);
+        return { deleted: true, created };
+      },
+<%_ } else { _%>
+      run: async () => {
+        await service.<%- action.key %>(record.id);
+        return {};
+      },
+<%_ } _%>
+    },
+<%_ }) _%>
+  };
+  const confirmation = pending ? confirmations[pending.action] : null;
+
+  const close = () => {
+    setFailure("");
+    onClose();
+  };
+
+  const confirm = async () => {
+    setBusy(true);
+    setFailure("");
+    try {
+      const outcome = await confirmation.run();
+      onClose();
+      onDone(outcome);
+    } catch (error) {
+      setFailure(error.message || entityCopy.actionFailed);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <ConfirmDialog
+      open={Boolean(confirmation)}
+      title={confirmation?.title}
+      description={
+        <>
+          <Typography variant="body2">{confirmation?.description}</Typography>
+          {failure && (
+            <Typography variant="body2" role="alert" sx={{ color: "error.main", mt: 1 }}>
+              {failure}
+            </Typography>
+          )}
+        </>
+      }
+      confirmLabel={confirmation?.confirmLabel}
+      cancelLabel={copy.common.cancel}
+      danger={confirmation?.danger}
+      busy={busy}
+      onConfirm={confirm}
+      onClose={close}
+    />
+  );
+}
+<%_ } _%>

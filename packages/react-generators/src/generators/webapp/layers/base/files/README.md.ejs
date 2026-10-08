@@ -1,0 +1,41 @@
+# <%= name %>
+
+<%= description || 'A Link Loom webapp.' %>
+
+Created with [`@link-loom/cli`](https://github.com/link-loom/loom-cli): the Mi Retail workspace frame on
+`@link-loom/react-shell`, Veripass sign-in<%= layers.signup ? ' and sign-up' : '' %>, Overview and Advanced settings<%= layers.stoneos ? ', the StoneOS launchpad and the platform hubs' : '' %><%= layers.commandCenter ? ', and the Sommatic Command Center' : '' %>.
+
+## Run it
+
+```bash
+npm install
+npm run dev
+```
+
+The app opens at `http://localhost:<%= port %>`. URLs and keys are in `.env.local`, which
+is not versioned; `.env.sample` lists every variable.
+
+## Scripts
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server |
+| `npm run build` | Production build in `dist/` |
+| `npm test` | Unit and flow tests (Jest) |
+| `npm run verify` | Lint, `link-loom check`, tests and build: run it before every push |
+| `npm run version-patch` | Bumps the patch version, tags it and pushes the tag |
+| `npm run docker:build` | Builds the image in `docker/Dockerfile` |
+
+## Add to it
+
+Use the CLI so every piece follows the same standard:
+
+```bash
+npx link-loom describe --project
+npx link-loom add page --domain reports --name Monthly
+```
+
+## Docker
+
+`docker/Dockerfile` builds and serves the app with nginx on port 8080 (health check at `/system/health`).
+`docker/Dockerfile.runtime` serves a `dist/` you already built: `npm run build && docker build -f docker/Dockerfile.runtime .`

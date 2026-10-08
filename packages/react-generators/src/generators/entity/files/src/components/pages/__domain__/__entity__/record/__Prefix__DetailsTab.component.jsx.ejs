@@ -1,0 +1,40 @@
+<%_
+  const detailFields = editableFields.filter((field) => field.type === "longtext");
+_%>
+<%_ if (detailFields.length) { _%>
+import { Box, TextField, Typography } from "@mui/material";
+import { STOS_QUIET_FIELD } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+
+/**
+ * The long texts of a <%- text.singular %>, each under its own section title, the same while creating and on the saved
+ * record. `missing` holds the required fields left empty after a failed save; they are framed until filled in.
+ */
+export default function <%- Prefix %>DetailsTab({ values, setField, missing, disabled }) {
+  const copy = useCopy();
+  const entityCopy = copy.<%- copyPath %>;
+
+  return (
+    <Box className="stos-property-form">
+<%_ detailFields.forEach((field) => { _%>
+      <Typography variant="overline" className="stos-property-form__section">
+        {entityCopy.fields.<%- field.name %>}
+      </Typography>
+      <Box className="stos-property-field stos-property-field--wide">
+        <TextField
+          {...STOS_QUIET_FIELD}
+          multiline
+          minRows={4}
+          value={values.<%- field.name %>}
+          disabled={disabled}
+          error={missing.has("<%- field.name %>")}
+          inputProps={{ "aria-label": entityCopy.fields.<%- field.name %> }}
+          onChange={(event) => setField("<%- field.name %>", event.target.value)}
+        />
+      </Box>
+<%_ }) _%>
+    </Box>
+  );
+}
+<%_ } _%>

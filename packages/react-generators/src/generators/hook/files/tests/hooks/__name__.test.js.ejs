@@ -1,0 +1,15 @@
+import { act, renderHook } from "@testing-library/react";
+
+import <%- name %> from "@hooks/<%- name %>.hook";
+
+describe("<%- name %>", () => {
+  it("keeps a value, changes it and resets it", () => {
+    const { result } = renderHook(() => <%- name %>("first"));
+
+    act(() => result.current.setValue("second"));
+    expect(result.current.value).toBe("second");
+
+    act(() => result.current.reset());
+    expect(result.current.value).toBe("first");
+  });
+});

@@ -1,0 +1,23 @@
+import appConfig from "@app-config";
+import { appPath } from "@utils/paths.utils";
+
+const MANAGE_APP_ROOT = `/${appConfig.slug}`;
+
+/** The cards of "Manage <%= name %>", in order: data only. `to` is relative to the app's base route. */
+export const MANAGE_APP_SECTIONS = [
+  { id: "identity", to: `${MANAGE_APP_ROOT}/identity`, titleKey: "manageApp.identity.title", descriptionKey: "manageApp.identity.card", icon: "identity", color: "brand" },
+  { id: "locale", to: `${MANAGE_APP_ROOT}/locale`, titleKey: "manageApp.locale.title", descriptionKey: "manageApp.locale.card", icon: "locale", color: "cyan" },
+<%_ if (layers.stoneos) { _%>
+  { id: "subscription", to: `${MANAGE_APP_ROOT}/subscription/home`, titleKey: "manageApp.subscription.title", descriptionKey: "manageApp.subscription.card", icon: "billing", color: "amber" },
+<%_ } _%>
+  { id: "contracts", to: `${MANAGE_APP_ROOT}/contracts`, titleKey: "manageApp.contracts.title", descriptionKey: "manageApp.contracts.card", icon: "contracts", color: "coral" },
+<%_ if (layers.stoneos) { _%>
+  { id: "support", to: "/help-center", titleKey: "helpCenter.title", descriptionKey: "manageApp.support.card", icon: "support", color: "green" },
+<%_ } _%>
+];
+
+/** The breadcrumb above every page of "Manage <%= name %>". */
+export const manageAppTrail = (copy) => [
+  { label: copy.management.title, to: appPath("/management") },
+  { label: copy.manageApp.title, to: appPath(`${MANAGE_APP_ROOT}/home`) },
+];

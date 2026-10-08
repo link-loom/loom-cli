@@ -1,0 +1,33 @@
+import { screen } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import ManagementHomeComponent from "@components/pages/management/home/ManagementHome.component";
+import { renderWithProviders } from "@tests/support/render";
+
+describe("Advanced settings", () => {
+  it("lists the app's own sections first", () => {
+    renderWithProviders(<ManagementHomeComponent />);
+
+    expect(screen.getByRole("link", { name: new RegExp(`Manage ${appConfig.name}`) })).toHaveAttribute(
+      "href",
+      `${appConfig.basePath}/${appConfig.slug}/home`
+    );
+    expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", `${appConfig.basePath}/security/api-keys`);
+  });
+<%_ if (layers.stoneos) { _%>
+
+  it("adds a card per visible platform, named by what it gives", () => {
+    renderWithProviders(<ManagementHomeComponent />);
+
+    expect(screen.getByRole("link", { name: /Intelligence/ })).toHaveAttribute("href", `${appConfig.basePath}/platforms/sommatic`);
+    expect(screen.getAllByRole("link").length).toBeGreaterThanOrEqual(appConfig.stoneos.platforms.length);
+  });
+
+  it("speaks Spanish when the person does", () => {
+    renderWithProviders(<ManagementHomeComponent />, { locale: "es" });
+
+    expect(screen.getByRole("heading", { name: "Configuración avanzada" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /^Identidad/ })).toBeInTheDocument();
+  });
+<%_ } _%>
+});

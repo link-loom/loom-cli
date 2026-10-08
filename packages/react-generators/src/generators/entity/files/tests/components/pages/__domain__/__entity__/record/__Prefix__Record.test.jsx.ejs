@@ -1,0 +1,126 @@
+<%_
+  const requiredOthers = editableFields.filter((field) => field.required && !field.isTitle && field.type !== "boolean");
+  const recordActions = rowActions.filter((action) => action === "copy-id" || action === "delete");
+  const hasRequired = editableFields.some((field) => field.required && field.type !== "boolean");
+  const secretsInBand = fields.filter((field) => field.type === "secret");
+  const CHANGED = { text: ['"Changed"', '"Changed"'], email: ['"other@example.com"', '"other@example.com"'], url: ['"https://example.org"', '"https://example.org"'], number: ['"7"', "7"], date: ['"2026-02-01"', '"2026-02-01"'] };
+  const bandTyped = editableFields.find((field) => !field.isTitle && CHANGED[field.type]);
+_%>
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { RECORD, VALUES, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+<%_ if (secretsInBand.length) { _%>
+import { maskSecret } from "@components/pages/<%- domain %>/<%- entity %>/<%- utilsFile %>";
+<%_ } _%>
+import <%- Prefix %>Record from "@components/pages/<%- domain %>/<%- entity %>/record/<%- Prefix %>Record.component";
+
+const mockService = serviceMock();
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const entityCopy = en.<%- copyPath %>;
+const handlers = () => ({ onCreated: jest.fn(), onChanged: jest.fn(), onClose: jest.fn(), onDone: jest.fn() });
+<%_ if (requiredOthers.length) { _%>
+
+// The required fields besides the title, filled in as a person would.
+const fillRequired = () => {
+<%_ requiredOthers.forEach((field) => { _%>
+<%_ if (field.type === "options") { _%>
+  fireEvent.keyDown(screen.getByLabelText(entityCopy.fields.<%- field.name %>), { key: "ArrowDown" });
+  fireEvent.click(screen.getByRole("option", { name: entityCopy.options.<%- field.name %>[VALUES.<%- field.name %>] }));
+<%_ } else { _%>
+  fireEvent.change(screen.getByLabelText(entityCopy.fields.<%- field.name %>), { target: { value: VALUES.<%- field.name %> } });
+<%_ } _%>
+<%_ }) _%>
+};
+<%_ } _%>
+
+describe("<%- Prefix %>Record", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("creates a new one with what the person typed", async () => {
+    const props = handlers();
+    mockService.add.mockResolvedValue({ id: "created-1" });
+    renderWithProviders(<<%- Prefix %>Record record={null} {...props} />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: entityCopy.fields.<%- titleField.name %> }), {
+      target: { value: VALUES.<%- titleField.name %> },
+    });
+<%_ if (requiredOthers.length) { _%>
+    fillRequired();
+<%_ } _%>
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.create }));
+
+    await waitFor(() => expect(props.onCreated).toHaveBeenCalledWith({ id: "created-1" }));
+    expect(mockService.add).toHaveBeenCalledWith(expect.objectContaining({ <%- titleField.name %>: VALUES.<%- titleField.name %> }));
+  });
+<%_ if (hasRequired) { _%>
+
+  it("says which required fields are missing instead of creating", () => {
+    renderWithProviders(<<%- Prefix %>Record record={null} {...handlers()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.create }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(entityCopy.requiredMissing.split(":")[0]);
+    expect(mockService.add).not.toHaveBeenCalled();
+  });
+<%_ } _%>
+
+  it("edits a saved one where it is read", async () => {
+    const props = handlers();
+    mockService.edit.mockResolvedValue({});
+    renderWithProviders(<<%- Prefix %>Record record={RECORD} {...props} />);
+
+    fireEvent.change(screen.getByDisplayValue(RECORD.<%- titleField.name %>), { target: { value: "Renamed" } });
+    fireEvent.click(await screen.findByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(mockService.edit).toHaveBeenCalledWith(RECORD.id, expect.objectContaining({ <%- titleField.name %>: "Renamed" }))
+    );
+    expect(props.onChanged).toHaveBeenCalled();
+  });
+<%_ if (bandTyped) { _%>
+
+  it("edits its properties in the band", async () => {
+    mockService.edit.mockResolvedValue({});
+    renderWithProviders(<<%- Prefix %>Record record={RECORD} {...handlers()} />);
+
+    fireEvent.change(screen.getByLabelText(entityCopy.fields.<%- bandTyped.name %>), { target: { value: <%- CHANGED[bandTyped.type][0] %> } });
+    fireEvent.click(await screen.findByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(mockService.edit).toHaveBeenCalledWith(RECORD.id, expect.objectContaining({ <%- bandTyped.name %>: <%- CHANGED[bandTyped.type][1] %> }))
+    );
+  });
+<%_ } _%>
+<%_ secretsInBand.forEach((field) => { _%>
+
+  it("shows the <%- field.name %> masked, never whole", () => {
+    renderWithProviders(<<%- Prefix %>Record record={RECORD} {...handlers()} />);
+
+    expect(screen.getByText(maskSecret(RECORD.<%- field.name %>))).toBeInTheDocument();
+    expect(screen.queryByText(RECORD.<%- field.name %>)).not.toBeInTheDocument();
+  });
+<%_ }) _%>
+<%_ if (recordActions.includes("delete")) { _%>
+
+  it("deletes from its menu after the person confirms", async () => {
+    const props = handlers();
+    mockService.remove.mockResolvedValue({});
+    renderWithProviders(<<%- Prefix %>Record record={RECORD} {...props} />);
+
+    fireEvent.click(screen.getByRole("button", { name: en.common.options }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: entityCopy.deleteConfirm.action }));
+    fireEvent.click(await screen.findByRole("button", { name: entityCopy.deleteConfirm.action }));
+
+    await waitFor(() => expect(props.onChanged).toHaveBeenCalledWith({ deleted: true }));
+    expect(mockService.remove).toHaveBeenCalledWith(RECORD.id);
+  });
+<%_ } _%>
+});

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/service",
+  "title": "Service",
+  "description": "Adds a service on BaseApi for one backend entity (Link Loom contract: GET <endpoint>/<queryselector>, POST, PATCH, DELETE) with list, read, add, edit and remove, and its test. `add entity` already writes one for its CRUD.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["domain", "entity"],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Domain in kebab-case, as in the backend",
+      "x-prompt": { "en": "Domain", "es": "Dominio" },
+      "x-order": 1
+    },
+    "entity": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Entity in kebab-case and singular",
+      "x-prompt": { "en": "Entity", "es": "Entidad" },
+      "x-order": 2
+    },
+    "endpoint": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/-]+$",
+      "description": "Backend path under VITE_APP_BACKEND_URL. Defaults to /<domain>/<entity>"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["none", "organization"],
+      "default": "none",
+      "description": "organization: list() asks for the records of an organization (queryselector organization-id)"
+    },
+    "calls": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+      "default": [],
+      "description": "Actions the backend exposes as POST <endpoint>/<action> with { id }; each becomes a method"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# Runtime-only image: serves a dist/ already built on the host (`npm run build`). With no RUN step, an amd64 image
+# can be assembled on an arm64 machine without emulating any code: dist/ is architecture-independent.
+#
+#   npm run build && docker build -f docker/Dockerfile.runtime .
+FROM nginx:1.27-alpine
+
+COPY dist /usr/share/nginx/html
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 8080

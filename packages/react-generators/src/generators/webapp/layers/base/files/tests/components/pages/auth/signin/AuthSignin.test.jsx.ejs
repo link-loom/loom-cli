@@ -1,0 +1,39 @@
+import appConfig from "@app-config";
+import AuthSigninComponent from "@components/pages/auth/signin/AuthSignin.component";
+import { lastProps } from "@tests/support/sdk-stubs";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@veripass/react-sdk", () => jest.requireActual("@tests/support/sdk-stubs").stubs(["VeripassSignInManager"]));
+
+describe("AuthSignin", () => {
+  it("signs in with Veripass and lands on the callback", () => {
+    renderWithProviders(<AuthSigninComponent />, { route: "/auth/login", path: "/auth/login" });
+
+    expect(lastProps.VeripassSignInManager).toMatchObject({
+      redirectUrl: "/auth/callback",
+      organization: expect.objectContaining({ name: appConfig.name }),
+      ui: expect.objectContaining({ title: "Welcome back" }),
+    });
+  });
+
+  it("opens the organization in the address", () => {
+    renderWithProviders(<AuthSigninComponent />, { route: "/auth/login/acme", path: "/auth/login/:organizationSlug" });
+
+    expect(lastProps.VeripassSignInManager.organizationSlug).toBe("acme");
+  });
+<%_ if (layers.signup) { _%>
+
+  it("offers sign-up", () => {
+    renderWithProviders(<AuthSigninComponent />, { route: "/auth/login", path: "/auth/login" });
+
+    expect(lastProps.VeripassSignInManager.registerUrl).toBe("/auth/signup");
+  });
+<%_ } else { _%>
+
+  it("offers no sign-up", () => {
+    renderWithProviders(<AuthSigninComponent />, { route: "/auth/login", path: "/auth/login" });
+
+    expect(lastProps.VeripassSignInManager.registerUrl).toBeUndefined();
+  });
+<%_ } _%>
+});

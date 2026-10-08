@@ -1,0 +1,20 @@
+import { useSommaticContextSource } from "@sommatic/react-sdk";
+
+export const PAGE_METADATA = {
+  path: "<%- basePath %><%- listPath %>",
+  description: <%- json(`${text.Plural} of ${appName}: ${scoped ? "" : "search, "}open, create${rowActions.includes("delete") ? " and delete" : ""} ${text.plural}.`) %>,
+};
+
+/** Tells the Command Center which page the person is on and what it offers. */
+export default function <%- Prefix %>ListSommatic() {
+  useSommaticContextSource(
+    {
+      id: "page-context",
+      ...PAGE_METADATA,
+      getData: () => ({ type: "<%- entityType %>-list" }),
+    },
+    []
+  );
+
+  return null;
+}

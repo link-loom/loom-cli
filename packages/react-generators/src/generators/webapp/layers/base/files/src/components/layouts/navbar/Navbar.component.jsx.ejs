@@ -1,0 +1,171 @@
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { NavbarBreadcrumb, OmniSearch, useGlobalShortcuts } from "@link-loom/react-sdk";
+import { AppNavbar, QuickAddMenu, UserMenu<%= layers.stoneos ? ', AppsMenu' : '' %> } from "@link-loom/react-shell";
+<%_ if (layers.stoneos) { _%>
+import { stoneOSAppsMenuItems, useAppSearchCategory } from "@link-loom/cloud-sdk";
+<%_ } _%>
+import {
+  AccountCircleOutlined as ProfileIcon,
+  GppGoodOutlined as SecurityIcon,
+  LockOutlined as LockIcon,
+  Logout as LogoutIcon,
+  SettingsOutlined as SettingsIcon,
+} from "@mui/icons-material";
+
+import appConfig from "@app-config";
+import { useCopy<%= layers.stoneos ? ', useLocale' : '' %> } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+import { copyAt } from "@utils/copy.utils";
+import { appPath, publicUrl } from "@utils/paths.utils";
+<%_ if (layers.commandCenter) { _%>
+import { useCommandCenterSearch } from "@components/layouts/extensions/command-center.hooks";
+<%_ } _%>
+import { OMNISEARCH_CATEGORIES, OMNISEARCH_COMMANDS } from "./omnisearch.registry";
+import { QUICK_ADD_ACTIONS, QUICK_ADD_PLACEHOLDER } from "./quick-add.registry";
+
+/** The top bar: logo, breadcrumb, Omnisearch (⌘K)<%= layers.stoneos ? ', the StoneOS apps menu' : '' %> and the person's menu. */
+export default function Navbar() {
+  const copy = useCopy();
+<%_ if (layers.stoneos) { _%>
+  const { locale } = useLocale();
+<%_ } _%>
+  const navigate = useNavigate();
+  const { name, email, organizationId, identity } = useCurrentUser();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+<%_ if (layers.stoneos) { _%>
+
+  // The records of the organization's apps, listed beside the app's own. Asked for only once the search opens.
+  const appSearchCategory = useAppSearchCategory({
+    enabled: isSearchOpen,
+    baseUrl: import.meta.env.VITE_LOOM_CLOUD_BACKEND_URL || "",
+    labels: copy.navbar.appSearch,
+    locale,
+  });
+<%_ } _%>
+<%_ if (layers.commandCenter) { _%>
+  const commandCenterSearch = useCommandCenterSearch({ closeSearch });
+<%_ } _%>
+
+  const categories = [
+<%_ if (layers.commandCenter) { _%>
+    ...commandCenterSearch.categories,
+<%_ } _%>
+    ...OMNISEARCH_CATEGORIES.map((category) => ({
+      id: category.id,
+      label: copyAt(copy, category.labelKey),
+      service: category.service,
+      payload: category.payload({ organizationId, identity }),
+      icon: iconElement(category.icon),
+      ...(category.itemLabel ? { renderItem: (item) => category.itemLabel(item) } : {}),
+      onSelect: (item, go) => go(appPath(category.to(item))),
+      ...(category.createTo
+        ? { onCreate: (_query, go) => go(appPath(category.createTo)), createLabel: copyAt(copy, category.createLabelKey) }
+        : {}),
+    })),
+<%_ if (layers.stoneos) { _%>
+    ...(appSearchCategory ? [appSearchCategory] : []),
+<%_ } _%>
+  ];
+
+  const staticCommands = OMNISEARCH_COMMANDS.map((command) => ({
+    id: command.id,
+    label: copyAt(copy, command.labelKey),
+    icon: iconElement(command.icon),
+    shortcut: command.shortcut,
+    keys: command.keys,
+    isPriority: true,
+    action: (go) => {
+      closeSearch();
+      go(appPath(command.to));
+    },
+  }));
+
+  useGlobalShortcuts([
+    { keys: ["meta", "k"], action: () => setIsSearchOpen((open) => !open) },
+    ...staticCommands.map((command) => ({ keys: command.keys, action: () => command.action(navigate) })),
+  ]);
+<%_ if (layers.stoneos) { _%>
+
+  const appsMenu = useMemo(
+    () =>
+      stoneOSAppsMenuItems({
+        locale,
+        iconBasePath: publicUrl(appConfig.stoneos.platformIconPath),
+        storeLink: appPath("/stoneos/store"),
+        labels: copy.navbar.appsMenu,
+      }),
+    [locale, copy]
+  );
+<%_ } _%>
+
+  const quickAddActions = QUICK_ADD_ACTIONS.map((action) => ({
+    label: copyAt(copy, action.labelKey),
+    description: copyAt(copy, action.descriptionKey),
+    to: appPath(action.to),
+    icon: iconElement(action.icon, { fontSize: "small" }),
+  }));
+
+  const userItems = useMemo(
+    () => [
+      { to: appPath("/account/profile"), icon: <ProfileIcon fontSize="small" />, label: copy.userMenu.profile },
+      { to: appPath("/security/api-keys"), icon: <SecurityIcon fontSize="small" />, label: copy.userMenu.security },
+      { to: appPath("/management"), icon: <SettingsIcon fontSize="small" />, label: copy.userMenu.settings },
+      { to: "/auth/lock-screen", icon: <LockIcon fontSize="small" />, label: copy.userMenu.lock },
+    ],
+    [copy]
+  );
+
+  return (
+    <AppNavbar
+      logo={{
+        to: appPath("/overview"),
+        label: appConfig.name,
+        wordmarkSrc: publicUrl(appConfig.brand.headerWordmark),
+        markSrc: publicUrl(appConfig.brand.headerMark),
+      }}
+      menuLabel={copy.shell.openNavigation}
+      start={<NavbarBreadcrumb ariaLabel={copy.shell.location} />}
+      center={
+        <OmniSearch
+          categories={categories}
+<%_ if (layers.commandCenter) { _%>
+          staticCommands={[...staticCommands, ...commandCenterSearch.commands]}
+<%_ } else { _%>
+          staticCommands={staticCommands}
+<%_ } _%>
+          open={isSearchOpen}
+          onOpenChange={setIsSearchOpen}
+          labels={copy.omnisearch}
+        />
+      }
+      end={
+        <>
+          <QuickAddMenu
+            actions={quickAddActions}
+            label={copy.navbar.create}
+            placeholder={
+              QUICK_ADD_PLACEHOLDER && {
+                label: copyAt(copy, QUICK_ADD_PLACEHOLDER.labelKey),
+                description: copyAt(copy, QUICK_ADD_PLACEHOLDER.descriptionKey),
+                icon: iconElement(QUICK_ADD_PLACEHOLDER.icon, { fontSize: "small" }),
+              }
+            }
+          />
+<%_ if (layers.stoneos) { _%>
+          <AppsMenu {...appsMenu} label={copy.navbar.apps} />
+<%_ } _%>
+          <UserMenu
+            name={name}
+            email={email}
+            label={copy.userMenu.label}
+            items={userItems}
+            exit={{ to: "/auth/logout", icon: <LogoutIcon fontSize="small" />, label: copy.userMenu.exit }}
+          />
+        </>
+      }
+    />
+  );
+}

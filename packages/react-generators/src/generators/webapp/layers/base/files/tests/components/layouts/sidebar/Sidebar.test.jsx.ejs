@@ -1,0 +1,52 @@
+import { fireEvent, screen } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import Sidebar from "@components/layouts/sidebar/Sidebar.component";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@link-loom/react-sdk", () => ({
+  SidebarLinkRow: ({ title, active, onClick }) => (
+    <button type="button" aria-current={active ? "page" : undefined} onClick={onClick}>
+      {title}
+    </button>
+  ),
+  SidebarGroup: ({ title }) => <span>{title}</span>,
+  useSidebarCondensed: () => false,
+}));
+jest.mock("@veripass/react-sdk", () => jest.requireActual("@tests/support/sdk-stubs").stubs(["VeripassOrganizationSwitcher"]));
+<%_ if (layers.stoneos) { _%>
+jest.mock("@link-loom/cloud-sdk", () => ({
+  StoneOSLaunchpadSidebar: ({ children, footer }) => (
+    <aside aria-label="Main navigation">
+      <ul>{children}</ul>
+      {footer}
+    </aside>
+  ),
+}));
+<%_ } _%>
+
+describe("Sidebar", () => {
+  it("shows the rows of navigation.js with their section title", () => {
+    renderWithProviders(<Sidebar />);
+
+    expect(screen.getByRole("button", { name: "Overview" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Advanced settings" })).toBeInTheDocument();
+    expect(screen.getAllByText("Settings", { selector: ".menu-title" }).length).toBeGreaterThan(0);
+    expect(screen.getByTestId("VeripassOrganizationSwitcher")).toBeInTheDocument();
+  });
+
+  it("marks Advanced settings active on every page it groups", () => {
+    renderWithProviders(<Sidebar />, { route: `${appConfig.basePath}/${appConfig.slug}/locale` });
+
+    expect(screen.getByRole("button", { name: "Advanced settings" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: "Overview" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("navigates under the app's base route", () => {
+    renderWithProviders(<Sidebar />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Advanced settings" }));
+
+    expect(screen.getByTestId("location")).toHaveTextContent(`${appConfig.basePath}/management`);
+  });
+});

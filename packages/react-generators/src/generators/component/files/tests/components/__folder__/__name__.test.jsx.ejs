@@ -1,0 +1,15 @@
+import { render, screen } from "@testing-library/react";
+
+import <%- name %> from "@components/<%- folder %>/<%- name %>.component";
+
+describe("<%- name %>", () => {
+  it("renders what it holds", () => {
+    render(
+      <<%- name %>>
+        <span data-testid="content" />
+      </<%- name %>>
+    );
+
+    expect(screen.getByTestId("content")).toBeInTheDocument();
+  });
+});

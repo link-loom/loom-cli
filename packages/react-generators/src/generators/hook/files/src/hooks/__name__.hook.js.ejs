@@ -1,0 +1,9 @@
+import { useCallback, useState } from "react";
+
+/** <%- description || "A value the screen keeps, with a way to change it and to go back to where it started." %> */
+export default function <%- name %>(initialValue = null) {
+  const [value, setValue] = useState(initialValue);
+  const reset = useCallback(() => setValue(initialValue), [initialValue]);
+
+  return { value, setValue, reset };
+}

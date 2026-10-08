@@ -1,0 +1,14 @@
+import { screen } from "@testing-library/react";
+
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import <%- Prefix %>Component from "@components/pages/<%- domain %>/<%- name %>/<%- Prefix %>.component";
+
+describe("<%- Prefix %>Component", () => {
+  it("shows its title and what it is for", () => {
+    renderWithProviders(<<%- Prefix %>Component />);
+
+    expect(screen.getByText(en.<%- copyPath %>.title)).toBeInTheDocument();
+    expect(screen.getByText(en.<%- copyPath %>.emptyTitle)).toBeInTheDocument();
+  });
+});

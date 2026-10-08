@@ -1,0 +1,20 @@
+import { useSommaticContextSource } from "@sommatic/react-sdk";
+
+export const PAGE_METADATA = {
+  path: "<%= basePath %>/<%= slug %>/home",
+  description: "Manage <%= name %> — the organization identity, language and theme<%= layers.stoneos ? ", plan and billing" : "" %>, and contracts.",
+};
+
+/** Tells the Command Center which page the person is on and what it offers. */
+export default function ManageAppHomeSommatic() {
+  useSommaticContextSource(
+    {
+      id: "page-context",
+      ...PAGE_METADATA,
+      getData: () => ({ type: "manage-app" }),
+    },
+    []
+  );
+
+  return null;
+}

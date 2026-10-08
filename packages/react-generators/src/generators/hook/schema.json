@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/hook",
+  "title": "Hook",
+  "description": "Adds a hook (src/hooks/use<Name>.hook.js) that keeps a value with a way to set and reset it, and its test.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^use[A-Z][A-Za-z0-9]*$",
+      "description": "Hook name (e.g. useStockFilters)",
+      "x-prompt": { "en": "Hook name", "es": "Nombre del hook" },
+      "x-order": 1
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "description": "One sentence about what it keeps, for its doc comment"
+    }
+  }
+}

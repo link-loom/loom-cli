@@ -1,0 +1,38 @@
+import { fireEvent, screen } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { RECORD, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>DetailComponent from "@components/pages/<%- domain %>/<%- entity %>/record/<%- Prefix %>Detail.component";
+
+const mockService = serviceMock();
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const LIST_ROUTE = `${appConfig.basePath}<%- listPath %>`;
+const PAGE = { path: `${LIST_ROUTE}/:id` };
+
+describe("<%- Prefix %>DetailComponent", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("shows the <%- text.singular %> of the address on its own page", async () => {
+    mockService.read.mockResolvedValue({ record: RECORD });
+    renderWithProviders(<<%- Prefix %>DetailComponent />, { route: `${LIST_ROUTE}/${RECORD.id}`, ...PAGE });
+
+    expect(await screen.findByDisplayValue(RECORD.<%- titleField.name %>)).toBeInTheDocument();
+    expect(mockService.read).toHaveBeenCalledWith(RECORD.id);
+  });
+
+  it("says so when it does not exist, and leads back to the list", async () => {
+    mockService.read.mockResolvedValue({ record: null });
+    renderWithProviders(<<%- Prefix %>DetailComponent />, { route: `${LIST_ROUTE}/missing`, ...PAGE });
+
+    fireEvent.click(await screen.findByRole("button", { name: en.<%- copyPath %>.backToList }));
+    expect(screen.getByTestId("location")).toHaveTextContent(LIST_ROUTE);
+  });
+});

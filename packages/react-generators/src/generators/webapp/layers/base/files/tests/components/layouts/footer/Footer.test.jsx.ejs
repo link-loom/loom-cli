@@ -1,0 +1,21 @@
+import { screen } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import Footer from "@components/layouts/footer/Footer.component";
+import { renderWithProviders } from "@tests/support/render";
+
+describe("Footer", () => {
+  it("signs the page with the year and the product name", () => {
+    renderWithProviders(<Footer />);
+
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(`${new Date().getFullYear()} © ${appConfig.name}`);
+  });
+<%_ if (layers.stoneos) { _%>
+
+  it("links to the help center", () => {
+    renderWithProviders(<Footer />);
+
+    expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute("href", `${appConfig.basePath}/help-center`);
+  });
+<%_ } _%>
+});

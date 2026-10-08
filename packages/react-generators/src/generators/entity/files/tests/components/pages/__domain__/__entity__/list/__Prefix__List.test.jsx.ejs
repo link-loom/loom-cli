@@ -1,0 +1,52 @@
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { RECORD, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>ListComponent from "@components/pages/<%- domain %>/<%- entity %>/list/<%- Prefix %>List.component";
+
+const mockService = serviceMock();
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const LIST_ROUTE = `${appConfig.basePath}<%- listPath %>`;
+const entityCopy = en.<%- copyPath %>;
+
+describe("<%- Prefix %>ListComponent", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("shows a page of <%- text.plural %> from the service", async () => {
+    mockService.list.mockResolvedValue({ items: [RECORD], totalItems: 1 });
+    renderWithProviders(<<%- Prefix %>ListComponent />, { route: LIST_ROUTE });
+
+    expect(await screen.findByText(RECORD.<%- titleField.name %>)).toBeInTheDocument();
+<%_ if (scoped) { _%>
+    expect(mockService.list).toHaveBeenCalledWith({ organizationId: "org-1", page: 1, pageSize: 25 });
+<%_ } else { _%>
+    expect(mockService.list).toHaveBeenCalledWith({ search: "", page: 1, pageSize: 25 });
+<%_ } _%>
+  });
+
+  it("says what the list is for while it is empty, and opens the form of a new one", async () => {
+    mockService.list.mockResolvedValue({ items: [], totalItems: 0 });
+    renderWithProviders(<<%- Prefix %>ListComponent />, { route: LIST_ROUTE });
+
+    expect(await screen.findByText(entityCopy.emptyTitle)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: entityCopy.new })[0]);
+    expect(screen.getByTestId("location")).toHaveTextContent("new=1");
+  });
+
+  it("says what failed and tries again", async () => {
+    mockService.list.mockRejectedValueOnce(new Error("The backend is down")).mockResolvedValue({ items: [], totalItems: 0 });
+    renderWithProviders(<<%- Prefix %>ListComponent />, { route: LIST_ROUTE });
+
+    expect(await screen.findByText("The backend is down")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+    await waitFor(() => expect(mockService.list).toHaveBeenCalledTimes(2));
+  });
+});

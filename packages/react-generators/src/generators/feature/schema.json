@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/feature",
+  "title": "Feature",
+  "description": "Adds a capability to a project after it was created. images: the image manifest (prompts, sizes, destinations), the folder of PNG masters and the scripts gen:images, optimize:images and og:compose, which call `link-loom images`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "enum": ["images"],
+      "description": "The feature to add",
+      "x-prompt": { "en": "Feature", "es": "Capacidad" },
+      "x-order": 1
+    }
+  }
+}

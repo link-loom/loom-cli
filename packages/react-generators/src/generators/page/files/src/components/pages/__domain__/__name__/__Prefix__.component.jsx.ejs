@@ -1,0 +1,21 @@
+import { EmptyState, PageHeader, PageShell } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+
+/** <%- titleEn %><%- descriptionEn ? `: ${descriptionEn.replace(/\.$/, "")}` : "" %>. */
+export default function <%- Prefix %>Component() {
+  const copy = useCopy();
+  const pageCopy = copy.<%- copyPath %>;
+
+  return (
+    <PageShell width="default">
+      <PageHeader icon={iconElement("<%- icon %>")} title={pageCopy.title} description={pageCopy.description} />
+      <section className="row g-3">
+        <div className="col-12">
+          <EmptyState illustration="inbox" title={pageCopy.emptyTitle} description={pageCopy.emptyDescription} />
+        </div>
+      </section>
+    </PageShell>
+  );
+}

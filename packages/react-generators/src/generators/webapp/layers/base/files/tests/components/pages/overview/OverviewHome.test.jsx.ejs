@@ -1,0 +1,28 @@
+import { screen } from "@testing-library/react";
+import { useAuth } from "@veripass/react-sdk";
+
+import appConfig from "@app-config";
+import OverviewHomeComponent from "@components/pages/overview/OverviewHome.component";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@veripass/react-sdk", () => ({ useAuth: jest.fn() }));
+
+describe("Overview", () => {
+  it("greets the person by first name", () => {
+    useAuth.mockReturnValue({ user: { payload: { profile: { first_name: "Ada" } } } });
+    renderWithProviders(<OverviewHomeComponent />);
+
+    expect(screen.getByRole("heading", { name: "Hello, Ada" })).toBeInTheDocument();
+  });
+
+  it("offers the places to go next", () => {
+    useAuth.mockReturnValue({ user: null });
+    renderWithProviders(<OverviewHomeComponent />);
+
+    expect(screen.getByRole("heading", { name: "Overview" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Advanced settings/ })).toHaveAttribute("href", `${appConfig.basePath}/management`);
+<%_ if (layers.stoneos) { _%>
+    expect(screen.getByRole("link", { name: /My apps/ })).toHaveAttribute("href", `${appConfig.basePath}/stoneos/apps`);
+<%_ } _%>
+  });
+});

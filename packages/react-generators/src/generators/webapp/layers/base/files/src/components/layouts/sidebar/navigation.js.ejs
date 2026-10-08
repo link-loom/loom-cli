@@ -1,0 +1,23 @@
+import appConfig from "@app-config";
+
+/**
+ * The sidebar, in order: data only. `link-loom add nav-item` and `add entity` append here.
+ *
+ *   { id, kind: "link", labelKey, icon, to, match?: [paths], sectionKey?, collapseToggle? }
+ *   { id, kind: "group", labelKey, icon, sectionKey?, items: [{ id, labelKey, to, icon? }] }
+ *
+ * `to` and `match` are relative to the app's base route; a link is active on `to` and under any `match` path.
+ * `sectionKey` prints a section title above the row; `icon` names an entry of src/constants/iconLibrary.js.
+ */
+export const NAVIGATION = [
+  { id: "overview", kind: "link", labelKey: "nav.overview", icon: "overview", to: "/overview", collapseToggle: true },
+  {
+    id: "advanced",
+    kind: "link",
+    labelKey: "nav.advanced",
+    icon: "settings",
+    to: "/management",
+    match: [`/${appConfig.slug}`, "/security", "/account"<%- layers.stoneos ? ', "/platforms", "/help-center"' : '' %>],
+    sectionKey: "nav.groups.settings",
+  },
+];

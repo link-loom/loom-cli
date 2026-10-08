@@ -1,0 +1,82 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import { SidebarGroup, SidebarLinkRow, useSidebarCondensed } from "@link-loom/react-sdk";
+<%_ if (layers.stoneos) { _%>
+import { StoneOSLaunchpadSidebar } from "@link-loom/cloud-sdk";
+<%_ } else { _%>
+import { AppSidebar } from "@link-loom/react-shell";
+<%_ } _%>
+import { VeripassOrganizationSwitcher } from "@veripass/react-sdk";
+
+import { useCopy } from "@i18n/index";
+import { iconFor } from "@constants/iconLibrary";
+import { copyAt } from "@utils/copy.utils";
+import { appPath, isUnder } from "@utils/paths.utils";
+import { NAVIGATION } from "./navigation";
+
+const isActive = (pathname, entry) => [entry.to, ...(entry.match || [])].some((to) => isUnder(pathname, appPath(to)));
+
+/** The sidebar rows from navigation.js<%= layers.stoneos ? ', inside the StoneOS launchpad sidebar (apps rail, column and footer)' : '' %>. */
+export default function Sidebar() {
+  const copy = useCopy();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isCondensed = useSidebarCondensed();
+
+  const renderLink = (entry) => {
+    const Icon = iconFor(entry.icon);
+    return (
+      <>
+        {entry.sectionKey && !isCondensed ? <div className="menu-title mt-2">{copyAt(copy, entry.sectionKey)}</div> : null}
+        <SidebarLinkRow
+          title={copyAt(copy, entry.labelKey)}
+          icon={<Icon fontSize="small" />}
+          active={isActive(pathname, entry)}
+          onClick={() => navigate(appPath(entry.to))}
+          withCollapseToggle={Boolean(entry.collapseToggle)}
+          collapseLabel={copy.shell.collapseSidebar}
+          expandLabel={copy.shell.expandSidebar}
+        />
+      </>
+    );
+  };
+
+  const renderGroup = (entry) => {
+    const Icon = iconFor(entry.icon);
+    const items = entry.items.map((item) => {
+      const ItemIcon = item.icon ? iconFor(item.icon) : null;
+      return {
+        id: item.id,
+        label: copyAt(copy, item.labelKey),
+        ...(ItemIcon ? { icon: <ItemIcon fontSize="small" /> } : {}),
+        className: isUnder(pathname, appPath(item.to)) ? "is-active" : undefined,
+        onClick: () => navigate(appPath(item.to)),
+      };
+    });
+
+    return (
+      <>
+        {entry.sectionKey && !isCondensed ? <div className="menu-title mt-2">{copyAt(copy, entry.sectionKey)}</div> : null}
+        <div className="px-0">
+          <SidebarGroup title={copyAt(copy, entry.labelKey)} icon={<Icon fontSize="small" />} isCondensed={isCondensed} defaultExpanded items={items} />
+        </div>
+      </>
+    );
+  };
+
+  const rows = NAVIGATION.map((entry) => (
+    <li className="px-0" key={entry.id}>
+      {entry.kind === "group" ? renderGroup(entry) : renderLink(entry)}
+    </li>
+  ));
+  const footer = <VeripassOrganizationSwitcher isCondensed={isCondensed} />;
+
+<%_ if (layers.stoneos) { _%>
+  return <StoneOSLaunchpadSidebar footer={footer}>{rows}</StoneOSLaunchpadSidebar>;
+<%_ } else { _%>
+  return (
+    <AppSidebar label={copy.shell.mainNavigation} footer={footer}>
+      {rows}
+    </AppSidebar>
+  );
+<%_ } _%>
+}

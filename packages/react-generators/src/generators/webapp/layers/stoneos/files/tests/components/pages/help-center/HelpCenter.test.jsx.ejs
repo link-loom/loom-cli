@@ -1,0 +1,29 @@
+import appConfig from "@app-config";
+import HelpCenterComponent from "@components/pages/help-center/HelpCenter.component";
+import { lastProps } from "@tests/support/sdk-stubs";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@link-loom/cloud-sdk", () => jest.requireActual("@tests/support/sdk-stubs").stubs(["SupportCenterLayout"]));
+<%_ if (layers.commandCenter) { _%>
+jest.mock("@components/layouts/extensions/command-center.hooks", () => ({ useSupportAssistant: () => null }));
+<%_ } _%>
+
+describe("Help center", () => {
+  it("is the app's own help center by default", () => {
+    renderWithProviders(<HelpCenterComponent />);
+
+    expect(lastProps.SupportCenterLayout).toMatchObject({
+      namespaceSlug: appConfig.slug,
+      productSlug: appConfig.slug,
+      productDisplayName: appConfig.name,
+      originSurface: appConfig.slug,
+      locale: "en",
+    });
+  });
+
+  it("serves a platform's help center when told which", () => {
+    renderWithProviders(<HelpCenterComponent namespaceSlug="veripass" productSlug="veripass" productDisplayName="Veripass" />);
+
+    expect(lastProps.SupportCenterLayout.namespaceSlug).toBe("veripass");
+  });
+});

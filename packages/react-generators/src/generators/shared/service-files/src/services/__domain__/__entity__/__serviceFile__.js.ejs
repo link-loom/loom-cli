@@ -1,0 +1,74 @@
+import { BaseApi } from "@link-loom/react-sdk";
+
+import { pageOf, recordOf, resultOf } from "@utils/response.utils";
+
+const ENDPOINT = "<%- endpoint %>";
+
+/**
+ * <%- Entity %> records on the app's backend, by the Link Loom contract: GET <%- endpoint %>/<queryselector>, POST,
+ * PATCH and DELETE <%- endpoint %>. Every method answers the data or throws with the backend's message.
+ */
+export default class <%- serviceClass %> extends BaseApi {
+  constructor(args) {
+    super(args);
+
+    this.serviceEndpoints = {
+      baseUrl: import.meta.env.VITE_APP_BACKEND_URL,
+      get: `${ENDPOINT}/`,
+      create: ENDPOINT,
+      update: ENDPOINT,
+      delete: ENDPOINT,
+    };
+  }
+
+<%_ if (scoped) { _%>
+  /** One page of the organization's records: `{ items, totalItems }`. */
+  async list({ organizationId, page = 1, pageSize = 25 } = {}) {
+    const response = await this.getByParameters({
+      queryselector: "organization-id",
+      search: organizationId,
+      exclude_status: "deleted",
+      page,
+      pageSize,
+    });
+    return pageOf(resultOf(response));
+  }
+<%_ } else { _%>
+  /** One page of records, narrowed by `search` when there is one: `{ items, totalItems }`. */
+  async list({ search = "", page = 1, pageSize = 25 } = {}) {
+    const response = await this.getByParameters({
+      queryselector: search ? "search" : "all",
+      search,
+      exclude_status: "deleted",
+      page,
+      pageSize,
+    });
+    return pageOf(resultOf(response));
+  }
+<%_ } _%>
+
+  /** One record by id, as the kit's record reads it: `{ record }` (null when it does not exist). */
+  async read(id) {
+    const response = await this.getByParameters({ queryselector: "id", search: id });
+    return { record: recordOf(resultOf(response)) };
+  }
+
+  async add(payload) {
+    return resultOf(await this.create(payload));
+  }
+
+  async edit(id, payload) {
+    return resultOf(await this.update({ ...payload, id }));
+  }
+
+  async remove(id) {
+    return resultOf(await this.delete({ id }));
+  }
+<%_ customActions.filter((action) => action.kind === "call").forEach((action) => { _%>
+
+  /** <%- action.labelEn %>: POST { id } to <%- endpoint %>/<%- action.id %>. */
+  async <%- action.key %>(id) {
+    return resultOf(await this.post({ id }, { endpoint: `${ENDPOINT}/<%- action.id %>` }));
+  }
+<%_ }) _%>
+}

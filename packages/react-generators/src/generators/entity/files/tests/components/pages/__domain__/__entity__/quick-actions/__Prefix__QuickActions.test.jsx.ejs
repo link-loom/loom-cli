@@ -1,0 +1,92 @@
+<%_
+  const replaces = customActions.filter((action) => action.kind === "replace");
+  const calls = customActions.filter((action) => action.kind === "call");
+  const first = has.delete
+    ? { id: "delete", title: "entityCopy.deleteConfirm.title", button: "entityCopy.deleteConfirm.action", method: "remove" }
+    : (() => { const action = [...replaces, ...calls][0]; return action && { id: action.id, title: `entityCopy.${action.key}Confirm.title`, button: `entityCopy.actions.${action.key}`, method: action.kind === "replace" ? "add" : action.key }; })();
+_%>
+<%_ if (has.quickActions) { _%>
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { RECORD, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>QuickActions from "@components/pages/<%- domain %>/<%- entity %>/quick-actions/<%- Prefix %>QuickActions.component";
+
+const mockService = serviceMock();
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const entityCopy = en.<%- copyPath %>;
+
+const renderPending = (action) => {
+  const props = { onClose: jest.fn(), onDone: jest.fn() };
+  renderWithProviders(<<%- Prefix %>QuickActions pending={{ action, record: RECORD }} {...props} />);
+  return props;
+};
+
+describe("<%- Prefix %>QuickActions", () => {
+  beforeEach(() => jest.clearAllMocks());
+<%_ if (has.delete) { _%>
+
+  it("deletes after the person confirms", async () => {
+    mockService.remove.mockResolvedValue({});
+    const props = renderPending("delete");
+
+    expect(screen.getByText(entityCopy.deleteConfirm.title)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.deleteConfirm.action }));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalledWith({ deleted: true }));
+    expect(mockService.remove).toHaveBeenCalledWith(RECORD.id);
+    expect(props.onClose).toHaveBeenCalled();
+  });
+<%_ } _%>
+<%_ replaces.forEach((action) => { _%>
+
+  it("<%- action.id %>: the new one exists before this one stops working", async () => {
+    mockService.add.mockResolvedValue({ id: "created-1" });
+    mockService.remove.mockResolvedValue({});
+    const props = renderPending("<%- action.id %>");
+
+    expect(screen.getByText(entityCopy.<%- action.key %>Confirm.title)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.actions.<%- action.key %> }));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalledWith({ deleted: true, created: { id: "created-1" } }));
+    expect(mockService.add.mock.invocationCallOrder[0]).toBeLessThan(mockService.remove.mock.invocationCallOrder[0]);
+    expect(mockService.remove).toHaveBeenCalledWith(RECORD.id);
+  });
+<%_ }) _%>
+<%_ calls.forEach((action) => { _%>
+
+  it("<%- action.id %>: runs on the server after the person confirms", async () => {
+    mockService.<%- action.key %>.mockResolvedValue({});
+    const props = renderPending("<%- action.id %>");
+
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.actions.<%- action.key %> }));
+
+    await waitFor(() => expect(props.onDone).toHaveBeenCalledWith({}));
+    expect(mockService.<%- action.key %>).toHaveBeenCalledWith(RECORD.id);
+  });
+<%_ }) _%>
+
+  it("stays open and says why when the server refuses", async () => {
+    mockService.<%- first.method %>.mockRejectedValue(new Error("Please provide an id"));
+    const props = renderPending("<%- first.id %>");
+
+    fireEvent.click(screen.getByRole("button", { name: <%- first.button %> }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Please provide an id");
+    expect(props.onDone).not.toHaveBeenCalled();
+  });
+
+  it("shows nothing while no action waits", () => {
+    renderWithProviders(<<%- Prefix %>QuickActions pending={null} onClose={jest.fn()} onDone={jest.fn()} />);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+});
+<%_ } _%>

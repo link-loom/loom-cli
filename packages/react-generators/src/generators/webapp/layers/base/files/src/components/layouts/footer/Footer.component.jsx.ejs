@@ -1,0 +1,23 @@
+import { AppFooter } from "@link-loom/react-shell";
+
+import appConfig from "@app-config";
+import { useCopy } from "@i18n/index";
+<%_ if (layers.stoneos) { _%>
+import { appPath } from "@utils/paths.utils";
+<%_ } _%>
+
+export default function Footer() {
+  const copy = useCopy();
+
+  return (
+    <AppFooter
+      copyright={`${new Date().getFullYear()} © ${appConfig.name}`}
+      linksLabel={copy.footer.label}
+<%_ if (layers.stoneos) { _%>
+      links={[{ to: appPath("/help-center"), label: copy.footer.help }]}
+<%_ } else { _%>
+      links={[]}
+<%_ } _%>
+    />
+  );
+}

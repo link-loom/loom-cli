@@ -1,0 +1,20 @@
+{
+  "id": "command-center",
+  "dependencies": ["@sommatic/react-sdk", "@mui/x-date-pickers", "luxon"],
+  "devDependencies": [],
+  "scripts": {},
+  "env": [
+    {
+      "group": "Backends",
+      "key": "VITE_APP_SOMMATIC_BACKEND_URL",
+      "option": "sommaticUrl",
+      "comment": "Sommatic backend: Command Center intent, chat and LLM providers"
+    },
+    {
+      "group": "Feature gates",
+      "key": "VITE_SOMMATIC_ENABLED",
+      "value": "true",
+      "comment": "\"true\" mounts the Command Center; anything else runs the app without it"
+    }
+  ]
+}

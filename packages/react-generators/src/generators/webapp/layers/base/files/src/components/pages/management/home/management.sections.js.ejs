@@ -1,0 +1,35 @@
+import appConfig from "@app-config";
+
+/**
+ * The cards of Advanced settings, in order: data only. `link-loom add settings-section` appends here.
+ * `to` is relative to the app's base route; `icon` names an entry of src/constants/iconLibrary.js and `color` one
+ * of CARD_COLORS in src/constants/theme.js.<%= layers.stoneos ? ' The platform cards follow these, from app.config.js.' : '' %>
+ */
+export const MANAGEMENT_SECTIONS = [
+  {
+    id: "manage-app",
+    to: `/${appConfig.slug}/home`,
+    titleKey: "manageApp.title",
+    descriptionKey: "management.sections.manageApp",
+    icon: "manageApp",
+    color: "brand",
+  },
+  {
+    id: "security",
+    to: "/security/api-keys",
+    titleKey: "security.title",
+    descriptionKey: "management.sections.security",
+    icon: "keys",
+    color: "amber",
+  },
+<%_ if (layers.stoneos) { _%>
+  {
+    id: "help-center",
+    to: "/help-center",
+    titleKey: "helpCenter.title",
+    descriptionKey: "management.sections.helpCenter",
+    icon: "support",
+    color: "cyan",
+  },
+<%_ } _%>
+];

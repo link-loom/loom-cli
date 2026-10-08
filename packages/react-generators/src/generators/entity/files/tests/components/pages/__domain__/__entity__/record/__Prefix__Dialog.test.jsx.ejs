@@ -1,0 +1,36 @@
+import { screen } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { RECORD, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>Dialog from "@components/pages/<%- domain %>/<%- entity %>/record/<%- Prefix %>Dialog.component";
+
+const mockService = serviceMock();
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const LIST_ROUTE = `${appConfig.basePath}<%- listPath %>`;
+
+describe("<%- Prefix %>Dialog", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("opens the <%- text.singular %> the address names", async () => {
+    mockService.read.mockResolvedValue({ record: RECORD });
+    renderWithProviders(<<%- Prefix %>Dialog onChanged={jest.fn()} />, { route: `${LIST_ROUTE}?id=${RECORD.id}` });
+
+    expect(await screen.findByDisplayValue(RECORD.<%- titleField.name %>)).toBeInTheDocument();
+    expect(mockService.read).toHaveBeenCalledWith(RECORD.id);
+  });
+
+  it("opens the form of a new one with ?new=1", async () => {
+    renderWithProviders(<<%- Prefix %>Dialog onChanged={jest.fn()} />, { route: `${LIST_ROUTE}?new=1` });
+
+    expect(await screen.findByRole("button", { name: en.<%- copyPath %>.create })).toBeInTheDocument();
+    expect(mockService.read).not.toHaveBeenCalled();
+  });
+});

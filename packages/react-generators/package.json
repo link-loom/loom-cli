@@ -1,0 +1,28 @@
+{
+  "name": "@link-loom/react-generators",
+  "version": "3.0.0-alpha.0",
+  "description": "Link Loom React generators: webapp, CRUD, pages, components, services and more",
+  "type": "module",
+  "main": "./collection.json",
+  "files": [
+    "collection.json",
+    "src",
+    "skills",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@link-loom/devkit": "3.0.0-alpha.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/link-loom/loom-cli.git",
+    "directory": "packages/react-generators"
+  },
+  "license": "Apache-2.0"
+}

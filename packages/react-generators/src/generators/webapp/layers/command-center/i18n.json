@@ -1,0 +1,16 @@
+{
+  "en": {
+    "commandCenter": {
+      "category": "Command Center",
+      "send": "Send to the Command Center",
+      "slashDescription": "Ask the Command Center about your operation"
+    }
+  },
+  "es": {
+    "commandCenter": {
+      "category": "Command Center",
+      "send": "Enviar al Command Center",
+      "slashDescription": "Pregúntale al Command Center por tu operación"
+    }
+  }
+}

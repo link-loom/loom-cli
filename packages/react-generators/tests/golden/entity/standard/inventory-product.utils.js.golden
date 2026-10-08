@@ -1,0 +1,60 @@
+import { createElement } from "react";
+import { PlayCircleOutlineOutlined } from "@mui/icons-material";
+
+/** The list of products, under the app's base route; each product also has its own page under it. */
+export const LIST_PATH = "/inventory/products";
+
+/** The page of one product. */
+export const recordPath = (id) => `${LIST_PATH}/${encodeURIComponent(id)}`;
+
+/** The values `status` takes; their labels are in the copy under `options.status`. */
+export const STATUS_OPTIONS = Object.freeze(["active", "archived"]);
+
+const REQUIRED_FIELDS = Object.freeze(["name"]);
+
+/** The values the record edits, from a saved product or empty for a new one. */
+export const valuesOf = (record) => ({
+  name: record?.name ?? "",
+  sku: record?.sku ?? "",
+  price: String(record?.price ?? ""),
+  status: record?.status ?? "",
+  notes: record?.notes ?? "",
+});
+
+/** The values as the backend takes them. */
+export const payloadOf = (values) => ({
+  name: values.name.trim(),
+  sku: values.sku.trim(),
+  price: values.price === "" ? null : Number(values.price),
+  status: values.status || null,
+  notes: values.notes.trim(),
+});
+
+/** What creating sends. */
+export const createPayloadOf = (values) => payloadOf(values);
+
+/** The required fields left empty. */
+export const missingRequiredOf = (values) => REQUIRED_FIELDS.filter((field) => String(values[field] ?? "").trim() === "");
+
+const KIND_ICONS = { call: PlayCircleOutlineOutlined };
+
+/** The product's own actions, beside the standard ones. Their labels are in the copy under `actions`. */
+export const CUSTOM_ACTIONS = Object.freeze([
+  { id: "archive", kind: "call", labelKey: "archive" },
+]);
+
+/**
+ * A record's menu: the standard items with the product's own before the destructive one. `onPick(action, record)`
+ * runs the one chosen; while `locked` only copying is offered.
+ */
+export const withCustomActions = ({ items, record, labels, locked = false, onPick }) => {
+  const custom = CUSTOM_ACTIONS.map((action) => ({
+    id: action.id,
+    label: labels[action.labelKey],
+    icon: createElement(KIND_ICONS[action.kind]),
+    disabled: locked && action.kind !== "copy",
+    onClick: () => onPick(action, record),
+  }));
+  const dangerAt = items.findIndex((item) => item.danger);
+  return dangerAt === -1 ? [...items, ...custom] : [...items.slice(0, dangerAt), ...custom, ...items.slice(dangerAt)];
+};

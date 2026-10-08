@@ -1,0 +1,89 @@
+{
+  "name": "@link-loom/react-generators",
+  "check": "./src/check/index.js",
+  "inventory": "./src/inventory.js",
+  "stack": "./src/stack.json",
+  "migrations": {},
+  "generators": {
+    "webapp": {
+      "factory": "./src/generators/webapp/index.js",
+      "schema": "./src/generators/webapp/schema.json",
+      "description": "A Link Loom React webapp (client or admin) built from layers: the Mi Retail frame, Veripass, StoneOS and the Command Center",
+      "status": "available"
+    },
+    "brand": {
+      "factory": "./src/generators/brand/index.js",
+      "schema": "./src/generators/brand/schema.json",
+      "description": "Changes the brand of a webapp (colours, logo) and rebuilds the theme, favicons, PWA icons and share image",
+      "status": "available"
+    },
+    "entity": {
+      "factory": "./src/generators/entity/index.js",
+      "schema": "./src/generators/entity/schema.json",
+      "description": "Adds a CRUD for one entity from the kit of @link-loom/react-sdk: list, record (over the list and as a page), service, routes, sidebar row, Omnisearch category, en/es copy and tests",
+      "status": "available"
+    },
+    "page": {
+      "factory": "./src/generators/page/index.js",
+      "schema": "./src/generators/page/schema.json",
+      "description": "Adds a page of a domain: the page, its component on the kit, its route, en/es copy, its test and (with the Command Center) its companion; optionally a sidebar row",
+      "status": "available"
+    },
+    "component": {
+      "factory": "./src/generators/component/index.js",
+      "schema": "./src/generators/component/schema.json",
+      "description": "Adds a component, shared or of a domain, with its test",
+      "status": "available"
+    },
+    "service": {
+      "factory": "./src/generators/service/index.js",
+      "schema": "./src/generators/service/schema.json",
+      "description": "Adds a service on BaseApi for one backend entity (Link Loom contract) with its test",
+      "status": "available"
+    },
+    "hook": {
+      "factory": "./src/generators/hook/index.js",
+      "schema": "./src/generators/hook/schema.json",
+      "description": "Adds a hook with its test",
+      "status": "available"
+    },
+    "nav-item": {
+      "factory": "./src/generators/nav-item/index.js",
+      "schema": "./src/generators/nav-item/schema.json",
+      "description": "Adds a sidebar row with its en/es label",
+      "status": "available"
+    },
+    "settings-section": {
+      "factory": "./src/generators/settings-section/index.js",
+      "schema": "./src/generators/settings-section/schema.json",
+      "description": "Adds a card to Advanced settings with its en/es copy",
+      "status": "available"
+    },
+    "platform-section": {
+      "factory": "./src/generators/platform-section/index.js",
+      "schema": "./src/generators/platform-section/schema.json",
+      "description": "Adds a card to a platform's page of Advanced settings (stoneos layer)",
+      "status": "available"
+    },
+    "copy": {
+      "factory": "./src/generators/copy/index.js",
+      "schema": "./src/generators/copy/schema.json",
+      "description": "Adds one text to both dictionaries under a dotted key",
+      "status": "available"
+    },
+    "feature": {
+      "factory": "./src/generators/feature/index.js",
+      "schema": "./src/generators/feature/schema.json",
+      "description": "Adds a capability after create: images (manifest, masters folder, gen/optimize/og scripts)",
+      "status": "available"
+    },
+    "seo": {
+      "description": "SEO of a page (title, description, share image)",
+      "status": "planned"
+    },
+    "route": {
+      "description": "A route for a page that has none",
+      "status": "planned"
+    }
+  }
+}

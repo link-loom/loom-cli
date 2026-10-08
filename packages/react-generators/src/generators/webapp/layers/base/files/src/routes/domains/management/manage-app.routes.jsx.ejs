@@ -1,0 +1,33 @@
+import { lazy } from "react";
+import { Route } from "react-router-dom";
+
+import appConfig from "@app-config";
+
+const ManageAppHomePage = lazy(() => import("@pages/management/ManageAppHome.page"));
+const ManageAppIdentityPage = lazy(() => import("@pages/management/ManageAppIdentity.page"));
+const ManageAppLocalePage = lazy(() => import("@pages/management/ManageAppLocale.page"));
+const ManageAppContractsPage = lazy(() => import("@pages/management/ManageAppContracts.page"));
+<%_ if (layers.stoneos) { _%>
+const ManageAppSubscriptionPage = lazy(() => import("@pages/management/ManageAppSubscription.page"));
+const ManageAppPricingPage = lazy(() => import("@pages/management/ManageAppPricing.page"));
+const ManageAppBillingPage = lazy(() => import("@pages/management/ManageAppBilling.page"));
+<%_ } _%>
+
+/** "Manage <%= name %>": the app's own account, under <%= basePath %>/<%= slug %>. */
+export default function ManageAppRoutes() {
+  return (
+    <Route path={appConfig.slug}>
+      <Route path="home" element={<ManageAppHomePage />} />
+      <Route path="identity" element={<ManageAppIdentityPage />} />
+      <Route path="locale" element={<ManageAppLocalePage />} />
+      <Route path="contracts" element={<ManageAppContractsPage />} />
+<%_ if (layers.stoneos) { _%>
+      <Route path="subscription">
+        <Route path="home" element={<ManageAppSubscriptionPage />} />
+        <Route path="pricing" element={<ManageAppPricingPage />} />
+        <Route path="billing" element={<ManageAppBillingPage />} />
+      </Route>
+<%_ } _%>
+    </Route>
+  );
+}

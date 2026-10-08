@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/webapp",
+  "title": "Webapp",
+  "description": "Creates a Link Loom React webapp (client or admin) that looks and behaves like Mi Retail workspace: the app shell, Veripass sign-in, Overview, Advanced settings with the platform hubs, language and theme, brand assets, Docker and tests. Layers add sign-up, the StoneOS launchpad and the Sommatic Command Center.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40,
+      "description": "Product name people see: header, titles, share image (e.g. \"Acme Workspace\")",
+      "x-prompt": {
+        "en": "Product name",
+        "es": "Nombre del producto"
+      },
+      "x-order": 1
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Machine name: folder, package name, storage keys and the \"Manage my app\" route. Defaults to the name in kebab-case",
+      "x-order": 2
+    },
+    "variant": {
+      "type": "string",
+      "enum": ["client", "admin"],
+      "default": "client",
+      "description": "client: for the people who run the operation (routes under /client). admin: for the people who run the platform (routes under /admin)",
+      "x-prompt": {
+        "en": "Client or admin",
+        "es": "Client o admin"
+      },
+      "x-order": 3,
+      "x-enum-labels": {
+        "en": {
+          "client": "Client — for the people who run the operation",
+          "admin": "Admin — for the people who run the platform"
+        },
+        "es": {
+          "client": "Client — para quienes operan",
+          "admin": "Admin — para quienes administran la plataforma"
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 160,
+      "default": "",
+      "description": "One sentence about the product: meta description, manifest and share image tagline",
+      "x-prompt": {
+        "en": "One-sentence description",
+        "es": "Descripción en una frase"
+      },
+      "x-order": 4
+    },
+    "descriptionEs": {
+      "type": "string",
+      "maxLength": 160,
+      "default": "",
+      "description": "The same sentence written natively in Spanish (neutral, with \"tú\"): the Spanish dictionary's description and sign-in subtitle. Without it the Spanish copy repeats the English one, with a warning",
+      "x-prompt": {
+        "en": "Description in Spanish",
+        "es": "Descripción en español"
+      },
+      "x-order": 4.5
+    },
+    "directory": {
+      "type": "string",
+      "description": "Target folder, relative to the working directory (defaults to the slug); \".\" creates the app in the working folder itself, which must be empty"
+    },
+    "defaultLocale": {
+      "type": "string",
+      "enum": ["en", "es"],
+      "default": "en",
+      "description": "Language the app opens in until the person picks one",
+      "x-prompt": {
+        "en": "Default language",
+        "es": "Idioma por defecto"
+      },
+      "x-order": 5,
+      "x-enum-labels": {
+        "en": {
+          "en": "English",
+          "es": "Spanish"
+        },
+        "es": {
+          "en": "Inglés",
+          "es": "Español"
+        }
+      }
+    },
+    "signup": {
+      "type": "boolean",
+      "default": true,
+      "description": "Adds sign-up and the organization setup (Veripass tenancy onboarding)",
+      "x-prompt": {
+        "en": "Let people sign up",
+        "es": "Permitir el registro"
+      },
+      "x-order": 6
+    },
+    "organizationSlug": {
+      "type": "string",
+      "pattern": "^$|^[a-z0-9][a-z0-9-]*$",
+      "default": "",
+      "description": "Veripass organization slug the sign-in screen opens with (empty: people choose)"
+    },
+    "stoneos": {
+      "type": "boolean",
+      "default": true,
+      "description": "StoneOS layer: launchpad sidebar, My apps, App Store, apps menu, platform hubs and help center from Link Loom Cloud",
+      "x-prompt": {
+        "en": "Include StoneOS (launchpad, apps, platform hubs)",
+        "es": "Incluir StoneOS (launchpad, apps, hubs de plataformas)"
+      },
+      "x-order": 7
+    },
+    "commandCenter": {
+      "type": "boolean",
+      "default": true,
+      "description": "Sommatic Command Center layer: right panel, command catalog and Omnisearch category",
+      "x-prompt": {
+        "en": "Include the Sommatic Command Center",
+        "es": "Incluir el Command Center de Sommatic"
+      },
+      "x-order": 8
+    },
+    "platforms": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["linkloom", "veripass", "sommatic", "vectry", "hivora", "vca", "miretail", "micampus"]
+      },
+      "default": ["linkloom", "veripass", "sommatic", "vectry", "hivora", "vca", "miretail", "micampus"],
+      "description": "Platforms shown as cards in Advanced settings, named by capability (Applications, Identity, Intelligence, Analytics, Devices, Finance, Operations, Learning)"
+    },
+    "brandMode": {
+      "type": "string",
+      "enum": ["default", "preset", "random"],
+      "default": "default",
+      "description": "Where the palette starts: Mi Retail's (default), a preset, or a random harmonious one from `seed`. Colours given below override it",
+      "x-prompt": {
+        "en": "Colours",
+        "es": "Colores"
+      },
+      "x-order": 9,
+      "x-enum-labels": {
+        "en": {
+          "default": "Link Loom default (Mi Retail's palette)",
+          "preset": "A preset palette",
+          "random": "A random, harmonious palette"
+        },
+        "es": {
+          "default": "Los de Link Loom (la paleta de Mi Retail)",
+          "preset": "Una paleta predefinida",
+          "random": "Una paleta aleatoria y armónica"
+        }
+      }
+    },
+    "brandPreset": {
+      "type": "string",
+      "enum": ["indigo", "plum", "forest", "ocean", "graphite", "clay"],
+      "default": "indigo",
+      "description": "Preset palette when brandMode is preset",
+      "x-prompt": {
+        "en": "Palette",
+        "es": "Paleta"
+      },
+      "x-order": 10,
+      "x-when": {
+        "brandMode": "preset"
+      },
+      "x-enum-labels": {
+        "en": {
+          "indigo": "Indigo",
+          "plum": "Plum",
+          "forest": "Forest",
+          "ocean": "Ocean",
+          "graphite": "Graphite",
+          "clay": "Clay"
+        },
+        "es": {
+          "indigo": "Índigo",
+          "plum": "Ciruela",
+          "forest": "Bosque",
+          "ocean": "Océano",
+          "graphite": "Grafito",
+          "clay": "Arcilla"
+        }
+      }
+    },
+    "seed": {
+      "type": "string",
+      "description": "Seed for brandMode random: the same seed gives the same palette"
+    },
+    "primaryColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Brand colour (buttons, links, the mark)"
+    },
+    "headerColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Top bar background (defaults to the brand colour)"
+    },
+    "logoAreaColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Background behind the logo, at the left of the top bar (defaults to the header a shade darker)"
+    },
+    "backgroundColor": {
+      "type": "string",
+      "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Page background"
+    },
+    "footerColor": {
+      "type": "string",
+      "pattern": "^transparent$|^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$",
+      "description": "Footer background (transparent by default)"
+    },
+    "logo": {
+      "type": "string",
+      "description": "Path to the logo for light backgrounds (SVG, or PNG of at least 512 px). Without it a monogram and wordmark are generated"
+    },
+    "logoDark": {
+      "type": "string",
+      "description": "Path to the logo for dark backgrounds and the header (defaults to `logo`)"
+    },
+    "mark": {
+      "type": "string",
+      "description": "Path to a square symbol for favicons and the condensed sidebar (defaults to a monogram)"
+    },
+    "backendUrl": {
+      "type": "string",
+      "default": "http://localhost:3601",
+      "description": "This app's own backend (VITE_APP_BACKEND_URL): API keys and the app's domains",
+      "x-prompt": {
+        "en": "This app's backend URL",
+        "es": "URL del backend de esta app"
+      },
+      "x-order": 11
+    },
+    "veripassUrl": {
+      "type": "string",
+      "default": "",
+      "description": "Veripass identity backend (VITE_APP_SERVICE_VERIPASS_URL)",
+      "x-prompt": {
+        "en": "Veripass backend URL",
+        "es": "URL del backend de Veripass"
+      },
+      "x-order": 12
+    },
+    "veripassApiKey": {
+      "type": "string",
+      "description": "Veripass API key. Written only to .env.local, never printed. In agent mode prefer the VERIPASS_API_KEY environment variable",
+      "x-secret": true,
+      "x-env": "VERIPASS_API_KEY",
+      "x-prompt": {
+        "en": "Veripass API key",
+        "es": "API key de Veripass"
+      },
+      "x-order": 13
+    },
+    "loomCloudUrl": {
+      "type": "string",
+      "default": "",
+      "description": "Link Loom Cloud backend (VITE_LOOM_CLOUD_BACKEND_URL): App Engine, App Store, billing and help center. StoneOS layer",
+      "x-prompt": {
+        "en": "Link Loom Cloud backend URL",
+        "es": "URL del backend de Link Loom Cloud"
+      },
+      "x-order": 14,
+      "x-when": {
+        "stoneos": true
+      }
+    },
+    "sommaticUrl": {
+      "type": "string",
+      "default": "",
+      "description": "Sommatic backend (VITE_APP_SOMMATIC_BACKEND_URL) for the Command Center. Command Center layer",
+      "x-prompt": {
+        "en": "Sommatic backend URL",
+        "es": "URL del backend de Sommatic"
+      },
+      "x-order": 15,
+      "x-when": {
+        "commandCenter": true
+      }
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["local", "development", "production"],
+      "default": "local",
+      "description": "Blackwood apps environment (VITE_APP_BLACKWOOD_APPS_ENVIRONMENT)"
+    },
+    "port": {
+      "type": "integer",
+      "minimum": 1024,
+      "maximum": 65535,
+      "default": 3000,
+      "description": "Dev server port (VITE_PORT)"
+    }
+  },
+  "required": ["name"],
+  "examples": [
+    {
+      "name": "Acme Workspace",
+      "variant": "client",
+      "description": "The operations center every role runs the organization from."
+    },
+    {
+      "name": "Acme Admin",
+      "variant": "admin",
+      "commandCenter": false,
+      "brandMode": "random",
+      "seed": "acme"
+    }
+  ]
+}

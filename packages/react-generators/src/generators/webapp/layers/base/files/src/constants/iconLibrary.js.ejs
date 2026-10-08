@@ -1,0 +1,65 @@
+import { createElement } from "react";
+import {
+  AddCircleOutlineOutlined,
+  ApartmentOutlined,
+  AppsOutlined,
+  CreditCardOutlined,
+  DashboardOutlined,
+  GavelOutlined,
+  HelpOutlineOutlined,
+  KeyOutlined,
+  LanguageOutlined,
+  ManageAccountsOutlined,
+  SettingsOutlined,
+  StorefrontOutlined,
+  SupportAgentOutlined,
+<%_ if (layers.stoneos) { _%>
+  AccountBalanceOutlined,
+  BadgeOutlined,
+  DevicesOutlined,
+  InsightsOutlined,
+  LensBlurOutlined,
+  SchoolOutlined,
+  StoreOutlined,
+  WidgetsOutlined,
+<%_ } _%>
+} from "@mui/icons-material";
+
+/** The icons the registries (navigation, Advanced settings, Omnisearch) name by key. Outlined only. */
+export const ICONS = Object.freeze({
+  add: AddCircleOutlineOutlined,
+  apps: AppsOutlined,
+  billing: CreditCardOutlined,
+  contracts: GavelOutlined,
+  help: HelpOutlineOutlined,
+  identity: ApartmentOutlined,
+  keys: KeyOutlined,
+  locale: LanguageOutlined,
+  manageApp: ManageAccountsOutlined,
+  overview: DashboardOutlined,
+  settings: SettingsOutlined,
+  store: StorefrontOutlined,
+  support: SupportAgentOutlined,
+});
+
+export const iconFor = (key) => ICONS[key] || ICONS.overview;
+
+/** The icon as an element, for props that take one (`icon={iconElement("keys")}`). */
+export const iconElement = (key, props) => createElement(iconFor(key), props);
+<%_ if (layers.stoneos) { _%>
+
+/** One icon per StoneOS platform, by the capability it gives (the card titles of Advanced settings). */
+export const PLATFORM_ICONS = Object.freeze({
+  linkloom: WidgetsOutlined,
+  veripass: BadgeOutlined,
+  // The Command Center's own mark: Intelligence is where the Command Center comes from.
+  sommatic: LensBlurOutlined,
+  vectry: InsightsOutlined,
+  hivora: DevicesOutlined,
+  vca: AccountBalanceOutlined,
+  miretail: StoreOutlined,
+  micampus: SchoolOutlined,
+});
+
+export const platformIconFor = (platformId) => PLATFORM_ICONS[platformId] || ICONS.apps;
+<%_ } _%>

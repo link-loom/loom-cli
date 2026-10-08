@@ -1,0 +1,34 @@
+<%_
+  const detailFields = editableFields.filter((field) => field.type === "longtext");
+_%>
+<%_ if (detailFields.length) { _%>
+import { fireEvent, screen } from "@testing-library/react";
+
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { VALUES } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>DetailsTab from "@components/pages/<%- domain %>/<%- entity %>/record/<%- Prefix %>DetailsTab.component";
+
+const entityCopy = en.<%- copyPath %>;
+
+describe("<%- Prefix %>DetailsTab", () => {
+  it("shows each long text under its section and reports what the person writes", () => {
+    const setField = jest.fn();
+    renderWithProviders(<<%- Prefix %>DetailsTab values={VALUES} setField={setField} missing={new Set()} disabled={false} />);
+
+<%_ detailFields.forEach((field) => { _%>
+    expect(screen.getByText(entityCopy.fields.<%- field.name %>)).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(entityCopy.fields.<%- field.name %>), { target: { value: "Changed" } });
+    expect(setField).toHaveBeenCalledWith("<%- field.name %>", "Changed");
+<%_ }) _%>
+  });
+
+  it("keeps them read-only while the record is locked", () => {
+    renderWithProviders(<<%- Prefix %>DetailsTab values={VALUES} setField={jest.fn()} missing={new Set()} disabled />);
+
+<%_ detailFields.forEach((field) => { _%>
+    expect(screen.getByLabelText(entityCopy.fields.<%- field.name %>)).toBeDisabled();
+<%_ }) _%>
+  });
+});
+<%_ } _%>

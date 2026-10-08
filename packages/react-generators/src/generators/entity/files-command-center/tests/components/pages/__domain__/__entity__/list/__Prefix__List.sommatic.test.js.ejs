@@ -1,0 +1,8 @@
+import { PAGE_METADATA } from "@components/pages/<%- domain %>/<%- entity %>/list/<%- Prefix %>List.sommatic";
+
+describe("<%- Prefix %>List companion", () => {
+  it("names its page for the Command Center's navigation", () => {
+    expect(PAGE_METADATA.path).toBe("<%- basePath %><%- listPath %>");
+    expect(PAGE_METADATA.description.length).toBeGreaterThan(20);
+  });
+});

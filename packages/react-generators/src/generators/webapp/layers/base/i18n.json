@@ -1,0 +1,334 @@
+{
+  "en": {
+    "app": {
+      "name": "{name}",
+      "title": "{name}",
+      "description": "{description}"
+    },
+    "common": {
+      "loading": "Loading",
+      "noScript": "{name} needs JavaScript turned on."
+    },
+    "shell": {
+      "skipToContent": "Skip to content",
+      "openNavigation": "Open navigation",
+      "mainNavigation": "Main navigation",
+      "location": "You are here",
+      "collapseSidebar": "Collapse the sidebar",
+      "expandSidebar": "Expand the sidebar"
+    },
+    "nav": {
+      "overview": "Overview",
+      "advanced": "Advanced settings",
+      "groups": {
+        "settings": "Settings"
+      }
+    },
+    "navbar": {
+      "create": "Create",
+      "quickAdd": {
+        "apiKey": "API key",
+        "apiKeyHint": "So another system can call this app",
+        "placeholder": "Your next shortcut",
+        "placeholderHint": "Add here what your team creates most often"
+      }
+    },
+    "omnisearch": {
+      "search": "Search",
+      "input": "Ask AI anything or search...",
+      "loading": "Loading...",
+      "noCommands": "No matching commands.",
+      "noResults": "No results found.",
+      "suggestions": "Suggestions",
+      "navigation": "Navigation",
+      "commandCenter": "Command Center",
+      "create": "Create \"{query}\"",
+      "navigate": "Navigate",
+      "select": "Select",
+      "close": "Close"
+    },
+    "userMenu": {
+      "label": "Your account",
+      "profile": "My profile",
+      "security": "Security",
+      "settings": "Settings",
+      "lock": "Lock screen",
+      "exit": "Sign out"
+    },
+    "footer": {
+      "label": "Footer links"
+    },
+    "overview": {
+      "title": "Overview",
+      "greeting": "Hello, {firstName}",
+      "subtitle": "Where would you like to start?",
+      "cards": {
+        "manageApp": {
+          "description": "Your organization's identity, language and theme, and contracts."
+        },
+        "management": {
+          "description": "Everything about the account, its security and the platforms it uses."
+        }
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "My profile"
+      },
+      "signOutEverywhere": {
+        "title": "Sign out everywhere",
+        "description": "Ends your session in every browser and device where {name} is open.",
+        "action": "Sign out everywhere"
+      }
+    },
+    "management": {
+      "title": "Advanced settings",
+      "subtitle": "Your account, its security and the other platforms you work with.",
+      "sections": {
+        "manageApp": "Organization identity, language and theme, and contracts.",
+        "security": "Create, rotate and revoke the API keys other systems use to call {name}."
+      }
+    },
+    "security": {
+      "title": "Security"
+    },
+    "manageApp": {
+      "title": "Manage {name}",
+      "subtitle": "The general settings of your organization in {name}.",
+      "identity": {
+        "title": "Corporate identity",
+        "card": "Who your organization is and how it presents itself.",
+        "loading": "Loading the corporate identity…",
+        "notFound": "We could not find your organization.",
+        "lastUpdated": "Last updated:"
+      },
+      "locale": {
+        "title": "Language and theme",
+        "card": "The language of the interface and a light or dark look.",
+        "subtitle": "Changes apply right away and are remembered in this browser.",
+        "settings": {
+          "language": "Language",
+          "theme": "Theme",
+          "languages": {
+            "en": "English",
+            "es": "Español"
+          },
+          "modes": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "Same as my device"
+          }
+        }
+      },
+      "contracts": {
+        "title": "Contracts and terms",
+        "card": "Review and accept your organization's agreements.",
+        "loading": "Loading contracts…",
+        "listTitle": "Contracts and agreements",
+        "listSubtitle": "Every contract and legal agreement linked to your account."
+      }
+    },
+    "auth": {
+      "signin": {
+        "title": "Sign in",
+        "welcome": "Welcome back",
+        "heroTitle": "Your whole operation, in one place.",
+        "heroSubtitle": "{description}"
+      },
+      "recoverPassword": {
+        "title": "Recover your password"
+      },
+      "newPassword": {
+        "title": "New password"
+      },
+      "lockScreen": {
+        "title": "Locked"
+      },
+      "logout": {
+        "title": "Signed out",
+        "texts": {
+          "farewellMessage": "See you soon",
+          "successMessage": "You have signed out.",
+          "goBackText": "Back to",
+          "signinText": "Sign in"
+        }
+      },
+      "callback": {
+        "title": "Signing in",
+        "entering": "Signing you in…",
+        "notAdmitted": "Your account does not have access to {name} yet. Ask your organization for an invitation."
+      }
+    },
+    "maintenance": {
+      "title": "This page is not here",
+      "description": "The address may be wrong, or the page may have moved.",
+      "action": "Go to the overview"
+    }
+  },
+  "es": {
+    "app": {
+      "name": "{name}",
+      "title": "{name}",
+      "description": "{description}"
+    },
+    "common": {
+      "loading": "Cargando",
+      "noScript": "{name} necesita JavaScript activado."
+    },
+    "shell": {
+      "skipToContent": "Ir al contenido",
+      "openNavigation": "Abrir la navegación",
+      "mainNavigation": "Navegación principal",
+      "location": "Estás aquí",
+      "collapseSidebar": "Contraer la barra lateral",
+      "expandSidebar": "Expandir la barra lateral"
+    },
+    "nav": {
+      "overview": "Inicio",
+      "advanced": "Configuración avanzada",
+      "groups": {
+        "settings": "Configuración"
+      }
+    },
+    "navbar": {
+      "create": "Crear",
+      "quickAdd": {
+        "apiKey": "API key",
+        "apiKeyHint": "Para que otro sistema llame a esta app",
+        "placeholder": "Tu próximo atajo",
+        "placeholderHint": "Agrega aquí lo que tu equipo crea con más frecuencia"
+      }
+    },
+    "omnisearch": {
+      "search": "Buscar",
+      "input": "Pregúntale a la IA o busca...",
+      "loading": "Cargando...",
+      "noCommands": "Ningún comando coincide.",
+      "noResults": "No hay resultados.",
+      "suggestions": "Sugerencias",
+      "navigation": "Navegación",
+      "commandCenter": "Command Center",
+      "create": "Crear \"{query}\"",
+      "navigate": "Moverte",
+      "select": "Elegir",
+      "close": "Cerrar"
+    },
+    "userMenu": {
+      "label": "Tu cuenta",
+      "profile": "Mi perfil",
+      "security": "Seguridad",
+      "settings": "Configuración",
+      "lock": "Bloquear pantalla",
+      "exit": "Cerrar sesión"
+    },
+    "footer": {
+      "label": "Enlaces del pie de página"
+    },
+    "overview": {
+      "title": "Inicio",
+      "greeting": "Hola, {firstName}",
+      "subtitle": "¿Por dónde quieres empezar?",
+      "cards": {
+        "manageApp": {
+          "description": "La identidad de tu organización, el idioma y el tema, y los contratos."
+        },
+        "management": {
+          "description": "Todo sobre la cuenta, su seguridad y las plataformas que usa."
+        }
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "Mi perfil"
+      },
+      "signOutEverywhere": {
+        "title": "Cerrar sesión en todas partes",
+        "description": "Cierra tu sesión en cada navegador y dispositivo donde tengas {name} abierto.",
+        "action": "Cerrar sesión en todas partes"
+      }
+    },
+    "management": {
+      "title": "Configuración avanzada",
+      "subtitle": "Tu cuenta, su seguridad y las demás plataformas con las que trabajas.",
+      "sections": {
+        "manageApp": "Identidad de la organización, idioma y tema, y contratos.",
+        "security": "Crea, rota y revoca las API keys con las que otros sistemas llaman a {name}."
+      }
+    },
+    "security": {
+      "title": "Seguridad"
+    },
+    "manageApp": {
+      "title": "Gestionar {name}",
+      "subtitle": "La configuración general de tu organización en {name}.",
+      "identity": {
+        "title": "Identidad corporativa",
+        "card": "Quién es tu organización y cómo se presenta.",
+        "loading": "Cargando la identidad corporativa…",
+        "notFound": "No encontramos tu organización.",
+        "lastUpdated": "Última actualización:"
+      },
+      "locale": {
+        "title": "Idioma y tema",
+        "card": "El idioma de la interfaz y un aspecto claro u oscuro.",
+        "subtitle": "Los cambios se aplican de inmediato y se recuerdan en este navegador.",
+        "settings": {
+          "language": "Idioma",
+          "theme": "Tema",
+          "languages": {
+            "en": "English",
+            "es": "Español"
+          },
+          "modes": {
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Igual que mi dispositivo"
+          }
+        }
+      },
+      "contracts": {
+        "title": "Contratos y términos",
+        "card": "Revisa y acepta los acuerdos de tu organización.",
+        "loading": "Cargando los contratos…",
+        "listTitle": "Contratos y acuerdos",
+        "listSubtitle": "Todos los contratos y acuerdos legales vinculados a tu cuenta."
+      }
+    },
+    "auth": {
+      "signin": {
+        "title": "Iniciar sesión",
+        "welcome": "Qué bueno verte de nuevo",
+        "heroTitle": "Toda tu operación, en un solo lugar.",
+        "heroSubtitle": "{description}"
+      },
+      "recoverPassword": {
+        "title": "Recupera tu contraseña"
+      },
+      "newPassword": {
+        "title": "Nueva contraseña"
+      },
+      "lockScreen": {
+        "title": "Pantalla bloqueada"
+      },
+      "logout": {
+        "title": "Sesión cerrada",
+        "texts": {
+          "farewellMessage": "Hasta pronto",
+          "successMessage": "Cerraste tu sesión.",
+          "goBackText": "Volver a",
+          "signinText": "Iniciar sesión"
+        }
+      },
+      "callback": {
+        "title": "Iniciando sesión",
+        "entering": "Entrando…",
+        "notAdmitted": "Tu cuenta todavía no tiene acceso a {name}. Pide una invitación a tu organización."
+      }
+    },
+    "maintenance": {
+      "title": "Esta página no está aquí",
+      "description": "Puede que la dirección esté mal escrita o que la página se haya movido.",
+      "action": "Ir al inicio"
+    }
+  }
+}

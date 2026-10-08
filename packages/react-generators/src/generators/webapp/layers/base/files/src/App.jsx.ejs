@@ -1,0 +1,89 @@
+<%_ if (layers.commandCenter) { _%>
+import { useState } from "react";
+<%_ } _%>
+import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route, RouterProvider } from "react-router-dom";
+import { AuthProvider } from "@veripass/react-sdk";
+import { Snackbar, Toast } from "@link-loom/react-sdk";
+<%_ if (layers.commandCenter) { _%>
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
+import { LocaleProvider, SHELL_EVENTS, ThemeModeProvider, useShellEvent } from "@link-loom/react-shell";
+<%_ } else { _%>
+import { LocaleProvider, ThemeModeProvider } from "@link-loom/react-shell";
+<%_ } _%>
+
+import appConfig from "@app-config";
+import { DICTIONARIES } from "@i18n/index";
+import { THEME_COLORS, THEME_COLORS_DARK } from "@constants/theme";
+import { AuthRoutes, DomainRoutes<%= layers.signup ? ', SetupRoutes' : '' %> } from "@routes/index";
+import LayoutApp from "@layouts/LayoutApp";
+import LayoutMaintenance from "@layouts/LayoutMaintenance";
+import MaintenanceGeneralPage from "@pages/maintenance/MaintenanceGeneral.page";
+import "./styles/index.css";
+
+const BASENAME = import.meta.env.BASE_URL.replace(/\/$/, "");
+<%_ if (layers.commandCenter) { _%>
+
+// Toasts sit top-right; while the Command Center panel is open they move left of it.
+const TOAST_OFFSET = { top: 88, right: 24 };
+const TOAST_OFFSET_BESIDE_COMMAND_CENTER = { top: 88, right: 440 };
+<%_ } _%>
+
+function AppProviders() {
+<%_ if (layers.commandCenter) { _%>
+  const [isCommandCenterOpen, setIsCommandCenterOpen] = useState(false);
+  useShellEvent(SHELL_EVENTS.commandCenterOpened, () => setIsCommandCenterOpen(true));
+  useShellEvent(SHELL_EVENTS.commandCenterClosed, () => setIsCommandCenterOpen(false));
+
+<%_ } _%>
+  return (
+    <LocaleProvider dictionaries={DICTIONARIES} defaultLocale={appConfig.defaultLocale} storageKey={appConfig.storageKey}>
+      <ThemeModeProvider colors={THEME_COLORS} darkColors={THEME_COLORS_DARK} storageKey={appConfig.storageKey}>
+<%_ if (layers.commandCenter) { _%>
+        <LocalizationProvider dateAdapter={AdapterLuxon}>
+          <Toast position="top-right" offset={isCommandCenterOpen ? TOAST_OFFSET_BESIDE_COMMAND_CENTER : TOAST_OFFSET}>
+            <Snackbar>
+              <AuthProvider basename={BASENAME} publicPaths={appConfig.auth.publicPaths}>
+                <Outlet />
+              </AuthProvider>
+            </Snackbar>
+          </Toast>
+        </LocalizationProvider>
+<%_ } else { _%>
+        <Toast position="top-right" offset={{ top: 88, right: 24 }}>
+          <Snackbar>
+            <AuthProvider basename={BASENAME} publicPaths={appConfig.auth.publicPaths}>
+              <Outlet />
+            </AuthProvider>
+          </Snackbar>
+        </Toast>
+<%_ } _%>
+      </ThemeModeProvider>
+    </LocaleProvider>
+  );
+}
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<AppProviders />}>
+      <Route index element={<Navigate to={`${appConfig.basePath}/overview`} replace />} />
+      {AuthRoutes()}
+<%_ if (layers.signup) { _%>
+      {SetupRoutes()}
+<%_ } _%>
+      <Route path={appConfig.basePath} element={<LayoutApp />}>
+        <Route index element={<Navigate to="overview" replace />} />
+        {DomainRoutes()}
+        <Route path="*" element={<MaintenanceGeneralPage />} />
+      </Route>
+      <Route path="*" element={<LayoutMaintenance />}>
+        <Route path="*" element={<MaintenanceGeneralPage />} />
+      </Route>
+    </Route>
+  ),
+  { basename: BASENAME }
+);
+
+export default function App() {
+  return <RouterProvider router={router} />;
+}

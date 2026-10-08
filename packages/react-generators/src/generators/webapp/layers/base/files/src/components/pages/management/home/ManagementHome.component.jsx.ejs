@@ -1,0 +1,56 @@
+<%_ if (layers.stoneos) { _%>
+import { platformLabels, platformsForSettings } from "@link-loom/cloud-sdk";
+
+import appConfig from "@app-config";
+import { useCopy, useLocale } from "@i18n/index";
+import { iconFor, platformIconFor } from "@constants/iconLibrary";
+<%_ } else { _%>
+import { useCopy } from "@i18n/index";
+import { iconFor } from "@constants/iconLibrary";
+<%_ } _%>
+import { CARD_COLORS } from "@constants/theme";
+import { copyAt } from "@utils/copy.utils";
+import { appPath } from "@utils/paths.utils";
+import HubCards from "@components/shared/hub-cards/HubCards.component";
+import { MANAGEMENT_SECTIONS } from "./management.sections";
+
+/** Advanced settings: this app's own sections<%= layers.stoneos ? ', then a card per platform, named by what it gives' : '' %>. */
+export default function ManagementHomeComponent() {
+  const copy = useCopy();
+<%_ if (layers.stoneos) { _%>
+  const { locale } = useLocale();
+<%_ } _%>
+
+  const sectionCards = MANAGEMENT_SECTIONS.map((section) => ({
+    id: section.id,
+    href: appPath(section.to),
+    title: copyAt(copy, section.titleKey),
+    description: copyAt(copy, section.descriptionKey),
+    Icon: iconFor(section.icon),
+    color: CARD_COLORS[section.color],
+  }));
+<%_ if (layers.stoneos) { _%>
+
+  const platformCards = platformsForSettings()
+    .filter((platform) => appConfig.stoneos.platforms.includes(platform.id))
+    .map((platform) => {
+      const labels = platformLabels(platform, locale);
+      return {
+        id: platform.id,
+        href: appPath(`/platforms/${platform.id}`),
+        title: labels.capability,
+        description: labels.description,
+        Icon: platformIconFor(platform.id),
+        color: platform.color,
+      };
+    });
+<%_ } _%>
+
+  return (
+    <HubCards
+      title={copy.management.title}
+      subtitle={copy.management.subtitle}
+      cards={<%= layers.stoneos ? '[...sectionCards, ...platformCards]' : 'sectionCards' %>}
+    />
+  );
+}

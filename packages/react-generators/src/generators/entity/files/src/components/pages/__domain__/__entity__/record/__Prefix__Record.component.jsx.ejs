@@ -1,0 +1,381 @@
+<%_
+  // Mi Retail's record: the short properties are quiet fields in the grey band, the long texts go to Details.
+  const detailFields = editableFields.filter((field) => field.type === "longtext");
+  const bandEditable = editableFields.filter((field) => !field.isTitle && field.type !== "longtext");
+  const bandReadonly = fields.filter((field) => field.readonly);
+  const INPUT_TYPES = { number: "number", date: "date", email: "email", url: "url" };
+  const optionFields = bandEditable.filter((field) => field.type === "options");
+  const typedBand = bandEditable.some((field) => field.type !== "boolean" && field.type !== "options");
+  const recordActions = rowActions.filter((action) => action === "copy-id" || action === "delete");
+  const hasMenu = recordActions.length > 0 || customActions.length > 0;
+  const copiesInRecord = recordActions.includes("copy-id") || has.copy;
+  const copyActionOf = (field) => customActions.find((action) => action.kind === "copy" && action.field === field.name);
+  const secretsInBand = bandReadonly.some((field) => field.type === "secret");
+  const needsInset = secretsInBand || bandEditable.some((field) => field.type === "boolean");
+  const muiImports = ["Box", "Button", "CircularProgress", secretsInBand ? "IconButton" : null, "InputBase", copiesInRecord ? "Snackbar" : null, bandEditable.some((field) => field.type === "boolean") ? "Switch" : null, typedBand ? "TextField" : null, secretsInBand ? "Tooltip" : null, "Typography"].filter(Boolean);
+  const kitImports = ["DirtyStateFooter", "EntityDetailShell", optionFields.length ? "OptionsField" : null, hasMenu ? "RowActionsMenu" : null, needsInset ? "STOS_FIELD_TEXT_INSET" : null, typedBand ? "STOS_QUIET_FIELD" : null, recordActions.length ? "rowActionItems" : null, "useDirtyState"].filter(Boolean);
+  const utilsImports = [...optionFields.map((field) => `${field.name.toUpperCase()}_OPTIONS`), "createPayloadOf", secretsInBand ? "maskSecret" : null, "missingRequiredOf", "payloadOf", "valuesOf", customActions.length ? "withCustomActions" : null].filter(Boolean);
+  const bandValue = (field) => {
+    const value = `record.${field.name}`;
+    if (field.type === "boolean") return `${value} ? copy.common.yes : copy.common.no`;
+    if (field.type === "options") return `entityCopy.options.${field.name}[${value}] || "—"`;
+    if (field.type === "date") return `String(${value} ?? "").slice(0, 10) || "—"`;
+    return `${value} || "—"`;
+  };
+  const rowLabels = catalogLabels.length ? `, labels: { ${catalogLabels.map((action) => `"${action.id}": entityCopy.actions.${action.key}`).join(", ")} }` : "";
+_%>
+import { useEffect, useMemo, useRef, useState } from "react";
+import { <%- muiImports.join(", ") %> } from "@mui/material";
+<%_ if (secretsInBand || detailFields.length) { _%>
+import { <%- [secretsInBand ? "ContentCopyOutlined as CopyIcon" : null, detailFields.length ? "ShortTextOutlined as DetailsIcon" : null].filter(Boolean).join(", ") %> } from "@mui/icons-material";
+<%_ } _%>
+import { <%- kitImports.join(", ") %> } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+<%_ if (copiesInRecord || secretsInBand) { _%>
+import { copyText } from "@utils/clipboard.utils";
+<%_ } _%>
+<%_ if (scoped) { _%>
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+<%_ } _%>
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+<%_ if (detailFields.length) { _%>
+import <%- Prefix %>DetailsTab from "./<%- Prefix %>DetailsTab.component";
+<%_ } _%>
+<%_ if (has.quickActions) { _%>
+import <%- Prefix %>QuickActions from "../quick-actions/<%- Prefix %>QuickActions.component";
+<%_ } _%>
+import { <%- utilsImports.join(", ") %> } from "../<%- utilsFile %>";
+
+// Fixed height of the tab body: the modal keeps its size whichever tab is open.
+const TAB_BODY_HEIGHT = "min(380px, 48vh)";
+<%_ if (copiesInRecord || secretsInBand) { _%>
+const NOTICE_MS = 2500;
+<%_ } _%>
+<%_ if (recordActions.length) { _%>
+const RECORD_ACTIONS = <%- list(recordActions) %>;
+<%_ } _%>
+
+/**
+ * A <%- text.singular %>, as Mi Retail shows a record: its <%- titleField.labelEn.toLowerCase() %> in the header beside its icon, its
+ * properties as quiet fields in the grey band<%- detailFields.length ? ", the long texts in Details" : "" %>, all edited where they are read.
+ * Creating is the same record before it exists: the same shell, and Create instead of Save.
+ */
+export default function <%- Prefix %>Record({
+  record,
+  canWrite = true,
+  action,
+  copyLinkPath,
+  doneLabel,
+  onCreated,
+  onChanged,
+  onDone,
+  onClose,
+  onDirtyChange,
+}) {
+  const copy = useCopy();
+  const { locale } = useLocale();
+<%_ if (scoped) { _%>
+  const { organizationId } = useCurrentUser();
+<%_ } _%>
+  const entityCopy = copy.<%- copyPath %>;
+  const service = useMemo(() => new <%- serviceClass %>(), []);
+
+  const isCreating = !record;
+  const baseline = useMemo(() => valuesOf(record), [record]);
+  const requiredMessage = (missingFields) =>
+    entityCopy.requiredMissing.replace("{fields}", missingFields.map((field) => entityCopy.fields[field]).join(", "));
+  const { values, setField, isDirty, status, error, save, discard } = useDirtyState(baseline, {
+    onSave: async (nextValues) => {
+      const missingFields = missingRequiredOf(nextValues);
+      if (missingFields.length) {
+        throw new Error(requiredMessage(missingFields));
+      }
+
+      await service.edit(record.id, payloadOf(nextValues));
+      await onChanged();
+      return nextValues;
+    },
+  });
+
+<%_ if (detailFields.length) { _%>
+  const [activeTab, setActiveTab] = useState("details");
+<%_ } _%>
+  const [busy, setBusy] = useState(false);
+  const [failure, setFailure] = useState("");
+  const [missing, setMissing] = useState([]);
+<%_ if (has.quickActions) { _%>
+  const [pending, setPending] = useState(null);
+<%_ } _%>
+<%_ if (copiesInRecord || secretsInBand) { _%>
+  const [notice, setNotice] = useState("");
+<%_ } _%>
+
+  const titleRef = useRef(null);
+  const locked = !canWrite;
+  const missingSet = new Set(missing);
+  const title = isCreating ? entityCopy.new : values.<%- titleField.name %> || copy.common.untitled;
+<%_ if (copiesInRecord || secretsInBand) { _%>
+
+  const notify = async (text, message) => {
+    if (await copyText(text)) {
+      setNotice(message);
+    }
+  };
+<%_ } _%>
+
+  const create = async () => {
+    const missingFields = missingRequiredOf(values);
+    setMissing(missingFields);
+    if (missingFields.length) {
+      setFailure(requiredMessage(missingFields));
+      return;
+    }
+
+    setBusy(true);
+    setFailure("");
+    try {
+      onCreated(await service.add(createPayloadOf(values<%- scoped ? ", { organizationId }" : "" %>)));
+    } catch (creationError) {
+      setFailure(creationError.message || entityCopy.actionFailed);
+      setBusy(false);
+    }
+  };
+<%_ if (has.quickActions) { _%>
+
+  // A rotation opens the new <%- text.singular %>; a deletion closes this one.
+  const finish = ({ deleted, created }) => (created ? onCreated(created) : onChanged({ deleted }));
+<%_ } _%>
+<%_ if (customActions.length) { _%>
+
+  const pick = (chosen) =>
+<%_ if (has.copy && customActions.some((candidate) => candidate.kind !== "copy")) { _%>
+    chosen.kind === "copy" ? notify(record[chosen.field], copy.common.copied) : setPending({ action: chosen.id, record });
+<%_ } else if (has.copy) { _%>
+    notify(record[chosen.field], copy.common.copied);
+<%_ } else { _%>
+    setPending({ action: chosen.id, record });
+<%_ } _%>
+<%_ } _%>
+
+  const renderHeader = () => (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
+      {iconElement("<%- icon %>", { sx: { fontSize: 20, color: "primary.main", flexShrink: 0 } })}
+      <InputBase
+        className="stos-record-title"
+        inputRef={titleRef}
+        value={values.<%- titleField.name %>}
+        placeholder={entityCopy.fields.<%- titleField.name %>}
+        onChange={(event) => setField("<%- titleField.name %>", event.target.value)}
+        disabled={locked}
+        error={missingSet.has("<%- titleField.name %>")}
+        fullWidth
+        inputProps={{ "aria-label": entityCopy.fields.<%- titleField.name %> }}
+      />
+    </Box>
+  );
+
+  // The band: what the person edits in place, then what the server keeps (only once the record exists).
+  const meta = [
+<%_ bandEditable.forEach((field) => { _%>
+    {
+      label: entityCopy.fields.<%- field.name %>,
+      render: (
+<%_ if (field.type === "boolean") { _%>
+        <Box sx={{ pl: STOS_FIELD_TEXT_INSET }}>
+          <Switch
+            size="small"
+            checked={values.<%- field.name %>}
+            disabled={locked}
+            inputProps={{ "aria-label": entityCopy.fields.<%- field.name %> }}
+            onChange={(event) => setField("<%- field.name %>", event.target.checked)}
+          />
+        </Box>
+<%_ } else if (field.type === "options") { _%>
+        <OptionsField
+          quiet
+          label={entityCopy.fields.<%- field.name %>}
+          options={<%- field.name.toUpperCase() %>_OPTIONS}
+          value={values.<%- field.name %> || null}
+          placeholder="—"
+          getOptionLabel={(option) => entityCopy.options.<%- field.name %>[option] || option}
+          disabled={locked}
+          error={missingSet.has("<%- field.name %>")}
+          locale={locale}
+          onChange={(option) => setField("<%- field.name %>", option || "")}
+        />
+<%_ } else { _%>
+        <TextField
+          {...STOS_QUIET_FIELD}
+<%_ if (INPUT_TYPES[field.type]) { _%>
+          type="<%- INPUT_TYPES[field.type] %>"
+<%_ } _%>
+          value={values.<%- field.name %>}
+          placeholder="—"
+          disabled={locked}
+          error={missingSet.has("<%- field.name %>")}
+          inputProps={{ "aria-label": entityCopy.fields.<%- field.name %> }}
+          onChange={(event) => setField("<%- field.name %>", event.target.value)}
+        />
+<%_ } _%>
+      ),
+    },
+<%_ }) _%>
+<%_ bandReadonly.forEach((field) => { _%>
+<%_ if (field.type === "secret") { _%>
+    !isCreating && {
+      label: entityCopy.fields.<%- field.name %>,
+      render: (
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, pl: STOS_FIELD_TEXT_INSET, minWidth: 0 }}>
+          <Typography variant="body2" noWrap sx={{ fontFamily: "var(--stos-font-mono)" }}>
+            {maskSecret(record.<%- field.name %>)}
+          </Typography>
+          <Tooltip title={entityCopy.actions.<%- copyActionOf(field).key %>}>
+            <IconButton
+              size="small"
+              aria-label={entityCopy.actions.<%- copyActionOf(field).key %>}
+              onClick={() => notify(record.<%- field.name %>, copy.common.copied)}
+            >
+              <CopyIcon fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+<%_ } else { _%>
+    !isCreating && { label: entityCopy.fields.<%- field.name %>, value: <%- bandValue(field) %> },
+<%_ } _%>
+<%_ }) _%>
+  ].filter(Boolean);
+<%_ if (detailFields.length) { _%>
+
+  const tabs = [
+    {
+      id: "details",
+      label: entityCopy.tabDetails,
+      icon: <DetailsIcon sx={{ fontSize: 16 }} />,
+      content: <<%- Prefix %>DetailsTab values={values} setField={setField} missing={missingSet} disabled={locked} />,
+    },
+  ];
+<%_ } _%>
+<%_ if (hasMenu) { _%>
+
+  const menuItems = isCreating
+    ? []
+<%_ if (customActions.length) { _%>
+    : withCustomActions({
+        items: <%- recordActions.length ? `rowActionItems({
+          actions: RECORD_ACTIONS,
+          record,
+          handlers: {${recordActions.includes("copy-id") ? `
+            copyId: () => notify(record.id, copy.common.copied),` : ""}${recordActions.includes("delete") ? `
+            remove: () => setPending({ action: "delete", record }),` : ""}
+          },
+          locale,${rowLabels ? `
+          labels: { ${catalogLabels.map((action) => `"${action.id}": entityCopy.actions.${action.key}`).join(", ")} },` : ""}
+        })` : "[]" %>,
+        record,
+        labels: entityCopy.actions,
+        locked,
+        onPick: pick,
+      });
+<%_ } else { _%>
+    : rowActionItems({
+        actions: RECORD_ACTIONS,
+        record,
+        handlers: {
+<%_ if (recordActions.includes("copy-id")) { _%>
+          copyId: () => notify(record.id, copy.common.copied),
+<%_ } _%>
+<%_ if (recordActions.includes("delete")) { _%>
+          remove: () => setPending({ action: "delete", record }),
+<%_ } _%>
+        },
+        locale<%- rowLabels %>,
+      });
+<%_ } _%>
+<%_ } _%>
+
+  const renderCreateFooter = () => (
+    <Box className="stos-dirty-footer">
+      <Button variant="text" onClick={onClose} disabled={busy}>
+        {copy.common.cancel}
+      </Button>
+      <Button
+        variant="contained"
+        onClick={create}
+        disabled={busy || locked}
+        startIcon={busy ? <CircularProgress size={14} color="inherit" /> : undefined}
+      >
+        {entityCopy.create}
+      </Button>
+    </Box>
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  // A new record, or one opened to edit, starts in its title.
+  useEffect(() => {
+    if (isCreating || action === "edit") {
+      titleRef.current?.focus();
+    }
+  }, [isCreating, action]);
+
+  return (
+    <>
+      <EntityDetailShell
+        breadcrumbSection={entityCopy.plural}
+        title={title}
+        copyLinkPath={copyLinkPath}
+        renderHeader={renderHeader()}
+        headerExtra={
+          failure && (
+            <Typography variant="body2" role="alert" sx={{ color: "error.main", mt: 1 }}>
+              {failure}
+            </Typography>
+          )
+        }
+        meta={meta}
+        metaColumns={4}
+<%_ if (detailFields.length) { _%>
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+<%_ } _%>
+        bodyHeight={TAB_BODY_HEIGHT}
+        onClose={onClose}
+<%_ if (hasMenu) { _%>
+        topBarExtra={menuItems.length > 0 && <RowActionsMenu items={menuItems} label={copy.common.options} />}
+<%_ } _%>
+        topBarLabels={{
+          untitled: copy.common.untitled,
+          copyLink: copy.common.copyLink,
+          linkCopied: copy.common.linkCopied,
+          close: copy.common.close,
+        }}
+      />
+      {isCreating ? (
+        renderCreateFooter()
+      ) : (
+        <DirtyStateFooter
+          status={status}
+          error={error}
+          onSave={save}
+          onDiscard={discard}
+          onClose={onDone}
+          closeLabel={doneLabel}
+          locale={locale}
+        />
+      )}
+<%_ if (has.quickActions) { _%>
+      <<%- Prefix %>QuickActions pending={pending} onClose={() => setPending(null)} onDone={finish} />
+<%_ } _%>
+<%_ if (copiesInRecord || secretsInBand) { _%>
+      <Snackbar open={Boolean(notice)} message={notice} autoHideDuration={NOTICE_MS} onClose={() => setNotice("")} />
+<%_ } _%>
+    </>
+  );
+}

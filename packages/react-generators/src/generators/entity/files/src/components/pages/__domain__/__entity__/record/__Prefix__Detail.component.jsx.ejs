@@ -1,0 +1,56 @@
+import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Box, CircularProgress } from "@mui/material";
+import { EmptyState, PageShell, useEntityRecord } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+import { appPath, appUrl } from "@utils/paths.utils";
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+import <%- Prefix %>Record from "./<%- Prefix %>Record.component";
+import { LIST_PATH, recordPath } from "../<%- utilsFile %>";
+
+/** A <%- text.singular %> on its own page (/<%- domain %>/<%- plural %>/:id): the same record as over the list. */
+export default function <%- Prefix %>DetailComponent() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const copy = useCopy();
+  const entityCopy = copy.<%- copyPath %>;
+  const service = useMemo(() => new <%- serviceClass %>(), []);
+  const { record, loading, error, reload } = useEntityRecord((recordId) => service.read(recordId), id);
+
+  const backToList = () => navigate(appPath(LIST_PATH));
+  const openRecord = (recordId) => navigate(appPath(recordPath(recordId)));
+
+  if (loading) {
+    return (
+      <Box className="stos-tab-state" role="status" aria-label={copy.common.loading}>
+        <CircularProgress size={24} />
+      </Box>
+    );
+  }
+
+  if (!record) {
+    return (
+      <EmptyState
+        variant={error ? "error" : undefined}
+        title={error?.message || entityCopy.notFound}
+        action={{ label: entityCopy.backToList, onClick: backToList }}
+      />
+    );
+  }
+
+  return (
+    <PageShell width="default">
+      <<%- Prefix %>Record
+        key={record.id}
+        record={record}
+        copyLinkPath={appUrl(recordPath(record.id))}
+        doneLabel={copy.common.close}
+        onDone={backToList}
+        onClose={backToList}
+        onCreated={(created) => openRecord(created.id)}
+        onChanged={async ({ deleted } = {}) => (deleted ? backToList() : reload())}
+      />
+    </PageShell>
+  );
+}

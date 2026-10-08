@@ -1,0 +1,57 @@
+# <%= name %>: instructions for agents
+
+This is a Link Loom webapp (`<%= variant %>`, routes under `<%= basePath %>`), created with `@link-loom/cli`.
+It reproduces the Mi Retail workspace frame on `@link-loom/react-shell`. `loom.json` records its type, layers and
+conventions.
+
+## The rules
+
+1. **Create pieces with the CLI, never by hand.** Pages, components, services, CRUDs, routes, navigation entries and
+   copy keys come from `npx link-loom add … --json`. Run `npx link-loom describe --json` to see what exists and
+   `npx link-loom schema <generator>` for the exact input. The same commands are MCP tools (`.mcp.json` starts
+   `npx link-loom mcp`). If the CLI cannot do something, say so: do not imitate its output.
+2. **Never invent a modal, a list or a shell.** Records, lists and row actions use the standard components of
+   `@link-loom/react-sdk`; the frame is `@link-loom/react-shell`.
+3. **Every visible text goes through the dictionaries** (`src/i18n/en.js` and `src/i18n/es.js`, same keys). Write the
+   Spanish natively, in neutral Spanish with "tú", never a literal translation.
+4. **Layout with the Bootstrap 5.3 grid** (`container-fluid`, `row`, `col-*`). Never MUI `Grid` and never Tailwind.
+   Semantic HTML5 (`section`, `header`, `article`, `nav`), no wrappers without a reason.
+5. **Colours come from `src/constants/theme.js`** (change them with `npx link-loom brand colors`). No hex values in
+   components.
+6. **Icons only from `@mui/icons-material`** (Outlined). No emojis.
+7. **Secrets live only in `.env.local`.** Never print them, never write them to a versioned file.
+8. **Before you finish, run `npm run verify`** (lint, `link-loom check`, tests and build). It must pass;
+   `npx link-loom check --json` lists every rule that fails, with the file and the fix.
+
+## Long runs
+
+Installing dependencies takes minutes (`npm install`, `npx link-loom update`). With `--json`, `update` reports its
+progress on stderr, one JSON event per line (`{"event":"progress","step","progress":0-100,"message"}`); over MCP, a
+call with a `progressToken` gets `notifications/progress`. To keep working meanwhile, run `update --no-install`, then
+`npm install` in the background, and go on with `npx link-loom add … --json`: generators only write files
+(`add feature` adds dependencies: install after it). `npm run verify` waits for the install to finish.
+
+## Where things go
+
+| What | Where |
+| --- | --- |
+| Page (title, `<OnPageLoaded/>`, one component) | `src/pages/<domain>/<Domain><Name>.page.jsx` |
+| Domain component | `src/components/pages/<domain>/…/<Name>.component.jsx` |
+| Service | `src/services/<domain>/<entity>/<domain>-<entity>.service.js` |
+| Routes | `src/routes/domains/<domain>/<domain>.routes.jsx`, one `<domain>-<entity>.routes.jsx` per entity (collected automatically) |
+| Sidebar entries | `src/components/layouts/sidebar/navigation.js` |
+| Advanced settings cards | `src/components/pages/management/home/management.sections.js` |
+| Copy | `src/i18n/{en,es}.js` |
+| Palette | `src/constants/theme.js` |
+| Tests | `tests/`, the same path as in `src/`, one `<File>.test.jsx` per file |
+
+`src/routes/index.js` collects every `*.routes.jsx` on its own: nobody edits it.
+
+## A CRUD
+
+`npx link-loom add entity --domain <domain> --entity <entity> --fields name:text:required,… --json` writes the list,
+the record (over the list with `?id=` and on its own page), the service, the routes, the sidebar row, the Omnisearch
+category, the copy and the tests, all from the kit of `@link-loom/react-sdk`. Choose the list (`--list
+standard|compact|cards`) and the row actions (`--actions quickview,open-new-tab,copy-link,delete`); pass the Spanish
+labels (`--singular-es`, `--plural-es`, `--gender-es`, `--field-labels-es`). The API keys under Advanced settings
+(`src/components/pages/security/api-key/`) were made the same way: read them as the reference.

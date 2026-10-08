@@ -1,0 +1,238 @@
+<%_
+  const uses = (action) => rowActions.includes(action);
+  const navigates = uses("open-page") || rowClick === "page";
+  const copies = uses("copy-id") || uses("copy-link") || has.copy;
+  const linksOut = uses("open-new-tab") || uses("copy-link");
+  const grid = Boolean(preset.viewModes);
+  const COLUMN_BREAKPOINTS = [0, 560, 720, 880];
+  const cellOf = (field) => {
+    const value = `row.${field.name}`;
+    if (field.type === "boolean") return `<TextCell value={${value} ? copy.common.yes : copy.common.no} />`;
+    if (field.type === "options") return `<TextCell value={entityCopy.options.${field.name}[${value}]} />`;
+    if (field.type === "secret") return `<TextCell value={maskSecret(${value})} mono />`;
+    if (field.type === "date") return `<TextCell value={String(${value} ?? "").slice(0, 10)} />`;
+    return `<TextCell value={${value}} />`;
+  };
+  const textOf = (field) => {
+    const value = `row.${field.name}`;
+    if (field.type === "boolean") return `(${value} ? copy.common.yes : copy.common.no)`;
+    if (field.type === "options") return `entityCopy.options.${field.name}[${value}]`;
+    if (field.type === "secret") return `maskSecret(${value})`;
+    return value;
+  };
+  const utilsImports = [navigates || linksOut ? "recordPath" : null, has.secret && columns.some((field) => field.type === "secret") ? "maskSecret" : null, customActions.length ? "withCustomActions" : null].filter(Boolean);
+  const kitImports = ["ListSurface", "NameCell", columns.length > 1 ? "TextCell" : null, "rowActionItems", "useDataQuery", "useEntityRoute", scoped ? null : "useListSearch", "useListState", grid ? "useViewMode" : null].filter(Boolean);
+  const pathImports = [navigates ? "appPath" : null, linksOut ? "appUrl" : null].filter(Boolean);
+  const metaFields = columns.slice(1, 3);
+  const rowLabels = catalogLabels.length ? `, labels: { ${catalogLabels.map((action) => `"${action.id}": entityCopy.actions.${action.key}`).join(", ")} }` : "";
+_%>
+import { useMemo, useState } from "react";
+<%_ if (navigates) { _%>
+import { useNavigate } from "react-router-dom";
+<%_ } _%>
+<%_ if (copies) { _%>
+import { Snackbar } from "@mui/material";
+<%_ } _%>
+import { AddOutlined as AddIcon } from "@mui/icons-material";
+import { <%- kitImports.join(", ") %> } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+<%_ if (pathImports.length) { _%>
+import { <%- pathImports.join(", ") %> } from "@utils/paths.utils";
+<%_ } _%>
+<%_ if (copies) { _%>
+import { copyText } from "@utils/clipboard.utils";
+<%_ } _%>
+<%_ if (scoped) { _%>
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+<%_ } _%>
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+import <%- Prefix %>Dialog from "../record/<%- Prefix %>Dialog.component";
+<%_ if (has.quickActions) { _%>
+import <%- Prefix %>QuickActions from "../quick-actions/<%- Prefix %>QuickActions.component";
+<%_ } _%>
+<%_ if (utilsImports.length) { _%>
+import { <%- utilsImports.join(", ") %> } from "../<%- utilsFile %>";
+<%_ } _%>
+
+const FILTERS = <%- scoped ? "{}" : '{ text: "text" }' %>;
+const ROW_ACTIONS = <%- list(rowActions) %>;
+<%_ if (grid) { _%>
+const VIEW_MODES = <%- list(preset.viewModes) %>;
+<%_ } _%>
+<%_ if (copies) { _%>
+const NOTICE_MS = 2500;
+<%_ } _%>
+
+/**
+ * The <%- text.plural %><%- scoped ? " of the person's organization" : "" %>, a page at a time<%- scoped ? "" : ", narrowed by the search box" %>. A row opens the <%- text.singular %><%- rowClick === "page" ? " on its own page" : " over the list (?id=)" %>; ?new=1 opens the form of a new one.
+ */
+export default function <%- Prefix %>ListComponent() {
+  const copy = useCopy();
+  const { locale } = useLocale();
+<%_ if (navigates) { _%>
+  const navigate = useNavigate();
+<%_ } _%>
+  const route = useEntityRoute();
+  const list = useListState(FILTERS);
+<%_ if (!scoped) { _%>
+  const search = useListSearch(list);
+<%_ } _%>
+<%_ if (grid) { _%>
+  const { viewMode, setViewMode } = useViewMode({ modes: VIEW_MODES, defaultMode: "<%- preset.defaultView %>" });
+<%_ } _%>
+<%_ if (scoped) { _%>
+  const { organizationId } = useCurrentUser();
+<%_ } _%>
+  const service = useMemo(() => new <%- serviceClass %>(), []);
+<%_ if (has.quickActions) { _%>
+  const [pending, setPending] = useState(null);
+<%_ } _%>
+<%_ if (copies) { _%>
+  const [notice, setNotice] = useState("");
+<%_ } _%>
+  const entityCopy = copy.<%- copyPath %>;
+<%_ if (scoped) { _%>
+  const query = useDataQuery(
+    () => service.list({ organizationId, ...list.pagination }),
+    [organizationId, list.key, list.pagination.page, list.pagination.pageSize],
+    { enabled: Boolean(organizationId) }
+  );
+<%_ } else { _%>
+  const query = useDataQuery(
+    () => service.list({ search: list.values.text, ...list.pagination }),
+    [list.key, list.pagination.page, list.pagination.pageSize]
+  );
+<%_ } _%>
+<%_ if (copies) { _%>
+
+  const notify = async (text, message) => {
+    if (await copyText(text)) {
+      setNotice(message);
+    }
+  };
+<%_ } _%>
+
+  const handlers = {
+<%_ if (uses("quickview")) { _%>
+    quickview: (row) => route.openEntity(row.id),
+<%_ } _%>
+<%_ if (uses("edit")) { _%>
+    edit: (row) => route.openEntity(row.id, { action: "edit" }),
+<%_ } _%>
+<%_ if (uses("open-page")) { _%>
+    openPage: (row) => navigate(appPath(recordPath(row.id))),
+<%_ } _%>
+<%_ if (uses("open-new-tab")) { _%>
+    openNewTab: (row) => window.open(appUrl(recordPath(row.id)), "_blank", "noopener"),
+<%_ } _%>
+<%_ if (uses("copy-id")) { _%>
+    copyId: (row) => notify(row.id, copy.common.copied),
+<%_ } _%>
+<%_ if (uses("copy-link")) { _%>
+    copyLink: (row) => notify(`${window.location.origin}${appUrl(recordPath(row.id))}`, copy.common.linkCopied),
+<%_ } _%>
+<%_ if (uses("delete")) { _%>
+    remove: (row) => setPending({ action: "delete", record: row }),
+<%_ } _%>
+  };
+<%_ if (customActions.length) { _%>
+
+  const pick = (action, row) =>
+<%_ if (has.copy && customActions.some((action) => action.kind !== "copy")) { _%>
+    action.kind === "copy" ? notify(row[action.field], copy.common.copied) : setPending({ action: action.id, record: row });
+<%_ } else if (has.copy) { _%>
+    notify(row[action.field], copy.common.copied);
+<%_ } else { _%>
+    setPending({ action: action.id, record: row });
+<%_ } _%>
+
+  const getActions = (row) =>
+    withCustomActions({
+      items: rowActionItems({ actions: ROW_ACTIONS, record: row, handlers, locale<%- rowLabels %> }),
+      record: row,
+      labels: entityCopy.actions,
+      onPick: pick,
+    });
+<%_ } else { _%>
+
+  const getActions = (row) => rowActionItems({ actions: ROW_ACTIONS, record: row, handlers, locale<%- rowLabels %> });
+<%_ } _%>
+
+  const columns = [
+<%_ columns.forEach((field, index) => { _%>
+<%_ if (field.isTitle) { _%>
+    {
+      field: "<%- field.name %>",
+      headerName: entityCopy.fields.<%- field.name %>,
+      flex: 1,
+      minWidth: 200,
+      renderCell: ({ row }) => <NameCell title={row.<%- field.name %>} untitled={copy.common.untitled} />,
+    },
+<%_ } else { _%>
+    {
+      field: "<%- field.name %>",
+      headerName: entityCopy.fields.<%- field.name %>,
+      width: 180,
+<%_ if (COLUMN_BREAKPOINTS[index]) { _%>
+      minContainerWidth: <%- COLUMN_BREAKPOINTS[index] %>,
+<%_ } _%>
+      renderCell: ({ row }) => <%- cellOf(field) %>,
+    },
+<%_ } _%>
+<%_ }) _%>
+  ];
+
+  return (
+    <ListSurface
+      icon={iconElement("<%- icon %>")}
+      title={entityCopy.plural}
+<%_ if (preset.description) { _%>
+      description={entityCopy.description}
+<%_ } _%>
+      primaryAction={{ id: "create", label: entityCopy.new, icon: <AddIcon />, onClick: () => route.startCreate() }}
+<%_ if (!scoped) { _%>
+      search={{ ...search, placeholder: entityCopy.searchPlaceholder }}
+<%_ } _%>
+<%_ if (grid) { _%>
+      viewMode={viewMode}
+      viewModes={VIEW_MODES}
+      onViewModeChange={setViewMode}
+<%_ } _%>
+      query={query}
+      pagination={{ ...list.pagination, onChange: list.setPagination }}
+      columns={columns}
+      getActions={getActions}
+<%_ if (rowClick === "page") { _%>
+      onOpen={(row) => navigate(appPath(recordPath(row.id)))}
+<%_ } else { _%>
+      onOpen={(row) => route.openEntity(row.id)}
+<%_ } _%>
+<%_ if (grid) { _%>
+      card={(row) => ({
+        title: row.<%- titleField.name %>,
+        meta: [<%- metaFields.map(textOf).join(", ") %>].filter(Boolean).join(" · "),
+        icon: iconElement("<%- icon %>"),
+      })}
+<%_ } _%>
+      filtersActive={list.active}
+      onClearFilters={list.clear}
+      empty={{
+        title: entityCopy.emptyTitle,
+        description: entityCopy.emptyDescription,
+        filteredTitle: entityCopy.filteredEmptyTitle,
+      }}
+      untitledLabel={copy.common.untitled}
+      locale={locale}
+    >
+      <<%- Prefix %>Dialog onChanged={query.refresh} />
+<%_ if (has.quickActions) { _%>
+      <<%- Prefix %>QuickActions pending={pending} onClose={() => setPending(null)} onDone={() => query.refresh()} />
+<%_ } _%>
+<%_ if (copies) { _%>
+      <Snackbar open={Boolean(notice)} message={notice} autoHideDuration={NOTICE_MS} onClose={() => setNotice("")} />
+<%_ } _%>
+    </ListSurface>
+  );
+}

@@ -1,0 +1,20 @@
+import { useSommaticContextSource } from "@sommatic/react-sdk";
+
+export const PAGE_METADATA = {
+  path: "<%= basePath %>/management",
+  description: "Advanced settings — <%= name %>'s own account, its security (API keys)<%= layers.stoneos ? ", the help center and a page per platform of the ecosystem" : "" %>.",
+};
+
+/** Tells the Command Center which page the person is on and what it offers. */
+export default function ManagementHomeSommatic() {
+  useSommaticContextSource(
+    {
+      id: "page-context",
+      ...PAGE_METADATA,
+      getData: () => ({ type: "management" }),
+    },
+    []
+  );
+
+  return null;
+}

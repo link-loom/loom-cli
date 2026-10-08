@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/page",
+  "title": "Page",
+  "description": "Adds a page to a webapp: the page (title, <OnPageLoaded/>, one component), its component on the kit (PageShell, PageHeader, an empty state to replace), its route, en/es copy, the test and, with the Command Center, its companion. Optionally a sidebar row.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["domain", "name", "titleEn"],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Domain in kebab-case (e.g. inventory, reports)",
+      "x-prompt": {
+        "en": "Domain",
+        "es": "Dominio"
+      },
+      "x-order": 1
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Page name in kebab-case; with the domain it makes the route /<domain>/<name> (e.g. stock-summary)",
+      "x-prompt": {
+        "en": "Page name",
+        "es": "Nombre de la página"
+      },
+      "x-order": 2
+    },
+    "titleEn": {
+      "type": "string",
+      "minLength": 2,
+      "description": "Title in English (e.g. \"Stock summary\")",
+      "x-prompt": {
+        "en": "Title in English",
+        "es": "Título en inglés"
+      },
+      "x-order": 3
+    },
+    "titleEs": {
+      "type": "string",
+      "description": "Title in Spanish. Without it the English one is used and a warning asks for it",
+      "x-prompt": {
+        "en": "Title in Spanish",
+        "es": "Título en español"
+      },
+      "x-order": 4
+    },
+    "descriptionEn": {
+      "type": "string",
+      "maxLength": 200,
+      "default": "",
+      "description": "One sentence under the title, in English: what the person does here"
+    },
+    "descriptionEs": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "The same sentence in Spanish"
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9/:-]*$",
+      "description": "Route under the app's base route. Defaults to <domain>/<name>"
+    },
+    "section": {
+      "type": "string",
+      "enum": ["app", "advanced"],
+      "default": "app",
+      "description": "advanced: the breadcrumb starts at Advanced settings"
+    },
+    "navigation": {
+      "type": "boolean",
+      "default": false,
+      "description": "Adds the page to the sidebar, before Advanced settings"
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "list",
+        "inventory",
+        "people",
+        "folder",
+        "document",
+        "tag",
+        "calendar",
+        "cart",
+        "task",
+        "keys",
+        "building",
+        "payments",
+        "analytics",
+        "dashboard",
+        "chart",
+        "map",
+        "mail",
+        "security",
+        "warehouse",
+        "category",
+        "today",
+        "insights",
+        "settings",
+        "home",
+        "store",
+        "receipt",
+        "inbox",
+        "notifications",
+        "help",
+        "add",
+        "diamond",
+        "collections",
+        "star"
+      ],
+      "default": "dashboard",
+      "description": "Icon of the page header and its sidebar row"
+    }
+  }
+}

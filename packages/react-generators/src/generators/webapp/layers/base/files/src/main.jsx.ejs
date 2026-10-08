@@ -1,0 +1,19 @@
+import { createRoot } from "react-dom/client";
+import { injectStoneOSStyles } from "@link-loom/react-sdk";
+import { configureVeripass } from "@veripass/react-sdk";
+<%_ if (layers.commandCenter) { _%>
+import { configureSommatic } from "@sommatic/react-sdk";
+<%_ } _%>
+
+import App from "./App.jsx";
+
+// Point the SDKs at this deployment's backends once, before the first render.
+configureVeripass({ baseUrl: import.meta.env.VITE_APP_SERVICE_VERIPASS_URL });
+<%_ if (layers.commandCenter) { _%>
+configureSommatic({ baseUrl: import.meta.env.VITE_APP_SOMMATIC_BACKEND_URL });
+<%_ } _%>
+
+// The StoneOS kit (lists, records) paints itself with the shell's --stos-* variables, so it wears the app's brand.
+injectStoneOSStyles();
+
+createRoot(document.getElementById("root")).render(<App />);

@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+*.log
+.DS_Store
+
+# Real URLs and API keys live only here: never commit them.
+.env.local
+.env.*.local

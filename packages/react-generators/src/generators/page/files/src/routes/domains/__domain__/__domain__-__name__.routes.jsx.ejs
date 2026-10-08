@@ -1,0 +1,8 @@
+import { lazy } from "react";
+import { Route } from "react-router-dom";
+
+const <%- Prefix %>Page = lazy(() => import("@pages/<%- domain %>/<%- Prefix %>.page"));
+
+export default function <%- Prefix %>Routes() {
+  return <Route path="<%- routePath %>" element={<<%- Prefix %>Page />} />;
+}

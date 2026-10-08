@@ -1,0 +1,140 @@
+{
+  "en": {
+    "helpCenter": {
+      "title": "Help center"
+    },
+    "launchpad": {
+      "myApps": "My apps"
+    },
+    "navbar": {
+      "apps": "StoneOS apps",
+      "appSearch": {
+        "category": "In your apps"
+      },
+      "appsMenu": {
+        "title": "StoneOS",
+        "caption": "Blackwood Stone Platforms",
+        "more": {
+          "title": "Explore StoneOS",
+          "subtitle": "Every platform in one place"
+        }
+      },
+      "quickAdd": {
+        "app": "App",
+        "appHint": "Install one from the App Store",
+        "supportCase": "Support case",
+        "supportCaseHint": "Report a problem to the team"
+      }
+    },
+    "footer": {
+      "help": "Help"
+    },
+    "overview": {
+      "cards": {
+        "apps": {
+          "title": "My apps",
+          "description": "The apps your organization uses, pinned the way you like."
+        },
+        "store": {
+          "title": "App Store",
+          "description": "Find and install apps that bring work into your operation."
+        },
+        "help": {
+          "description": "Guides, your cases and help from the team."
+        }
+      }
+    },
+    "management": {
+      "sections": {
+        "helpCenter": "Report a problem, read guides and follow your cases."
+      }
+    },
+    "manageApp": {
+      "subscription": {
+        "title": "Plan and billing",
+        "card": "Your plan, usage, invoices and billing details.",
+        "subtitle": "Change your plan and keep your billing details up to date.",
+        "pricing": {
+          "title": "Change plan",
+          "card": "See the plans and move up or down."
+        },
+        "billing": {
+          "title": "Billing and payments",
+          "card": "Your plan, usage and invoices, and your billing details."
+        }
+      },
+      "support": {
+        "card": "Help with the setup of your account."
+      }
+    }
+  },
+  "es": {
+    "helpCenter": {
+      "title": "Centro de ayuda"
+    },
+    "launchpad": {
+      "myApps": "Mis apps"
+    },
+    "navbar": {
+      "apps": "Apps de StoneOS",
+      "appSearch": {
+        "category": "En tus apps"
+      },
+      "appsMenu": {
+        "title": "StoneOS",
+        "caption": "Plataformas de Blackwood Stone",
+        "more": {
+          "title": "Explorar StoneOS",
+          "subtitle": "Todas las plataformas en un solo lugar"
+        }
+      },
+      "quickAdd": {
+        "app": "App",
+        "appHint": "Instala una desde el App Store",
+        "supportCase": "Caso de soporte",
+        "supportCaseHint": "Reporta un problema al equipo"
+      }
+    },
+    "footer": {
+      "help": "Ayuda"
+    },
+    "overview": {
+      "cards": {
+        "apps": {
+          "title": "Mis apps",
+          "description": "Las apps que usa tu organización, fijadas a tu manera."
+        },
+        "store": {
+          "title": "App Store",
+          "description": "Encuentra e instala apps que traen trabajo a tu operación."
+        },
+        "help": {
+          "description": "Guías, tus casos y ayuda del equipo."
+        }
+      }
+    },
+    "management": {
+      "sections": {
+        "helpCenter": "Reporta un problema, consulta guías y sigue tus casos."
+      }
+    },
+    "manageApp": {
+      "subscription": {
+        "title": "Plan y facturación",
+        "card": "Tu plan, el consumo, las facturas y los datos de facturación.",
+        "subtitle": "Cambia de plan y mantén al día tus datos de facturación.",
+        "pricing": {
+          "title": "Cambiar de plan",
+          "card": "Mira los planes y sube o baja de nivel."
+        },
+        "billing": {
+          "title": "Facturación y pagos",
+          "card": "Tu plan, el consumo y las facturas, y tus datos de facturación."
+        }
+      },
+      "support": {
+        "card": "Ayuda con la configuración de tu cuenta."
+      }
+    }
+  }
+}

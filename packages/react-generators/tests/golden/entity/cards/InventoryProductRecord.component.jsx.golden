@@ -1,0 +1,228 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Box, Button, CircularProgress, InputBase, TextField, Typography } from "@mui/material";
+import { ShortTextOutlined as DetailsIcon } from "@mui/icons-material";
+import { DirtyStateFooter, EntityDetailShell, OptionsField, STOS_QUIET_FIELD, useDirtyState } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+import InventoryProductService from "@services/inventory/product/inventory-product.service";
+import InventoryProductDetailsTab from "./InventoryProductDetailsTab.component";
+import { STATUS_OPTIONS, createPayloadOf, missingRequiredOf, payloadOf, valuesOf } from "../inventory-product.utils";
+
+// Fixed height of the tab body: the modal keeps its size whichever tab is open.
+const TAB_BODY_HEIGHT = "min(380px, 48vh)";
+
+/**
+ * A product, as Mi Retail shows a record: its name in the header beside its icon, its
+ * properties as quiet fields in the grey band, the long texts in Details, all edited where they are read.
+ * Creating is the same record before it exists: the same shell, and Create instead of Save.
+ */
+export default function InventoryProductRecord({
+  record,
+  canWrite = true,
+  action,
+  copyLinkPath,
+  doneLabel,
+  onCreated,
+  onChanged,
+  onDone,
+  onClose,
+  onDirtyChange,
+}) {
+  const copy = useCopy();
+  const { locale } = useLocale();
+  const entityCopy = copy.inventory.product;
+  const service = useMemo(() => new InventoryProductService(), []);
+
+  const isCreating = !record;
+  const baseline = useMemo(() => valuesOf(record), [record]);
+  const requiredMessage = (missingFields) =>
+    entityCopy.requiredMissing.replace("{fields}", missingFields.map((field) => entityCopy.fields[field]).join(", "));
+  const { values, setField, isDirty, status, error, save, discard } = useDirtyState(baseline, {
+    onSave: async (nextValues) => {
+      const missingFields = missingRequiredOf(nextValues);
+      if (missingFields.length) {
+        throw new Error(requiredMessage(missingFields));
+      }
+
+      await service.edit(record.id, payloadOf(nextValues));
+      await onChanged();
+      return nextValues;
+    },
+  });
+
+  const [activeTab, setActiveTab] = useState("details");
+  const [busy, setBusy] = useState(false);
+  const [failure, setFailure] = useState("");
+  const [missing, setMissing] = useState([]);
+
+  const titleRef = useRef(null);
+  const locked = !canWrite;
+  const missingSet = new Set(missing);
+  const title = isCreating ? entityCopy.new : values.name || copy.common.untitled;
+
+  const create = async () => {
+    const missingFields = missingRequiredOf(values);
+    setMissing(missingFields);
+    if (missingFields.length) {
+      setFailure(requiredMessage(missingFields));
+      return;
+    }
+
+    setBusy(true);
+    setFailure("");
+    try {
+      onCreated(await service.add(createPayloadOf(values)));
+    } catch (creationError) {
+      setFailure(creationError.message || entityCopy.actionFailed);
+      setBusy(false);
+    }
+  };
+
+  const renderHeader = () => (
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
+      {iconElement("list", { sx: { fontSize: 20, color: "primary.main", flexShrink: 0 } })}
+      <InputBase
+        className="stos-record-title"
+        inputRef={titleRef}
+        value={values.name}
+        placeholder={entityCopy.fields.name}
+        onChange={(event) => setField("name", event.target.value)}
+        disabled={locked}
+        error={missingSet.has("name")}
+        fullWidth
+        inputProps={{ "aria-label": entityCopy.fields.name }}
+      />
+    </Box>
+  );
+
+  // The band: what the person edits in place, then what the server keeps (only once the record exists).
+  const meta = [
+    {
+      label: entityCopy.fields.sku,
+      render: (
+        <TextField
+          {...STOS_QUIET_FIELD}
+          value={values.sku}
+          placeholder="—"
+          disabled={locked}
+          error={missingSet.has("sku")}
+          inputProps={{ "aria-label": entityCopy.fields.sku }}
+          onChange={(event) => setField("sku", event.target.value)}
+        />
+      ),
+    },
+    {
+      label: entityCopy.fields.price,
+      render: (
+        <TextField
+          {...STOS_QUIET_FIELD}
+          type="number"
+          value={values.price}
+          placeholder="—"
+          disabled={locked}
+          error={missingSet.has("price")}
+          inputProps={{ "aria-label": entityCopy.fields.price }}
+          onChange={(event) => setField("price", event.target.value)}
+        />
+      ),
+    },
+    {
+      label: entityCopy.fields.status,
+      render: (
+        <OptionsField
+          quiet
+          label={entityCopy.fields.status}
+          options={STATUS_OPTIONS}
+          value={values.status || null}
+          placeholder="—"
+          getOptionLabel={(option) => entityCopy.options.status[option] || option}
+          disabled={locked}
+          error={missingSet.has("status")}
+          locale={locale}
+          onChange={(option) => setField("status", option || "")}
+        />
+      ),
+    },
+  ].filter(Boolean);
+
+  const tabs = [
+    {
+      id: "details",
+      label: entityCopy.tabDetails,
+      icon: <DetailsIcon sx={{ fontSize: 16 }} />,
+      content: <InventoryProductDetailsTab values={values} setField={setField} missing={missingSet} disabled={locked} />,
+    },
+  ];
+
+  const renderCreateFooter = () => (
+    <Box className="stos-dirty-footer">
+      <Button variant="text" onClick={onClose} disabled={busy}>
+        {copy.common.cancel}
+      </Button>
+      <Button
+        variant="contained"
+        onClick={create}
+        disabled={busy || locked}
+        startIcon={busy ? <CircularProgress size={14} color="inherit" /> : undefined}
+      >
+        {entityCopy.create}
+      </Button>
+    </Box>
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  // A new record, or one opened to edit, starts in its title.
+  useEffect(() => {
+    if (isCreating || action === "edit") {
+      titleRef.current?.focus();
+    }
+  }, [isCreating, action]);
+
+  return (
+    <>
+      <EntityDetailShell
+        breadcrumbSection={entityCopy.plural}
+        title={title}
+        copyLinkPath={copyLinkPath}
+        renderHeader={renderHeader()}
+        headerExtra={
+          failure && (
+            <Typography variant="body2" role="alert" sx={{ color: "error.main", mt: 1 }}>
+              {failure}
+            </Typography>
+          )
+        }
+        meta={meta}
+        metaColumns={4}
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        bodyHeight={TAB_BODY_HEIGHT}
+        onClose={onClose}
+        topBarLabels={{
+          untitled: copy.common.untitled,
+          copyLink: copy.common.copyLink,
+          linkCopied: copy.common.linkCopied,
+          close: copy.common.close,
+        }}
+      />
+      {isCreating ? (
+        renderCreateFooter()
+      ) : (
+        <DirtyStateFooter
+          status={status}
+          error={error}
+          onSave={save}
+          onDiscard={discard}
+          onClose={onDone}
+          closeLabel={doneLabel}
+          locale={locale}
+        />
+      )}
+    </>
+  );
+}

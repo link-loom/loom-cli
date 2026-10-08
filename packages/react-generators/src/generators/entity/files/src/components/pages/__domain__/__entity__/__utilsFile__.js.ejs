@@ -1,0 +1,97 @@
+<%_
+  const kinds = [...new Set(customActions.map((action) => action.kind))];
+  const KIND_ICON_NAMES = { copy: "ContentCopyOutlined", replace: "AutorenewOutlined", call: "PlayCircleOutlineOutlined" };
+  const required = editableFields.filter((field) => field.required && field.type !== "boolean").map((field) => field.name);
+  const constantOf = (field) => `${field.name.toUpperCase()}_OPTIONS`;
+_%>
+<%_ if (customActions.length) { _%>
+import { createElement } from "react";
+import { <%- kinds.map((kind) => KIND_ICON_NAMES[kind]).sort().join(", ") %> } from "@mui/icons-material";
+
+<%_ } _%>
+/** The list of <%- plural %>, under the app's base route; each <%- entity %> also has its own page under it. */
+export const LIST_PATH = "<%- listPath %>";
+
+/** The page of one <%- entity %>. */
+export const recordPath = (id) => `${LIST_PATH}/${encodeURIComponent(id)}`;
+<%_ fields.filter((field) => field.type === "options").forEach((field) => { _%>
+
+/** The values `<%- field.name %>` takes; their labels are in the copy under `options.<%- field.name %>`. */
+export const <%- constantOf(field) %> = Object.freeze(<%- list(field.options) %>);
+<%_ }) _%>
+
+const REQUIRED_FIELDS = Object.freeze(<%- list(required) %>);
+<%_ if (scoped || Object.keys(createDefaults).length) { _%>
+
+// What creating sends besides the values the person typed.
+const CREATE_DEFAULTS = Object.freeze(<%- object(createDefaults) %>);
+<%_ } _%>
+
+/** The values the record edits, from a saved <%- entity %> or empty for a new one. */
+export const valuesOf = (record) => ({
+<%_ editableFields.forEach((field) => { _%>
+  <%- field.name %>: <%- field.initial %>,
+<%_ }) _%>
+});
+
+/** The values as the backend takes them. */
+export const payloadOf = (values) => ({
+<%_ editableFields.forEach((field) => { _%>
+  <%- field.name %>: <%- field.payload %>,
+<%_ }) _%>
+});
+
+<%_ if (scoped) { _%>
+/** What creating sends: the values, the fixed defaults and the organization the record belongs to. */
+export const createPayloadOf = (values, { organizationId }) => ({
+  ...payloadOf(values),
+  ...CREATE_DEFAULTS,
+  organization_id: organizationId,
+});
+<%_ } else if (Object.keys(createDefaults).length) { _%>
+/** What creating sends: the values and the fixed defaults. */
+export const createPayloadOf = (values) => ({ ...payloadOf(values), ...CREATE_DEFAULTS });
+<%_ } else { _%>
+/** What creating sends. */
+export const createPayloadOf = (values) => payloadOf(values);
+<%_ } _%>
+
+/** The required fields left empty. */
+export const missingRequiredOf = (values) => REQUIRED_FIELDS.filter((field) => String(values[field] ?? "").trim() === "");
+<%_ if (has.secret) { _%>
+
+const SECRET_EDGE = 4;
+
+/** A secret as it may be shown: only its first and last characters. */
+export const maskSecret = (value) => {
+  const text = String(value || "");
+  return text.length > SECRET_EDGE * 2 ? `${text.slice(0, SECRET_EDGE)}••••${text.slice(-SECRET_EDGE)}` : "••••";
+};
+<%_ } _%>
+<%_ if (customActions.length) { _%>
+
+const KIND_ICONS = { <%- kinds.map((kind) => `${kind}: ${KIND_ICON_NAMES[kind]}`).join(", ") %> };
+
+/** The <%- entity %>'s own actions, beside the standard ones. Their labels are in the copy under `actions`. */
+export const CUSTOM_ACTIONS = Object.freeze([
+<%_ customActions.forEach((action) => { _%>
+  { id: "<%- action.id %>", kind: "<%- action.kind %>", <%- action.field ? `field: "${action.field}", ` : "" %>labelKey: "<%- action.key %>" },
+<%_ }) _%>
+]);
+
+/**
+ * A record's menu: the standard items with the <%- entity %>'s own before the destructive one. `onPick(action, record)`
+ * runs the one chosen; while `locked` only copying is offered.
+ */
+export const withCustomActions = ({ items, record, labels, locked = false, onPick }) => {
+  const custom = CUSTOM_ACTIONS.map((action) => ({
+    id: action.id,
+    label: labels[action.labelKey],
+    icon: createElement(KIND_ICONS[action.kind]),
+    disabled: locked && action.kind !== "copy",
+    onClick: () => onPick(action, record),
+  }));
+  const dangerAt = items.findIndex((item) => item.danger);
+  return dangerAt === -1 ? [...items, ...custom] : [...items.slice(0, dangerAt), ...custom, ...items.slice(dangerAt)];
+};
+<%_ } _%>

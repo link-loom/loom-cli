@@ -1,0 +1,26 @@
+import { OnPageLoaded, usePageMeta } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+<%_ if (advanced) { _%>
+import { appPath } from "@utils/paths.utils";
+<%_ } _%>
+import <%- Prefix %>ListComponent from "@components/pages/<%- domain %>/<%- entity %>/list/<%- Prefix %>List.component";
+
+export default function <%- Prefix %>ListPage() {
+  const copy = useCopy();
+<%_ if (advanced) { _%>
+  usePageMeta({
+    title: copy.<%- copyPath %>.plural,
+    breadcrumb: [{ label: copy.management.title, to: appPath("/management") }],
+  });
+<%_ } else { _%>
+  usePageMeta({ title: copy.<%- copyPath %>.plural, breadcrumb: [] });
+<%_ } _%>
+
+  return (
+    <>
+      <<%- Prefix %>ListComponent />
+      <OnPageLoaded />
+    </>
+  );
+}

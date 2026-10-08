@@ -1,0 +1,103 @@
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
+import { AddOutlined as AddIcon } from "@mui/icons-material";
+import { ListSurface, NameCell, TextCell, rowActionItems, useDataQuery, useEntityRoute, useListSearch, useListState, useViewMode } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+import { appPath, appUrl } from "@utils/paths.utils";
+import { copyText } from "@utils/clipboard.utils";
+import InventoryProductService from "@services/inventory/product/inventory-product.service";
+import InventoryProductDialog from "../record/InventoryProductDialog.component";
+import { recordPath } from "../inventory-product.utils";
+
+const FILTERS = { text: "text" };
+const ROW_ACTIONS = ["open-page", "copy-link"];
+const VIEW_MODES = ["grid", "list"];
+const NOTICE_MS = 2500;
+
+/**
+ * The products, a page at a time, narrowed by the search box. A row opens the product on its own page; ?new=1 opens the form of a new one.
+ */
+export default function InventoryProductListComponent() {
+  const copy = useCopy();
+  const { locale } = useLocale();
+  const navigate = useNavigate();
+  const route = useEntityRoute();
+  const list = useListState(FILTERS);
+  const search = useListSearch(list);
+  const { viewMode, setViewMode } = useViewMode({ modes: VIEW_MODES, defaultMode: "grid" });
+  const service = useMemo(() => new InventoryProductService(), []);
+  const [notice, setNotice] = useState("");
+  const entityCopy = copy.inventory.product;
+  const query = useDataQuery(
+    () => service.list({ search: list.values.text, ...list.pagination }),
+    [list.key, list.pagination.page, list.pagination.pageSize]
+  );
+
+  const notify = async (text, message) => {
+    if (await copyText(text)) {
+      setNotice(message);
+    }
+  };
+
+  const handlers = {
+    openPage: (row) => navigate(appPath(recordPath(row.id))),
+    copyLink: (row) => notify(`${window.location.origin}${appUrl(recordPath(row.id))}`, copy.common.linkCopied),
+  };
+
+  const getActions = (row) => rowActionItems({ actions: ROW_ACTIONS, record: row, handlers, locale });
+
+  const columns = [
+    {
+      field: "name",
+      headerName: entityCopy.fields.name,
+      flex: 1,
+      minWidth: 200,
+      renderCell: ({ row }) => <NameCell title={row.name} untitled={copy.common.untitled} />,
+    },
+    {
+      field: "sku",
+      headerName: entityCopy.fields.sku,
+      width: 180,
+      minContainerWidth: 560,
+      renderCell: ({ row }) => <TextCell value={row.sku} />,
+    },
+  ];
+
+  return (
+    <ListSurface
+      icon={iconElement("list")}
+      title={entityCopy.plural}
+      description={entityCopy.description}
+      primaryAction={{ id: "create", label: entityCopy.new, icon: <AddIcon />, onClick: () => route.startCreate() }}
+      search={{ ...search, placeholder: entityCopy.searchPlaceholder }}
+      viewMode={viewMode}
+      viewModes={VIEW_MODES}
+      onViewModeChange={setViewMode}
+      query={query}
+      pagination={{ ...list.pagination, onChange: list.setPagination }}
+      columns={columns}
+      getActions={getActions}
+      onOpen={(row) => navigate(appPath(recordPath(row.id)))}
+      card={(row) => ({
+        title: row.name,
+        meta: [row.sku].filter(Boolean).join(" · "),
+        icon: iconElement("list"),
+      })}
+      filtersActive={list.active}
+      onClearFilters={list.clear}
+      empty={{
+        title: entityCopy.emptyTitle,
+        description: entityCopy.emptyDescription,
+        filteredTitle: entityCopy.filteredEmptyTitle,
+      }}
+      untitledLabel={copy.common.untitled}
+      locale={locale}
+    >
+      <InventoryProductDialog onChanged={query.refresh} />
+      <Snackbar open={Boolean(notice)} message={notice} autoHideDuration={NOTICE_MS} onClose={() => setNotice("")} />
+    </ListSurface>
+  );
+}

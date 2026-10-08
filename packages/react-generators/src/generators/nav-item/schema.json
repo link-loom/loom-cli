@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/nav-item",
+  "title": "Sidebar row",
+  "description": "Adds a row to the sidebar (src/components/layouts/sidebar/navigation.js), before Advanced settings or before the row you name, with its en/es label; optionally under a section title or inside a group. `add page --navigation` and `add entity` already add theirs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "labelEn", "to"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Row id in kebab-case",
+      "x-order": 1
+    },
+    "labelEn": {
+      "type": "string",
+      "minLength": 2,
+      "description": "Label in English",
+      "x-prompt": {
+        "en": "Label in English",
+        "es": "Etiqueta en inglés"
+      },
+      "x-order": 2
+    },
+    "labelEs": {
+      "type": "string",
+      "description": "Label in Spanish",
+      "x-prompt": {
+        "en": "Label in Spanish",
+        "es": "Etiqueta en español"
+      },
+      "x-order": 3
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/:?=&#-]*$",
+      "description": "Path under the app's base route (e.g. /reports/sales, or /item/daily#add-gem to open a page at a hash)",
+      "x-order": 4
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "list",
+        "inventory",
+        "people",
+        "folder",
+        "document",
+        "tag",
+        "calendar",
+        "cart",
+        "task",
+        "keys",
+        "building",
+        "payments",
+        "analytics",
+        "dashboard",
+        "chart",
+        "map",
+        "mail",
+        "security",
+        "warehouse",
+        "category",
+        "today",
+        "insights",
+        "settings",
+        "home",
+        "store",
+        "receipt",
+        "inbox",
+        "notifications",
+        "help",
+        "add",
+        "diamond",
+        "collections",
+        "star"
+      ],
+      "default": "list",
+      "description": "Icon of the row (also of the item inside a group)"
+    },
+    "before": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Id of the row this one goes before (default: advanced, the Advanced settings row)"
+    },
+    "sectionEn": {
+      "type": "string",
+      "description": "Section title printed above the row (or above its group), in English (e.g. Management)"
+    },
+    "sectionEs": {
+      "type": "string",
+      "description": "The section title in Spanish"
+    },
+    "group": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Id of a group row (a collapsible title with its links): the row becomes one of its links. The group is created, with groupEn/groupEs/groupIcon, if it does not exist"
+    },
+    "groupEn": {
+      "type": "string",
+      "description": "Label of the group in English, when it is created"
+    },
+    "groupEs": {
+      "type": "string",
+      "description": "Label of the group in Spanish, when it is created"
+    },
+    "groupIcon": {
+      "type": "string",
+      "enum": [
+        "list",
+        "inventory",
+        "people",
+        "folder",
+        "document",
+        "tag",
+        "calendar",
+        "cart",
+        "task",
+        "keys",
+        "building",
+        "payments",
+        "analytics",
+        "dashboard",
+        "chart",
+        "map",
+        "mail",
+        "security",
+        "warehouse",
+        "category",
+        "today",
+        "insights",
+        "settings",
+        "home",
+        "store",
+        "receipt",
+        "inbox",
+        "notifications",
+        "help",
+        "add",
+        "diamond",
+        "collections",
+        "star"
+      ],
+      "default": "folder",
+      "description": "Icon of the group, when it is created"
+    },
+    "last": {
+      "type": "boolean",
+      "default": false,
+      "description": "Puts the row at the very end, after Advanced settings (under its Settings title)"
+    }
+  }
+}

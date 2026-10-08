@@ -1,0 +1,80 @@
+import { useMemo, useState } from "react";
+import { AddOutlined as AddIcon } from "@mui/icons-material";
+import { ListSurface, NameCell, TextCell, rowActionItems, useDataQuery, useEntityRoute, useListSearch, useListState } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { iconElement } from "@constants/iconLibrary";
+import InventoryProductService from "@services/inventory/product/inventory-product.service";
+import InventoryProductDialog from "../record/InventoryProductDialog.component";
+import InventoryProductQuickActions from "../quick-actions/InventoryProductQuickActions.component";
+
+const FILTERS = { text: "text" };
+const ROW_ACTIONS = ["quickview", "delete"];
+
+/**
+ * The products, a page at a time, narrowed by the search box. A row opens the product over the list (?id=); ?new=1 opens the form of a new one.
+ */
+export default function InventoryProductListComponent() {
+  const copy = useCopy();
+  const { locale } = useLocale();
+  const route = useEntityRoute();
+  const list = useListState(FILTERS);
+  const search = useListSearch(list);
+  const service = useMemo(() => new InventoryProductService(), []);
+  const [pending, setPending] = useState(null);
+  const entityCopy = copy.inventory.product;
+  const query = useDataQuery(
+    () => service.list({ search: list.values.text, ...list.pagination }),
+    [list.key, list.pagination.page, list.pagination.pageSize]
+  );
+
+  const handlers = {
+    quickview: (row) => route.openEntity(row.id),
+    remove: (row) => setPending({ action: "delete", record: row }),
+  };
+
+  const getActions = (row) => rowActionItems({ actions: ROW_ACTIONS, record: row, handlers, locale });
+
+  const columns = [
+    {
+      field: "name",
+      headerName: entityCopy.fields.name,
+      flex: 1,
+      minWidth: 200,
+      renderCell: ({ row }) => <NameCell title={row.name} untitled={copy.common.untitled} />,
+    },
+    {
+      field: "sku",
+      headerName: entityCopy.fields.sku,
+      width: 180,
+      minContainerWidth: 560,
+      renderCell: ({ row }) => <TextCell value={row.sku} />,
+    },
+  ];
+
+  return (
+    <ListSurface
+      icon={iconElement("list")}
+      title={entityCopy.plural}
+      primaryAction={{ id: "create", label: entityCopy.new, icon: <AddIcon />, onClick: () => route.startCreate() }}
+      search={{ ...search, placeholder: entityCopy.searchPlaceholder }}
+      query={query}
+      pagination={{ ...list.pagination, onChange: list.setPagination }}
+      columns={columns}
+      getActions={getActions}
+      onOpen={(row) => route.openEntity(row.id)}
+      filtersActive={list.active}
+      onClearFilters={list.clear}
+      empty={{
+        title: entityCopy.emptyTitle,
+        description: entityCopy.emptyDescription,
+        filteredTitle: entityCopy.filteredEmptyTitle,
+      }}
+      untitledLabel={copy.common.untitled}
+      locale={locale}
+    >
+      <InventoryProductDialog onChanged={query.refresh} />
+      <InventoryProductQuickActions pending={pending} onClose={() => setPending(null)} onDone={() => query.refresh()} />
+    </ListSurface>
+  );
+}

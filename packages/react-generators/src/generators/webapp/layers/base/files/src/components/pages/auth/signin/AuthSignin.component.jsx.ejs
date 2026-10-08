@@ -1,0 +1,56 @@
+<%_ if (layers.signup) { _%>
+import { useNavigate, useParams } from "react-router-dom";
+<%_ } else { _%>
+import { useParams } from "react-router-dom";
+<%_ } _%>
+import { VeripassSignInManager } from "@veripass/react-sdk";
+
+import appConfig from "@app-config";
+import { THEME_COLORS } from "@constants/theme";
+import { useCopy } from "@i18n/index";
+import { publicUrl } from "@utils/paths.utils";
+import AuthBackdrop from "../shared/AuthBackdrop.component";
+
+/** Veripass sign-in with discovery: the organization comes from the URL, the environment or the person's choice. */
+export default function AuthSigninComponent() {
+  const copy = useCopy();
+<%_ if (layers.signup) { _%>
+  const navigate = useNavigate();
+<%_ } _%>
+  const { organizationSlug } = useParams();
+  const logoSrc = publicUrl(appConfig.brand.logo);
+
+  return (
+    <AuthBackdrop>
+      <section className="col-12 mx-auto">
+        <VeripassSignInManager
+          ui={{
+            logo: { src: logoSrc, height: "60" },
+            title: copy.auth.signin.welcome,
+            showTitle: true,
+            heroImage: {
+              src: publicUrl(appConfig.brand.authHero),
+              alt: appConfig.name,
+              title: copy.auth.signin.heroTitle,
+              subtitle: copy.auth.signin.heroSubtitle,
+              borderRadius: "1rem",
+            },
+            theme: { brandPrimary: THEME_COLORS.brandPrimary, brandPrimaryForeground: THEME_COLORS.onBrand, linkColor: THEME_COLORS.brandPrimary },
+          }}
+          organization={{ name: appConfig.name, logoSrc, slogan: copy.app.description }}
+          organizationSlug={organizationSlug || import.meta.env.VITE_APP_ORGANIZATION_SLUG || undefined}
+<%_ if (layers.signup) { _%>
+          registerUrl={publicUrl("/auth/signup")}
+          onRegisterClick={(event) => {
+            event.preventDefault();
+            navigate("/auth/signup");
+          }}
+<%_ } _%>
+          redirectUrl={publicUrl("/auth/callback")}
+          environment={import.meta.env.VITE_APP_BLACKWOOD_APPS_ENVIRONMENT}
+          apiKey={import.meta.env.VITE_APP_VERIPASS_API_KEY}
+        />
+      </section>
+    </AuthBackdrop>
+  );
+}

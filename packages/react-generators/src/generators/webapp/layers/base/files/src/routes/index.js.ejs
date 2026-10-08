@@ -1,0 +1,15 @@
+import { createElement, Fragment } from "react";
+
+export { default as AuthRoutes } from "./auth.routes.jsx";
+<%_ if (layers.signup) { _%>
+export { default as SetupRoutes } from "./setup.routes.jsx";
+<%_ } _%>
+
+// Every domain's routes, collected: a new `*.routes.jsx` under domains/ is mounted without touching this file.
+const DOMAIN_MODULES = import.meta.glob("./domains/**/*.routes.jsx", { eager: true });
+
+/** The routes of every domain, under the app's base route. */
+export const DomainRoutes = () =>
+  Object.entries(DOMAIN_MODULES)
+    .sort(([first], [second]) => first.localeCompare(second))
+    .map(([file, module]) => createElement(Fragment, { key: file }, module.default()));

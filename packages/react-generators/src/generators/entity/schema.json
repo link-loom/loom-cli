@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/entity",
+  "title": "Entity",
+  "description": "Adds a CRUD for one entity of a domain, built only from the kit of @link-loom/react-sdk: a list (ListSurface with search, view modes, pagination and row actions from the standard catalog), the record (EntityRecordDialog over the list and its own page, where creating is the record before it exists and fields are edited in place), a service on BaseApi, its routes, the sidebar row, the Omnisearch category, en/es copy and the tests. Nothing is inferred: choose the list preset and the actions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["domain", "entity"],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Domain in kebab-case, the folder the entity lives in, as in the backend (e.g. inventory, security)",
+      "examples": ["inventory", "security"],
+      "x-prompt": {
+        "en": "Domain",
+        "es": "Dominio"
+      },
+      "x-order": 1
+    },
+    "entity": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Entity in kebab-case and singular (e.g. product, api-key)",
+      "examples": ["product", "api-key"],
+      "x-prompt": {
+        "en": "Entity (singular)",
+        "es": "Entidad (singular)"
+      },
+      "x-order": 2
+    },
+    "plural": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Plural for the route (/<domain>/<plural>). Defaults to the English plural of the entity",
+      "x-order": 3
+    },
+    "singularEn": {
+      "type": "string",
+      "description": "English label, singular (e.g. \"Product\", \"API key\"). Defaults to the entity name",
+      "x-prompt": {
+        "en": "Label in English, singular",
+        "es": "Etiqueta en inglés, singular"
+      },
+      "x-order": 4
+    },
+    "pluralEn": {
+      "type": "string",
+      "description": "English label, plural (e.g. \"Products\")",
+      "x-prompt": {
+        "en": "Label in English, plural",
+        "es": "Etiqueta en inglés, plural"
+      },
+      "x-order": 5
+    },
+    "singularEs": {
+      "type": "string",
+      "description": "Spanish label, singular (e.g. \"Producto\", \"Clave de API\"). Without it the English label is used and a warning asks for it",
+      "x-prompt": {
+        "en": "Label in Spanish, singular",
+        "es": "Etiqueta en español, singular"
+      },
+      "x-order": 6
+    },
+    "pluralEs": {
+      "type": "string",
+      "description": "Spanish label, plural (e.g. \"Productos\")",
+      "x-prompt": {
+        "en": "Label in Spanish, plural",
+        "es": "Etiqueta en español, plural"
+      },
+      "x-order": 7
+    },
+    "genderEs": {
+      "type": "string",
+      "enum": ["m", "f"],
+      "default": "m",
+      "description": "Grammatical gender of the Spanish noun, so the copy agrees (Nuevo producto, Nueva clave de API)",
+      "x-prompt": {
+        "en": "Gender of the Spanish noun",
+        "es": "Género del sustantivo en español"
+      },
+      "x-order": 8,
+      "x-enum-labels": {
+        "en": {
+          "m": "Masculine (nuevo producto)",
+          "f": "Feminine (nueva clave)"
+        },
+        "es": {
+          "m": "Masculino (nuevo producto)",
+          "f": "Femenino (nueva clave)"
+        }
+      }
+    },
+    "descriptionEn": {
+      "type": "string",
+      "maxLength": 160,
+      "description": "One sentence under the list title, in English. Defaults to \"The <plural> of your organization.\""
+    },
+    "descriptionEs": {
+      "type": "string",
+      "maxLength": 160,
+      "description": "The same sentence in Spanish"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*(:[a-z]+(=[^:]+)?)?(:(required|readonly|list))*$"
+      },
+      "minItems": 1,
+      "default": ["name:text:required"],
+      "description": "Fields as name:type[=values][:flag...]. Types: text, longtext, number, date, boolean, email, url, options=a|b|c, secret (made by the server: shown masked, copied, never typed). Flags: required, readonly, list (show as a column). The first field is the record's title and must be text; name it `name` so Omnisearch can show it",
+      "examples": [["name:text:required", "sku:text:list", "price:number", "status:options=active|archived"]],
+      "x-prompt": {
+        "en": "Fields (name:type)",
+        "es": "Campos (nombre:tipo)"
+      },
+      "x-order": 9
+    },
+    "fieldLabelsEn": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]*=.+$"
+      },
+      "default": [],
+      "description": "English labels as field=Label, and option labels as field.value=Label. Missing ones come from the field name"
+    },
+    "fieldLabelsEs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]*=.+$"
+      },
+      "default": [],
+      "description": "Spanish labels as field=Etiqueta and field.value=Etiqueta"
+    },
+    "list": {
+      "type": "string",
+      "enum": ["standard", "compact", "cards"],
+      "default": "standard",
+      "description": "standard: header with description, search, table and grid. compact: table only, no description or grid. cards: grid first, table on demand",
+      "x-prompt": {
+        "en": "List",
+        "es": "Lista"
+      },
+      "x-order": 10,
+      "x-enum-labels": {
+        "en": {
+          "standard": "Standard — search, table and grid",
+          "compact": "Compact — a table only",
+          "cards": "Cards — grid first"
+        },
+        "es": {
+          "standard": "Estándar — búsqueda, tabla y cuadrícula",
+          "compact": "Compacta — solo una tabla",
+          "cards": "Tarjetas — cuadrícula primero"
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["quickview", "edit", "open-page", "open-new-tab", "copy-id", "copy-link", "delete"]
+      },
+      "uniqueItems": true,
+      "default": ["quickview", "open-new-tab", "copy-link", "delete"],
+      "description": "Row actions from the standard catalog: quickview (the record over the list), edit (the record, ready to edit), open-page, open-new-tab, copy-id, copy-link, delete (with a confirmation)",
+      "x-prompt": {
+        "en": "Row actions",
+        "es": "Acciones de fila"
+      },
+      "x-order": 11
+    },
+    "rowClick": {
+      "type": "string",
+      "enum": ["quickview", "page"],
+      "default": "quickview",
+      "description": "What clicking a row opens: the record over the list, or its own page"
+    },
+    "customActions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*(:(call|replace|copy)(:[a-z][a-z0-9_]*)?)?$"
+      },
+      "default": [],
+      "description": "The entity's own actions as id:kind. call: POST { id } to <endpoint>/<id>. replace: create a new record with the same values and delete this one (a rotation). copy:<field>: copy a field. Secret fields get their copy action without asking",
+      "examples": [["rotate:replace", "archive:call"]]
+    },
+    "actionLabelsEn": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*=.+$"
+      },
+      "default": [],
+      "description": "English labels of the custom actions as id=Label; a catalog action may be renamed the same way (delete=Revoke)"
+    },
+    "actionLabelsEs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*=.+$"
+      },
+      "default": [],
+      "description": "Spanish labels of the custom actions as id=Etiqueta (delete=Revocar)"
+    },
+    "endpoint": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/-]+$",
+      "description": "Backend path of the entity under VITE_APP_BACKEND_URL (Link Loom contract: GET <endpoint>/<queryselector>, POST, PATCH and DELETE <endpoint>). Defaults to /<domain>/<entity>"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["none", "organization"],
+      "default": "none",
+      "description": "organization: the list asks for the records of the person's organization (queryselector organization-id) and creating sends organization_id. Such a list has no text search and no Omnisearch category"
+    },
+    "createDefaults": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*=.*$"
+      },
+      "default": [],
+      "description": "Fixed values sent when creating, as field=value; {slug} is the app's slug (e.g. project_id={slug})"
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "list",
+        "inventory",
+        "people",
+        "folder",
+        "document",
+        "tag",
+        "calendar",
+        "cart",
+        "task",
+        "keys",
+        "building",
+        "payments",
+        "analytics",
+        "dashboard",
+        "chart",
+        "map",
+        "mail",
+        "security",
+        "warehouse",
+        "category",
+        "today",
+        "insights",
+        "settings",
+        "home",
+        "store",
+        "receipt",
+        "inbox",
+        "notifications",
+        "help",
+        "add",
+        "diamond",
+        "collections",
+        "star"
+      ],
+      "default": "list",
+      "description": "Icon of the entity in the sidebar, Omnisearch and the list header (Outlined icons of @mui/icons-material)",
+      "x-prompt": {
+        "en": "Icon",
+        "es": "Ícono"
+      },
+      "x-order": 12
+    },
+    "section": {
+      "type": "string",
+      "enum": ["app", "advanced"],
+      "default": "app",
+      "description": "app: a row of its own in the sidebar. advanced: it lives under Advanced settings (no sidebar row; the breadcrumb starts at Advanced settings)"
+    },
+    "navigation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Adds the list to the sidebar, before Advanced settings (only with section app)"
+    },
+    "omnisearch": {
+      "type": "boolean",
+      "default": true,
+      "description": "Adds an Omnisearch (⌘K) category that searches this entity (not with scope organization); results are titled by the first field, whatever its name (name, display_name…)"
+    },
+    "quickAdd": {
+      "type": "boolean",
+      "default": false,
+      "description": "Adds \"New <entity>\" to the navbar's + menu"
+    },
+    "replace": {
+      "type": "boolean",
+      "default": false,
+      "description": "Regenerate an entity that already exists: its files are written again from these options, and its sidebar row, Omnisearch category, + menu entry and copy are replaced. Hand edits to its files are lost"
+    }
+  }
+}

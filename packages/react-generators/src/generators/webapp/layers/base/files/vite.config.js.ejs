@@ -1,0 +1,60 @@
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react-swc";
+
+import { absoluteAliases } from "./aliases.config.js";
+import { appMetaPlugin } from "./tools/vite/app-meta.plugin.js";
+
+const SDKS = [
+  "@veripass/react-sdk",
+  "@link-loom/react-sdk",
+  "@link-loom/react-shell",<% if (layers.stoneos) { %>
+  "@link-loom/cloud-sdk",<% } %><% if (layers.commandCenter) { %>
+  "@sommatic/react-sdk",<% } %>
+];
+
+// The SDKs expose React contexts (auth, locale, Omnisearch<%= layers.commandCenter ? ', Command Center' : '' %>). A second copy of any of them is a
+// second context that no provider fills, so every importer is forced to the single copy in node_modules.
+const SINGLE_COPY = [
+  "react",
+  "react-dom",
+  "react/jsx-runtime",
+  "react-router-dom",
+  "@mui/material",
+  "@mui/icons-material",
+  "@emotion/react",
+  "@emotion/styled",
+  "styled-components",
+  ...SDKS,
+];
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    base: env.VITE_BASE_PATH || "/",
+    plugins: [react(), appMetaPlugin()],
+    server: { port: Number(env.VITE_PORT) || 3000 },
+    resolve: { dedupe: SINGLE_COPY, alias: absoluteAliases() },
+    build: {
+      // MUI and the SDKs that wrap it stay in one chunk: splitting them apart surfaces cross-chunk circular
+      // imports ("Cannot access 'X' before initialization"). Size is cut per route with React.lazy instead.
+      chunkSizeWarningLimit: 32000,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (!id.includes("node_modules")) return undefined;
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "vendor-react";
+            if (/node_modules\/(@mui|@emotion|styled-components|@sommatic|@link-loom|@veripass|@xyflow|@monaco-editor)\//.test(id)) {
+              return "vendor-ui";
+            }
+            return "vendor";
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      // Pre-bundled in dev so their CommonJS dependencies reach the browser as ES modules.
+      include: ["react", "react-dom", "react/jsx-runtime", ...SDKS],
+    },
+  };
+});

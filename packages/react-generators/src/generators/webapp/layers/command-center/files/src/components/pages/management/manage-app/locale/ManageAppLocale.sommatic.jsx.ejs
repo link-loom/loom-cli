@@ -1,0 +1,20 @@
+import { useSommaticContextSource } from "@sommatic/react-sdk";
+
+export const PAGE_METADATA = {
+  path: "<%= basePath %>/<%= slug %>/locale",
+  description: "Language and theme — choose English or Spanish and a light, dark or system theme.",
+};
+
+/** Tells the Command Center which page the person is on and what it offers. */
+export default function ManageAppLocaleSommatic() {
+  useSommaticContextSource(
+    {
+      id: "page-context",
+      ...PAGE_METADATA,
+      getData: () => ({ type: "manage-app-locale" }),
+    },
+    []
+  );
+
+  return null;
+}

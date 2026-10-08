@@ -1,0 +1,83 @@
+<%_
+  const required = editableFields.filter((field) => field.required && field.type !== "boolean").map((field) => field.name);
+  const hasCreateExtras = scoped || Object.keys(createDefaults).length;
+_%>
+import {
+  LIST_PATH,
+  createPayloadOf,
+<%_ if (has.secret) { _%>
+  maskSecret,
+<%_ } _%>
+  missingRequiredOf,
+  payloadOf,
+  recordPath,
+  valuesOf,
+<%_ if (customActions.length) { _%>
+  withCustomActions,
+<%_ } _%>
+} from "@components/pages/<%- domain %>/<%- entity %>/<%- utilsFile %>";
+import { EMPTY_VALUES, PAYLOAD, RECORD, VALUES } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+
+describe("<%- text.singular %> values", () => {
+  it("starts a new one empty", () => {
+    expect(valuesOf(null)).toEqual(EMPTY_VALUES);
+  });
+
+  it("reads a saved one and sends it back as the backend takes it", () => {
+    expect(valuesOf(RECORD)).toEqual(VALUES);
+    expect(payloadOf(VALUES)).toEqual(PAYLOAD);
+  });
+
+  it("sends what creating needs", () => {
+<%_ if (scoped) { _%>
+    expect(createPayloadOf(VALUES, { organizationId: "org-1" })).toEqual({
+      ...PAYLOAD,
+<%_ Object.entries(createDefaults).forEach(([key, value]) => { _%>
+      <%- key %>: <%- json(value) %>,
+<%_ }) _%>
+      organization_id: "org-1",
+    });
+<%_ } else if (hasCreateExtras) { _%>
+    expect(createPayloadOf(VALUES)).toEqual({
+      ...PAYLOAD,
+<%_ Object.entries(createDefaults).forEach(([key, value]) => { _%>
+      <%- key %>: <%- json(value) %>,
+<%_ }) _%>
+    });
+<%_ } else { _%>
+    expect(createPayloadOf(VALUES)).toEqual(PAYLOAD);
+<%_ } _%>
+  });
+
+  it("names the required fields left empty", () => {
+    expect(missingRequiredOf(EMPTY_VALUES)).toEqual(<%- list(required) %>);
+    expect(missingRequiredOf(VALUES)).toEqual([]);
+  });
+
+  it("builds the address of one", () => {
+    expect(recordPath("a b")).toBe(`${LIST_PATH}/a%20b`);
+  });
+<%_ if (has.secret) { _%>
+
+  it("shows only the edges of a secret", () => {
+    expect(maskSecret("key-0123456789abcdef")).toBe("key-••••cdef");
+    expect(maskSecret("")).toBe("••••");
+  });
+<%_ } _%>
+<%_ if (customActions.length) { _%>
+
+  it("puts its own actions before the destructive one", () => {
+    const onPick = jest.fn();
+    const items = withCustomActions({
+      items: [{ id: "copy-link" }, { id: "delete", danger: true }],
+      record: RECORD,
+      labels: {},
+      onPick,
+    });
+
+    expect(items.map((item) => item.id)).toEqual(["copy-link", <%- customActions.map((action) => json(action.id)).join(", ") %>, "delete"]);
+    items[1].onClick();
+    expect(onPick).toHaveBeenCalledWith(expect.objectContaining({ id: "<%- customActions[0].id %>" }), RECORD);
+  });
+<%_ } _%>
+});

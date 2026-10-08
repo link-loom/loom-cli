@@ -1,0 +1,92 @@
+{
+  "id": "base",
+  "dependencies": [
+    "@emotion/react",
+    "@emotion/styled",
+    "@link-loom/react-sdk",
+    "@link-loom/react-shell",
+    "@mui/icons-material",
+    "@mui/material",
+    "@mui/system",
+    "@veripass/react-sdk",
+    "react",
+    "react-dom",
+    "react-router-dom",
+    "styled-components"
+  ],
+  "devDependencies": [
+    "@babel/preset-env",
+    "@babel/preset-react",
+    "@eslint/js",
+    "@link-loom/cli",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@vitejs/plugin-react-swc",
+    "babel-jest",
+    "eslint",
+    "eslint-plugin-jsx-a11y",
+    "eslint-plugin-react-hooks",
+    "eslint-plugin-react-refresh",
+    "globals",
+    "identity-obj-proxy",
+    "jest",
+    "jest-environment-jsdom",
+    "prettier",
+    "vite"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "node --max-old-space-size=8192 node_modules/vite/bin/vite.js build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "test": "jest",
+    "verify": "npm run lint && link-loom check && npm test && npm run build",
+    "version-patch": "npm version patch && git push --tags",
+    "docker:build": "docker build -f docker/Dockerfile ."
+  },
+  "env": [
+    {
+      "group": "App",
+      "key": "VITE_PORT",
+      "option": "port",
+      "comment": "Dev server port"
+    },
+    {
+      "group": "App",
+      "key": "VITE_BASE_PATH",
+      "value": "",
+      "comment": "Build base path: empty for the host root, \"/subpath/\" behind a path prefix"
+    },
+    {
+      "group": "Backends",
+      "key": "VITE_APP_BACKEND_URL",
+      "option": "backendUrl",
+      "comment": "This app's backend: API keys and the app's own domains"
+    },
+    {
+      "group": "Identity",
+      "key": "VITE_APP_SERVICE_VERIPASS_URL",
+      "option": "veripassUrl",
+      "comment": "Veripass identity backend, set once in src/main.jsx through configureVeripass()"
+    },
+    {
+      "group": "Identity",
+      "key": "VITE_APP_VERIPASS_API_KEY",
+      "option": "veripassApiKey",
+      "secret": true,
+      "comment": "Veripass API key. SECRET: only in .env.local, never committed"
+    },
+    {
+      "group": "Identity",
+      "key": "VITE_APP_ORGANIZATION_SLUG",
+      "option": "organizationSlug",
+      "comment": "Veripass organization the sign-in opens with (empty: people choose)"
+    },
+    {
+      "group": "Identity",
+      "key": "VITE_APP_BLACKWOOD_APPS_ENVIRONMENT",
+      "option": "environment",
+      "comment": "local | development | production"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@link-loom/cloud-sdk": "^1.1.2",
+    "@link-loom/react-sdk": "^1.1.79",
+    "@link-loom/react-shell": "^0.1.0",
+    "@mui/icons-material": "^6.5.0",
+    "@mui/material": "^6.5.0",
+    "@mui/system": "^6.5.0",
+    "@mui/x-date-pickers": "^8.11.3",
+    "@sommatic/react-sdk": "^1.0.50",
+    "@veripass/react-sdk": "^1.1.51",
+    "luxon": "^3.7.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.2",
+    "styled-components": "^6.3.11"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "@eslint/js": "^9.36.0",
+    "@link-loom/cli": "^3.0.0-alpha.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "babel-jest": "^30.2.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "prettier": "^3.6.2",
+    "vite": "^7.1.7"
+  },
+  "features": {
+    "images": {
+      "devDependencies": {
+        "sharp": "^0.34.5"
+      }
+    }
+  }
+}

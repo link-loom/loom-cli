@@ -1,0 +1,27 @@
+import { OnPageLoaded, usePageMeta } from "@link-loom/react-sdk";
+
+import { useCopy } from "@i18n/index";
+import { appPath } from "@utils/paths.utils";
+import { LIST_PATH } from "@components/pages/<%- domain %>/<%- entity %>/<%- utilsFile %>";
+import <%- Prefix %>DetailComponent from "@components/pages/<%- domain %>/<%- entity %>/record/<%- Prefix %>Detail.component";
+
+export default function <%- Prefix %>DetailPage() {
+  const copy = useCopy();
+  const entityCopy = copy.<%- copyPath %>;
+  usePageMeta({
+    title: entityCopy.singular,
+    breadcrumb: [
+<%_ if (advanced) { _%>
+      { label: copy.management.title, to: appPath("/management") },
+<%_ } _%>
+      { label: entityCopy.plural, to: appPath(LIST_PATH) },
+    ],
+  });
+
+  return (
+    <>
+      <<%- Prefix %>DetailComponent />
+      <OnPageLoaded />
+    </>
+  );
+}

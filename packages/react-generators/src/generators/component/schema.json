@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/component",
+  "title": "Component",
+  "description": "Adds a component and its test: shared (src/components/shared/<name>/) or of a domain (src/components/pages/<domain>/<name>/). For a CRUD use `add entity`; for a page, `add page`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9]*$",
+      "description": "Component name in PascalCase (e.g. StockGauge)",
+      "x-prompt": { "en": "Component name", "es": "Nombre del componente" },
+      "x-order": 1
+    },
+    "domain": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Domain it belongs to; without it the component is shared",
+      "x-order": 2
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "description": "One sentence about what it shows or does, for its doc comment"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+/**
+ * The navbar's "+" menu: what people create often, as data. `link-loom add entity --quick-add` appends here.
+ * `to` is relative to the app's base route (a list with `?new=1` opens its create form); `icon` names an entry of
+ * src/constants/iconLibrary.js.
+ */
+export const QUICK_ADD_ACTIONS = [
+  { id: "api-key", labelKey: "navbar.quickAdd.apiKey", descriptionKey: "navbar.quickAdd.apiKeyHint", icon: "keys", to: "/security/api-keys?new=1" },
+<%_ if (layers.stoneos) { _%>
+  { id: "app", labelKey: "navbar.quickAdd.app", descriptionKey: "navbar.quickAdd.appHint", icon: "store", to: "/stoneos/store" },
+  {
+    id: "support-case",
+    labelKey: "navbar.quickAdd.supportCase",
+    descriptionKey: "navbar.quickAdd.supportCaseHint",
+    icon: "support",
+    to: "/help-center/new-case",
+  },
+<%_ } _%>
+];
+
+// The inert last row that tells the team where their own shortcuts go. Set it to null once the menu has them.
+export const QUICK_ADD_PLACEHOLDER = {
+  labelKey: "navbar.quickAdd.placeholder",
+  descriptionKey: "navbar.quickAdd.placeholderHint",
+  icon: "add",
+};

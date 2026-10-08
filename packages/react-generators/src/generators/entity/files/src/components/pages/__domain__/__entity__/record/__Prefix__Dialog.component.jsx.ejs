@@ -1,0 +1,30 @@
+import { useMemo } from "react";
+import { EntityRecordDialog } from "@link-loom/react-sdk";
+
+import { useCopy, useLocale } from "@i18n/index";
+import { appUrl } from "@utils/paths.utils";
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+import <%- Prefix %>Record from "./<%- Prefix %>Record.component";
+import { recordPath } from "../<%- utilsFile %>";
+
+/**
+ * The <%- text.singular %> over its list, driven by the address: ?id=<id> opens it and ?new=1 opens a new one. Closing
+ * with unsaved changes asks first.
+ */
+export default function <%- Prefix %>Dialog({ onChanged }) {
+  const copy = useCopy();
+  const { locale } = useLocale();
+  const service = useMemo(() => new <%- serviceClass %>(), []);
+
+  return (
+    <EntityRecordDialog
+      entityType="<%- entityType %>"
+      section={copy.<%- copyPath %>.plural}
+      loadRecord={(id) => service.read(id)}
+      onChanged={onChanged}
+      linkOf={(record) => appUrl(recordPath(record.id))}
+      locale={locale}
+      renderRecord={(context) => <<%- Prefix %>Record {...context} />}
+    />
+  );
+}

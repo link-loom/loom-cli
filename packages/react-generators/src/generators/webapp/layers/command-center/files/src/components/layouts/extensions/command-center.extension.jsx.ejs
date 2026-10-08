@@ -1,0 +1,189 @@
+import { useCallback, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
+import { useOmniSearchRegistry } from "@link-loom/react-sdk";
+import { useAuth } from "@veripass/react-sdk";
+import {
+  CognitiveInfrastructureLLMProviderService,
+  CommandCenterProvider,
+  CommandCenterSidebar,
+  ConversationExecutionService,
+  ConversationManagementService,
+  TaskNotificationToast,
+  TaskQuickViewOverlay,
+  useEventStream,
+  useTaskSLAMonitor,
+  WorkManagementTaskService,
+} from "@sommatic/react-sdk";
+<%_ if (layers.stoneos) { _%>
+import { AppEmbedCard } from "@sommatic/react-sdk";
+import { AppEngineSDKProvider, AppRuntimeHostComponent, useAppEngineSDK } from "@link-loom/cloud-sdk";
+
+import useAppRuntimeIdentity from "@hooks/useAppRuntimeIdentity.hook";
+<%_ } _%>
+
+import useCurrentUser from "@hooks/useCurrentUser.hook";
+import { appPath } from "@utils/paths.utils";
+import { isCommandCenterEnabled } from "./command-center.config";
+
+// Each `*.sommatic.jsx` beside a page component exports PAGE_METADATA ({ path, description }): the catalog the
+// Command Center resolves navigation intent with, and the page context it reads while the person is on that page.
+const COMPANIONS = import.meta.glob("../../pages/**/*.sommatic.jsx", { eager: true });
+const PAGE_CATALOG = Object.values(COMPANIONS)
+  .map((module) => module.PAGE_METADATA)
+  .filter(Boolean);
+const TOP_OFFSET = 70;
+
+/** The companion of the page on screen, if it has one: it tells the Command Center what the person is looking at. */
+function PageCompanion() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const entry = Object.values(COMPANIONS).find((module) => module.PAGE_METADATA?.path === pathname);
+
+  if (!entry?.default) {
+    return null;
+  }
+
+  const Companion = entry.default;
+  return <Companion navigate={navigate} />;
+}
+
+/** Task notifications: the live stream of assigned tasks, the SLA monitor, the toast and the quick view. */
+function TaskNavigation() {
+  const navigate = useNavigate();
+  const { identity } = useCurrentUser();
+  const taskService = useMemo(() => new WorkManagementTaskService(), []);
+
+  const fetchActiveTasks = useCallback(async () => {
+    if (!identity) {
+      return [];
+    }
+
+    const response = await taskService.getByParameters({ queryselector: "inbox", user_id: identity, pageSize: 50 });
+    return response?.success ? response.result?.items || response.result || [] : [];
+  }, [identity, taskService]);
+
+  useTaskSLAMonitor(fetchActiveTasks, { enabled: Boolean(identity) });
+  useEventStream({ userIdentity: identity, enabled: Boolean(identity) });
+
+  return (
+    <>
+      <TaskNotificationToast onNavigate={() => navigate(appPath("/overview"))} />
+      <TaskQuickViewOverlay />
+    </>
+  );
+}
+
+/** Wraps the frame in the Sommatic Command Center when it is on; otherwise renders the frame as it is. */
+export default function CommandCenterExtension({ children }) {
+  const { user } = useAuth();
+  const { commands } = useOmniSearchRegistry();
+  const executionService = useMemo(() => new ConversationExecutionService(), []);
+  const taskService = useMemo(() => new WorkManagementTaskService(), []);
+
+  if (!isCommandCenterEnabled()) {
+    return children;
+  }
+
+  return (
+    <CommandCenterProvider
+      commands={commands}
+      executionService={executionService}
+      pageCatalog={PAGE_CATALOG}
+      conversationManagementService={ConversationManagementService}
+      llmProviderService={CognitiveInfrastructureLLMProviderService}
+      taskService={taskService}
+      currentUser={user}
+    >
+      <PageCompanion />
+      {children}
+      <TaskNavigation />
+    </CommandCenterProvider>
+  );
+}
+<%_ if (layers.stoneos) { _%>
+
+/** An App Engine app inside the Command Center, able to move to full screen. */
+function AppEmbed({ record, onEscalate }) {
+  const { appSessionService } = useAppEngineSDK();
+  const runtimeIdentity = useAppRuntimeIdentity();
+
+  const close = () => window.dispatchEvent(new CustomEvent("sommatic:app:close-embed", { detail: { recordId: record.record_id } }));
+  const submitOutput = (outputPayload) =>
+    window.dispatchEvent(
+      new CustomEvent("sommatic:app:output", { detail: { recordId: record.record_id, appSlug: record.app_slug, outputPayload } })
+    );
+
+  return (
+    <AppEmbedCard>
+      <AppRuntimeHostComponent
+        appSlug={record.app_slug}
+        routePath={record.route_path || "/"}
+        launchMode="command-center"
+        inputPayload={record.input_payload || {}}
+        appSessionService={appSessionService}
+        {...runtimeIdentity}
+        apiBaseUrl={import.meta.env.VITE_APP_BACKEND_URL || ""}
+        onClose={close}
+        onSubmitOutput={submitOutput}
+        onRequestEscalation={({ routePath, viewState, sessionId }) =>
+          onEscalate({
+            ...record,
+            route_path: routePath || record.route_path,
+            input_payload: { ...(record.input_payload || {}), _restored_view_state: viewState, _parent_session_id: sessionId },
+          })
+        }
+      />
+    </AppEmbedCard>
+  );
+}
+<%_ } _%>
+
+/**
+ * The Command Center panel at the right of the content. MUI's small icons keep their own 20 px here: the app's
+ * theme shrinks them for dense lists, which would flatten the Command Center's glyphs.
+ */
+export function CommandCenterPanel() {
+  const theme = useTheme();
+  const panelTheme = useMemo(
+    () => createTheme(theme, { components: { MuiSvgIcon: { styleOverrides: { fontSizeSmall: { fontSize: 20 } } } } }),
+    [theme]
+  );
+<%_ if (layers.stoneos) { _%>
+  const navigate = useNavigate();
+
+  // Full screen is the app's runtime page; the Command Center keeps the conversation.
+  const openFullScreen = useCallback(
+    (record) => {
+      const route = String(record.route_path || "").replace(/^\//, "");
+      navigate(appPath(`/app-engine/runtime/${record.app_slug}${route ? `/${route}` : ""}`), {
+        state: { inputPayload: record.input_payload },
+      });
+    },
+    [navigate]
+  );
+
+  const renderAppEmbed = useCallback(
+    (record) => (
+      <AppEngineSDKProvider>
+        <AppEmbed record={record} onEscalate={openFullScreen} />
+      </AppEngineSDKProvider>
+    ),
+    [openFullScreen]
+  );
+<%_ } _%>
+
+  if (!isCommandCenterEnabled()) {
+    return null;
+  }
+
+  return (
+    <ThemeProvider theme={panelTheme}>
+<%_ if (layers.stoneos) { _%>
+      <CommandCenterSidebar topOffset={TOP_OFFSET} renderAppEmbed={renderAppEmbed} />
+<%_ } else { _%>
+      <CommandCenterSidebar topOffset={TOP_OFFSET} />
+<%_ } _%>
+    </ThemeProvider>
+  );
+}

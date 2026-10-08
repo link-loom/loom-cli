@@ -1,0 +1,8 @@
+import { PAGE_METADATA } from "@components/pages/management/manage-app/locale/ManageAppLocale.sommatic";
+
+describe("ManageAppLocale companion", () => {
+  it("names its page for the Command Center's navigation", () => {
+    expect(PAGE_METADATA.path).toBe("<%= basePath %>/<%= slug %>/locale");
+    expect(PAGE_METADATA.description.length).toBeGreaterThan(20);
+  });
+});

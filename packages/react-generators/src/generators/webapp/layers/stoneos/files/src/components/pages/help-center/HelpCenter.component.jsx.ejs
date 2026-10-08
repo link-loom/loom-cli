@@ -1,0 +1,38 @@
+import { SupportCenterLayout } from "@link-loom/cloud-sdk";
+
+import appConfig from "@app-config";
+import { useLocale } from "@i18n/index";
+<%_ if (layers.commandCenter) { _%>
+import { useSupportAssistant } from "@components/layouts/extensions/command-center.hooks";
+<%_ } _%>
+
+/**
+ * A help center for one support namespace: guides, cases<%= layers.commandCenter ? ' and the Command Center assistant' : '' %>. Its sub-pages render
+ * inside it, from the routes the cloud SDK provides. Without props it is this app's own help center.
+ */
+export default function HelpCenterComponent({
+  namespaceSlug = appConfig.slug,
+  productSlug = appConfig.slug,
+  productDisplayName = appConfig.name,
+}) {
+  const { locale } = useLocale();
+<%_ if (layers.commandCenter) { _%>
+  const assistant = useSupportAssistant();
+<%_ } _%>
+
+  return (
+    <SupportCenterLayout
+      key={namespaceSlug}
+      namespaceSlug={namespaceSlug}
+      productSlug={productSlug}
+      productDisplayName={productDisplayName}
+      originSurface={appConfig.slug}
+      locale={locale}
+<%_ if (layers.commandCenter) { _%>
+      assistant={assistant}
+<%_ } _%>
+      baseUrl={import.meta.env.VITE_LOOM_CLOUD_BACKEND_URL}
+      environment={import.meta.env.VITE_APP_BLACKWOOD_APPS_ENVIRONMENT}
+    />
+  );
+}

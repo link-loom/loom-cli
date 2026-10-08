@@ -1,0 +1,94 @@
+import <%- serviceClass %> from "@services/<%- domain %>/<%- entity %>/<%- serviceFile %>";
+
+const ok = (result) => ({ success: true, result });
+
+describe("<%- serviceClass %>", () => {
+  let service;
+
+  beforeEach(() => {
+    service = new <%- serviceClass %>();
+  });
+
+  it("talks to <%- endpoint %> on the app's backend", () => {
+    expect(service.serviceEndpoints).toEqual({
+      baseUrl: "http://backend.test",
+      get: "<%- endpoint %>/",
+      create: "<%- endpoint %>",
+      update: "<%- endpoint %>",
+      delete: "<%- endpoint %>",
+    });
+  });
+
+<%_ if (scoped) { _%>
+  it("lists a page of the organization's records", async () => {
+    const getByParameters = jest.spyOn(service, "getByParameters").mockResolvedValue(ok({ items: [{ id: "a" }], totalItems: 1 }));
+
+    await expect(service.list({ organizationId: "org-1", page: 2, pageSize: 25 })).resolves.toEqual({
+      items: [{ id: "a" }],
+      totalItems: 1,
+    });
+    expect(getByParameters).toHaveBeenCalledWith({
+      queryselector: "organization-id",
+      search: "org-1",
+      exclude_status: "deleted",
+      page: 2,
+      pageSize: 25,
+    });
+  });
+<%_ } else { _%>
+  it("lists a page, narrowed by text when there is some", async () => {
+    const getByParameters = jest.spyOn(service, "getByParameters").mockResolvedValue(ok({ items: [{ id: "a" }], totalItems: 1 }));
+
+    await expect(service.list({ search: "sample", page: 2, pageSize: 25 })).resolves.toEqual({
+      items: [{ id: "a" }],
+      totalItems: 1,
+    });
+    expect(getByParameters).toHaveBeenCalledWith({
+      queryselector: "search",
+      search: "sample",
+      exclude_status: "deleted",
+      page: 2,
+      pageSize: 25,
+    });
+
+    await service.list();
+    expect(getByParameters).toHaveBeenLastCalledWith(expect.objectContaining({ queryselector: "all", page: 1 }));
+  });
+<%_ } _%>
+
+  it("reads one by id", async () => {
+    const getByParameters = jest.spyOn(service, "getByParameters").mockResolvedValue(ok({ items: [{ id: "a" }] }));
+
+    await expect(service.read("a")).resolves.toEqual({ record: { id: "a" } });
+    expect(getByParameters).toHaveBeenCalledWith({ queryselector: "id", search: "a" });
+  });
+
+  it("creates, edits and removes", async () => {
+    const create = jest.spyOn(service, "create").mockResolvedValue(ok({ id: "a" }));
+    const update = jest.spyOn(service, "update").mockResolvedValue(ok({ id: "a" }));
+    const remove = jest.spyOn(service, "delete").mockResolvedValue(ok({ id: "a" }));
+
+    await expect(service.add({ name: "x" })).resolves.toEqual({ id: "a" });
+    await service.edit("a", { name: "y" });
+    await service.remove("a");
+
+    expect(create).toHaveBeenCalledWith({ name: "x" });
+    expect(update).toHaveBeenCalledWith({ name: "y", id: "a" });
+    expect(remove).toHaveBeenCalledWith({ id: "a" });
+  });
+<%_ customActions.filter((action) => action.kind === "call").forEach((action) => { _%>
+
+  it("<%- action.id %>: posts the id to its own endpoint", async () => {
+    const post = jest.spyOn(service, "post").mockResolvedValue(ok({}));
+
+    await service.<%- action.key %>("a");
+    expect(post).toHaveBeenCalledWith({ id: "a" }, { endpoint: "<%- endpoint %>/<%- action.id %>" });
+  });
+<%_ }) _%>
+
+  it("throws what the backend answers when it fails", async () => {
+    jest.spyOn(service, "create").mockResolvedValue({ success: false, message: "Please provide a name" });
+
+    await expect(service.add({})).rejects.toThrow("Please provide a name");
+  });
+});

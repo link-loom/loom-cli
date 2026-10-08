@@ -1,0 +1,8 @@
+import { PAGE_METADATA } from "@components/pages/management/home/ManagementHome.sommatic";
+
+describe("ManagementHome companion", () => {
+  it("names its page for the Command Center's navigation", () => {
+    expect(PAGE_METADATA.path).toBe("<%= basePath %>/management");
+    expect(PAGE_METADATA.description.length).toBeGreaterThan(20);
+  });
+});

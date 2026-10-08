@@ -1,0 +1,49 @@
+import { screen } from "@testing-library/react";
+import { useAuth } from "@veripass/react-sdk";
+
+import appConfig from "@app-config";
+import AuthCallbackComponent from "@components/pages/auth/callback/AuthCallback.component";
+import { renderWithProviders } from "@tests/support/render";
+
+jest.mock("@veripass/react-sdk", () => ({
+  ...jest.requireActual("@tests/support/sdk-stubs").stubs(["VeripassFederatedCallback"]),
+  AUTH_DECISIONS: { ALLOW: "allow", NEEDS_ORGANIZATION_JOIN: "needs_organization_join", NEEDS_APP_REGISTRATION: "needs_app_registration", DENY: "deny" },
+  useAuth: jest.fn(),
+}));
+
+const signedInWith = (decision) =>
+  useAuth.mockReturnValue({ user: { identity: "user-1", authorization: { decision } }, getAuthDecision: () => decision });
+
+describe("AuthCallback", () => {
+  it("lets an admitted person in", () => {
+    signedInWith("allow");
+    renderWithProviders(<AuthCallbackComponent />, { route: "/auth/callback" });
+
+    expect(screen.getByTestId("location")).toHaveTextContent(`${appConfig.basePath}/overview`);
+  });
+
+  it("sends a denied person back to sign-in", () => {
+    signedInWith("deny");
+    renderWithProviders(<AuthCallbackComponent />, { route: "/auth/callback" });
+
+    expect(screen.getByTestId("location")).toHaveTextContent("/auth/login?error=");
+  });
+
+  it("<%= layers.signup ? 'sends a person without an organization to the setup' : 'tells a person without access to ask for an invitation' %>", () => {
+    signedInWith("needs_organization_join");
+    renderWithProviders(<AuthCallbackComponent />, { route: "/auth/callback" });
+
+<%_ if (layers.signup) { _%>
+    expect(screen.getByTestId("location")).toHaveTextContent("/setup/workspace");
+<%_ } else { _%>
+    expect(screen.getByTestId("location")).toHaveTextContent("/auth/login?error=");
+<%_ } _%>
+  });
+
+  it("lets Veripass read a federated return", () => {
+    useAuth.mockReturnValue({ user: null, getAuthDecision: () => "unknown" });
+    renderWithProviders(<AuthCallbackComponent />, { route: "/auth/callback?token=abc" });
+
+    expect(screen.getByTestId("VeripassFederatedCallback")).toBeInTheDocument();
+  });
+});

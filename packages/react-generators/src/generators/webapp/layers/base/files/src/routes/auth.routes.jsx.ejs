@@ -1,0 +1,32 @@
+import { lazy } from "react";
+import { Navigate, Route } from "react-router-dom";
+
+import LayoutAuth from "@layouts/LayoutAuth";
+
+const AuthSigninPage = lazy(() => import("@pages/auth/AuthSignin.page"));
+const AuthRecoverPasswordPage = lazy(() => import("@pages/auth/AuthRecoverPassword.page"));
+const AuthNewPasswordPage = lazy(() => import("@pages/auth/AuthNewPassword.page"));
+const AuthLockScreenPage = lazy(() => import("@pages/auth/AuthLockScreen.page"));
+const AuthLogoutPage = lazy(() => import("@pages/auth/AuthLogout.page"));
+const AuthCallbackPage = lazy(() => import("@pages/auth/AuthCallback.page"));
+<%_ if (layers.signup) { _%>
+const AuthSignupPage = lazy(() => import("@pages/auth/AuthSignup.page"));
+<%_ } _%>
+
+export default function AuthRoutes() {
+  return (
+    <Route path="/auth" element={<LayoutAuth />}>
+      <Route index element={<Navigate to="login" replace />} />
+      <Route path="login" element={<AuthSigninPage />} />
+      <Route path="login/:organizationSlug" element={<AuthSigninPage />} />
+<%_ if (layers.signup) { _%>
+      <Route path="signup" element={<AuthSignupPage />} />
+<%_ } _%>
+      <Route path="recover-password" element={<AuthRecoverPasswordPage />} />
+      <Route path="new-password" element={<AuthNewPasswordPage />} />
+      <Route path="lock-screen" element={<AuthLockScreenPage />} />
+      <Route path="logout" element={<AuthLogoutPage />} />
+      <Route path="callback" element={<AuthCallbackPage />} />
+    </Route>
+  );
+}

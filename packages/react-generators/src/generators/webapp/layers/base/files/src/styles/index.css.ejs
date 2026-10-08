@@ -1,0 +1,23 @@
+/* Order matters: the frame (Bootstrap 5.3 grid and utilities, the shell, light and dark tokens), then the Link Loom
+   components, then this app's own rules. Colours are tokens (--ll-*) set from src/constants/theme.js. */
+@import "@link-loom/react-shell/styles.css";
+@import "@link-loom/react-sdk/dist/styles.css";
+
+:root {
+  --app-auth-from: <%= authGradient.from %>;
+  --app-auth-to: <%= authGradient.to %>;
+}
+
+/* The ground behind sign-in and sign-up: a soft diagonal from the page grey to a light tint of the brand. */
+.app-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  overflow: auto;
+  background: linear-gradient(135deg, var(--app-auth-from) 0%, var(--app-auth-to) 100%);
+}

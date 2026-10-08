@@ -1,0 +1,39 @@
+import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from "node:util";
+
+// What `import.meta.env` reads under Jest (see vite-meta.babel.cjs).
+globalThis.__VITE_ENV__ = {
+  BASE_URL: "/",
+  MODE: "test",
+  DEV: false,
+  PROD: false,
+  VITE_APP_BACKEND_URL: "http://backend.test",
+  VITE_APP_SERVICE_VERIPASS_URL: "http://veripass.test",
+  VITE_APP_BLACKWOOD_APPS_ENVIRONMENT: "local",
+<%_ if (layers.stoneos) { _%>
+  VITE_LOOM_CLOUD_BACKEND_URL: "http://cloud.test",
+<%_ } _%>
+<%_ if (layers.commandCenter) { _%>
+  VITE_APP_SOMMATIC_BACKEND_URL: "http://sommatic.test",
+  VITE_SOMMATIC_ENABLED: "false",
+<%_ } _%>
+};
+
+// jsdom leaves these out; the router and the SDKs read them.
+Object.assign(globalThis, { TextEncoder, TextDecoder });
+window.matchMedia ||= (query) => ({
+  matches: false,
+  media: query,
+  addEventListener: () => {},
+  removeEventListener: () => {},
+  addListener: () => {},
+  removeListener: () => {},
+});
+globalThis.ResizeObserver ||= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+window.scrollTo = () => {};
+
+afterEach(() => window.localStorage.clear());

@@ -1,0 +1,21 @@
+/**
+ * What Omnisearch (⌘K) finds: data only. `link-loom add entity` appends a category per searchable entity.
+ *
+ *   category: { id, labelKey, service, payload: ({ organizationId, identity }) => ({ … }), icon, to: (item) => path,
+ *               itemLabel?: (item) => text, createTo?, createLabelKey? }
+ *   command:  { id, labelKey, icon, to, keys, shortcut }
+ *
+ * Paths are relative to the app's base route; `icon` names an entry of src/constants/iconLibrary.js.
+ */
+export const OMNISEARCH_CATEGORIES = [];
+
+export const OMNISEARCH_COMMANDS = [
+  { id: "nav-overview", labelKey: "nav.overview", icon: "overview", to: "/overview", keys: ["meta", "shift", "o"], shortcut: "⌘⇧O" },
+<%_ if (layers.stoneos) { _%>
+  { id: "nav-apps", labelKey: "launchpad.myApps", icon: "apps", to: "/stoneos/apps", keys: ["meta", "shift", "a"], shortcut: "⌘⇧A" },
+<%_ } _%>
+  { id: "nav-advanced", labelKey: "nav.advanced", icon: "settings", to: "/management", keys: ["meta", "shift", "d"], shortcut: "⌘⇧D" },
+<%_ if (layers.stoneos) { _%>
+  { id: "nav-help", labelKey: "helpCenter.title", icon: "help", to: "/help-center", keys: ["meta", "shift", "h"], shortcut: "⌘⇧H" },
+<%_ } _%>
+];

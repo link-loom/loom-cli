@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/platform-section",
+  "title": "Platform section",
+  "description": "Adds a card to a platform's page in Advanced settings (src/components/pages/platforms/hub/platform.sections.js): a section this app built for that platform (e.g. Users under Identity). Needs the stoneos layer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["platform", "id", "titleEn", "descriptionEn", "to"],
+  "properties": {
+    "platform": {
+      "type": "string",
+      "enum": ["linkloom", "veripass", "sommatic", "vectry", "hivora", "vca", "miretail", "micampus"],
+      "description": "Platform id: linkloom (Applications), veripass (Identity), sommatic (Intelligence), vectry (Analytics), hivora (Devices), vca (Finance), miretail (Operations), micampus (Learning)",
+      "x-order": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*[a-z0-9]$",
+      "description": "Section id in kebab-case",
+      "x-order": 2
+    },
+    "titleEn": {
+      "type": "string",
+      "minLength": 2,
+      "description": "Title in English",
+      "x-order": 3
+    },
+    "titleEs": {
+      "type": "string",
+      "description": "Title in Spanish",
+      "x-order": 4
+    },
+    "descriptionEn": {
+      "type": "string",
+      "minLength": 2,
+      "description": "One sentence in English",
+      "x-order": 5
+    },
+    "descriptionEs": {
+      "type": "string",
+      "description": "The same sentence in Spanish",
+      "x-order": 6
+    },
+    "to": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/:?=&-]*$",
+      "description": "Path under the app's base route",
+      "x-order": 7
+    },
+    "icon": {
+      "type": "string",
+      "enum": [
+        "list",
+        "inventory",
+        "people",
+        "folder",
+        "document",
+        "tag",
+        "calendar",
+        "cart",
+        "task",
+        "keys",
+        "building",
+        "payments",
+        "analytics",
+        "dashboard",
+        "chart",
+        "map",
+        "mail",
+        "security",
+        "warehouse",
+        "category",
+        "today",
+        "insights",
+        "settings",
+        "home",
+        "store",
+        "receipt",
+        "inbox",
+        "notifications",
+        "help",
+        "add",
+        "diamond",
+        "collections",
+        "star"
+      ],
+      "default": "list",
+      "description": "Icon of the card"
+    }
+  }
+}

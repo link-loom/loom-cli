@@ -1,0 +1,50 @@
+{
+  "en": {
+    "auth": {
+      "signup": {
+        "title": "Create your account",
+        "welcome": "Create your {name} account",
+        "heroTitle": "Welcome to {name}",
+        "heroSubtitle": "{description}"
+      }
+    },
+    "setup": {
+      "title": "Set up your organization",
+      "steps": {
+        "hubSubtitle": "Choose how you want to start with {name}.",
+        "hubJoinTitle": "Join an organization",
+        "hubJoinSubtitle": "Just looking around? You can create your own later.",
+        "createTitle": "Create your organization",
+        "createSubtitle": "We set up your workspace with these details.",
+        "chooseTitle": "Choose your organization",
+        "chooseSubtitle": "Pick the one you want to join.",
+        "allSetTitle": "All set",
+        "allSetSubtitle": "Your organization is ready."
+      }
+    }
+  },
+  "es": {
+    "auth": {
+      "signup": {
+        "title": "Crea tu cuenta",
+        "welcome": "Crea tu cuenta de {name}",
+        "heroTitle": "Te damos la bienvenida a {name}",
+        "heroSubtitle": "{description}"
+      }
+    },
+    "setup": {
+      "title": "Configura tu organización",
+      "steps": {
+        "hubSubtitle": "Elige cómo quieres empezar con {name}.",
+        "hubJoinTitle": "Unirme a una organización",
+        "hubJoinSubtitle": "¿Solo quieres mirar? Puedes crear la tuya más tarde.",
+        "createTitle": "Crea tu organización",
+        "createSubtitle": "Con estos datos configuramos tu espacio de trabajo.",
+        "chooseTitle": "Elige tu organización",
+        "chooseSubtitle": "Selecciona a cuál te quieres unir.",
+        "allSetTitle": "Todo listo",
+        "allSetSubtitle": "Tu organización quedó configurada."
+      }
+    }
+  }
+}

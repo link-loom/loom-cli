@@ -1,0 +1,42 @@
+/**
+ * <%= name %>'s settings, as data: identity, brand files, sign-in and SEO. No logic and no secrets (those live in
+ * .env.local). Text lives in src/i18n and colours in src/constants/theme.js.
+ */
+const appConfig = {
+  name: <%- json(name) %>,
+  slug: <%- json(slug) %>,
+  variant: <%- json(variant) %>,
+  basePath: <%- json(basePath) %>,
+  storageKey: <%- json(slug) %>,
+  defaultLocale: <%- json(defaultLocale) %>,
+  brand: {
+    logo: "/brand/logo-light.svg",
+    logoOnDark: "/brand/logo-dark.svg",
+    headerWordmark: "/brand/wordmark-<%= headerArtwork %>.svg",
+    headerMark: "/brand/mark-<%= headerArtwork %>.svg",
+    favicon: "/brand/favicon.svg",
+    faviconIco: "/brand/favicon.ico",
+    appleTouchIcon: "/brand/apple-touch-icon.png",
+    authHero: "/brand/auth-hero.jpg",
+  },
+  auth: {
+    signup: <%= layers.signup %>,
+    // Paths reachable without a session, besides Veripass's own (/auth/login, /auth/signup, /auth/callback…).
+    publicPaths: ["/auth/*"<%- layers.signup ? ', "/setup/*"' : '' %>],
+  },
+<%_ if (layers.stoneos) { _%>
+  stoneos: {
+    // Platforms shown as cards in Advanced settings (ids of the StoneOS platform catalog in @link-loom/cloud-sdk).
+    platforms: <%- json(platforms) %>,
+    // Where public/ keeps the platform logos the apps menu, the rail and the hubs show.
+    platformIconPath: "/assets/images/bsh-apps",
+  },
+<%_ } _%>
+  seo: {
+    ogImage: "/brand/og-default.jpg",
+    // A signed-in workspace is not for search engines.
+    robots: "noindex, nofollow",
+  },
+};
+
+export default appConfig;

@@ -1,0 +1,53 @@
+import { Suspense } from "react";
+import { Outlet } from "react-router-dom";
+import { OmniSearchRegistryProvider, PageMetaProvider } from "@link-loom/react-sdk";
+import { AppShell, useCopy } from "@link-loom/react-shell";
+
+import appConfig from "@app-config";
+import Navbar from "@components/layouts/navbar/Navbar.component";
+import Sidebar from "@components/layouts/sidebar/Sidebar.component";
+import Footer from "@components/layouts/footer/Footer.component";
+<%_ if (layers.stoneos) { _%>
+import StoneOSExtension from "@components/layouts/extensions/stoneos.extension";
+<%_ } _%>
+<%_ if (layers.commandCenter) { _%>
+import CommandCenterExtension, { CommandCenterPanel } from "@components/layouts/extensions/command-center.extension";
+<%_ } _%>
+
+/** The signed-in frame: navbar, sidebar, the page and the footer<%= layers.commandCenter ? ', with the Command Center as a right panel' : '' %>. */
+export default function LayoutApp() {
+  const copy = useCopy();
+
+  return (
+    <PageMetaProvider appName={copy.app.name}>
+      <OmniSearchRegistryProvider>
+<%_ if (layers.stoneos) { _%>
+        <StoneOSExtension>
+<%_ } _%>
+<%_ if (layers.commandCenter) { _%>
+          <CommandCenterExtension>
+<%_ } _%>
+            <AppShell
+              storageKey={appConfig.storageKey}
+              skipLinkLabel={copy.shell.skipToContent}
+              navbar={<Navbar />}
+              sidebar={<Sidebar />}
+              footer={<Footer />}
+<%_ if (layers.commandCenter) { _%>
+              aside={<CommandCenterPanel />}
+<%_ } _%>
+            >
+              <Suspense fallback={null}>
+                <Outlet />
+              </Suspense>
+            </AppShell>
+<%_ if (layers.commandCenter) { _%>
+          </CommandCenterExtension>
+<%_ } _%>
+<%_ if (layers.stoneos) { _%>
+        </StoneOSExtension>
+<%_ } _%>
+      </OmniSearchRegistryProvider>
+    </PageMetaProvider>
+  );
+}

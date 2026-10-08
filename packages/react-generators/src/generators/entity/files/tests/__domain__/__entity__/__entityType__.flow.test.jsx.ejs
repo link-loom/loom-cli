@@ -1,0 +1,78 @@
+<%_
+  const requiredOthers = editableFields.filter((field) => field.required && !field.isTitle && field.type !== "boolean");
+_%>
+import { fireEvent, screen, waitFor<%- has.delete ? ", within" : "" %> } from "@testing-library/react";
+
+import appConfig from "@app-config";
+import en from "@i18n/en";
+import { renderWithProviders } from "@tests/support/render";
+import { VALUES, serviceMock } from "@tests/<%- domain %>/<%- entity %>/<%- entityType %>.fixtures";
+import <%- Prefix %>ListComponent from "@components/pages/<%- domain %>/<%- entity %>/list/<%- Prefix %>List.component";
+
+// The service over an in-memory store: what is created is listed, read and deleted like on the backend.
+const mockStore = { records: [] };
+const mockService = Object.assign(serviceMock(), {
+  list: jest.fn(async () => ({ items: [...mockStore.records], totalItems: mockStore.records.length })),
+  read: jest.fn(async (id) => ({ record: mockStore.records.find((record) => record.id === id) || null })),
+  add: jest.fn(async (payload) => {
+    const created = { ...payload, id: `<%- entityType %>-${mockStore.records.length + 1}` };
+    mockStore.records.push(created);
+    return created;
+  }),
+  edit: jest.fn(async (id, payload) => Object.assign(mockStore.records.find((record) => record.id === id), payload)),
+  remove: jest.fn(async (id) => {
+    mockStore.records = mockStore.records.filter((record) => record.id !== id);
+    return { id };
+  }),
+});
+jest.mock("@services/<%- domain %>/<%- entity %>/<%- serviceFile %>", () => jest.fn(() => mockService));
+<%_ if (scoped) { _%>
+jest.mock("@veripass/react-sdk", () => ({
+  useAuth: () => ({ user: { memberships: { active: { organization_id: "org-1" } } } }),
+}));
+<%_ } _%>
+
+const entityCopy = en.<%- copyPath %>;
+
+describe("<%- text.plural %>: the whole way through", () => {
+  beforeEach(() => {
+    mockStore.records = [];
+  });
+
+  it("creates one, finds it in the list<%- has.delete ? " and deletes it" : "" %>", async () => {
+    renderWithProviders(<<%- Prefix %>ListComponent />, { route: `${appConfig.basePath}<%- listPath %>` });
+    expect(await screen.findByText(entityCopy.emptyTitle)).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole("button", { name: entityCopy.new })[0]);
+    fireEvent.change(await screen.findByRole("textbox", { name: entityCopy.fields.<%- titleField.name %> }), {
+      target: { value: VALUES.<%- titleField.name %> },
+    });
+<%_ requiredOthers.forEach((field) => { _%>
+<%_ if (field.type === "options") { _%>
+    fireEvent.keyDown(screen.getByLabelText(entityCopy.fields.<%- field.name %>), { key: "ArrowDown" });
+    fireEvent.click(screen.getByRole("option", { name: entityCopy.options.<%- field.name %>[VALUES.<%- field.name %>] }));
+<%_ } else { _%>
+    fireEvent.change(screen.getByLabelText(entityCopy.fields.<%- field.name %>), { target: { value: VALUES.<%- field.name %> } });
+<%_ } _%>
+<%_ }) _%>
+    fireEvent.click(screen.getByRole("button", { name: entityCopy.create }));
+
+    // The new one opens in place of the form, and the list behind it already has it.
+    await waitFor(() => expect(screen.getByTestId("location")).toHaveTextContent("id=<%- entityType %>-1"));
+    expect(await screen.findByDisplayValue(VALUES.<%- titleField.name %>)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: en.common.close })[0]);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(await screen.findByText(VALUES.<%- titleField.name %>)).toBeInTheDocument();
+<%_ if (has.delete) { _%>
+
+    // A row of the table or a card of the grid: both reveal their options on hover.
+    const item = screen.getByText(VALUES.<%- titleField.name %>).closest(".stos-reveal-host");
+    fireEvent.click(within(item).getByRole("button", { name: en.common.options }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: entityCopy.deleteConfirm.action }));
+    fireEvent.click(await screen.findByRole("button", { name: entityCopy.deleteConfirm.action }));
+
+    expect(await screen.findByText(entityCopy.emptyTitle)).toBeInTheDocument();
+    expect(mockStore.records).toEqual([]);
+<%_ } _%>
+  });
+});

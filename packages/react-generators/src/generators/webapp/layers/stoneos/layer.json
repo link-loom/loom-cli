@@ -1,0 +1,14 @@
+{
+  "id": "stoneos",
+  "dependencies": ["@link-loom/cloud-sdk"],
+  "devDependencies": [],
+  "scripts": {},
+  "env": [
+    {
+      "group": "Backends",
+      "key": "VITE_LOOM_CLOUD_BACKEND_URL",
+      "option": "loomCloudUrl",
+      "comment": "Link Loom Cloud: App Engine, App Store, billing and the help center"
+    }
+  ]
+}

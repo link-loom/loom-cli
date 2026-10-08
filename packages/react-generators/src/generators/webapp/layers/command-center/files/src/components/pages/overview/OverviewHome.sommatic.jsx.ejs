@@ -1,0 +1,20 @@
+import { useSommaticContextSource } from "@sommatic/react-sdk";
+
+export const PAGE_METADATA = {
+  path: "<%= basePath %>/overview",
+  description: "Overview — the starting page of <%= name %>: a greeting and the places to go next.",
+};
+
+/** Tells the Command Center which page the person is on and what it offers. */
+export default function OverviewHomeSommatic() {
+  useSommaticContextSource(
+    {
+      id: "page-context",
+      ...PAGE_METADATA,
+      getData: () => ({ type: "overview" }),
+    },
+    []
+  );
+
+  return null;
+}

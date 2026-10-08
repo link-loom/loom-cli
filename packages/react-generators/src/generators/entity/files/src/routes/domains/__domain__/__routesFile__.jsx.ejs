@@ -1,0 +1,15 @@
+import { lazy } from "react";
+import { Route } from "react-router-dom";
+
+const <%- Prefix %>ListPage = lazy(() => import("@pages/<%- domain %>/<%- Prefix %>List.page"));
+const <%- Prefix %>DetailPage = lazy(() => import("@pages/<%- domain %>/<%- Prefix %>Detail.page"));
+
+/** <%- Entity %> records: the list (the record opens over it with ?id=) and each one's own page. */
+export default function <%- Prefix %>Routes() {
+  return (
+    <>
+      <Route path="<%- domain %>/<%- plural %>" element={<<%- Prefix %>ListPage />} />
+      <Route path="<%- domain %>/<%- plural %>/:id" element={<<%- Prefix %>DetailPage />} />
+    </>
+  );
+}

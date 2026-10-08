@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "link-loom/react-generators/brand",
+  "title": "Brand",
+  "description": "Changes the brand of an existing webapp and rebuilds every file that depends on it: the palette in src/constants/theme.js, the theme colour, the sign-in ground, logos, favicons, PWA icons, the share image and the web manifest.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["colors", "logo", "assets", "og"],
+      "description": "colors: change the palette; logo: use the person's own logo; assets: rebuild the derived files from the current brand; og: rebuild the share image"
+    },
+    "brandMode": {
+      "type": "string",
+      "enum": ["default", "preset", "random"],
+      "description": "Start the palette over from Mi Retail's, a preset or a random one (without it, the current palette is kept)"
+    },
+    "brandPreset": {
+      "type": "string",
+      "enum": ["indigo", "plum", "forest", "ocean", "graphite", "clay"],
+      "default": "indigo"
+    },
+    "seed": { "type": "string", "description": "Seed for brandMode random" },
+    "primaryColor": { "type": "string", "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "headerColor": { "type": "string", "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "logoAreaColor": { "type": "string", "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "backgroundColor": { "type": "string", "pattern": "^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "footerColor": { "type": "string", "pattern": "^transparent$|^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "logo": {
+      "type": "string",
+      "description": "Path to the logo for light backgrounds (SVG, or PNG of at least 512 px)"
+    },
+    "logoDark": {
+      "type": "string",
+      "description": "Path to the logo for the header and dark backgrounds (defaults to logo)"
+    },
+    "mark": { "type": "string", "description": "Path to a square symbol for favicons and the condensed sidebar" },
+    "tagline": {
+      "type": "string",
+      "maxLength": 160,
+      "description": "Line under the name in the share image (defaults to the package description)"
+    }
+  },
+  "required": ["action"],
+  "examples": [
+    { "action": "colors", "headerColor": "#1f4e79" },
+    { "action": "colors", "brandMode": "random", "seed": "acme" },
+    { "action": "logo", "logo": "assets/acme-logo.svg" },
+    { "action": "og", "tagline": "Operations, in one place" }
+  ]
+}
