@@ -1,0 +1,45 @@
+{
+  "name": "@link-loom/cli",
+  "version": "3.0.0-alpha.0",
+  "description": "Create any Link Loom project (landing, webapp, backend) with generators. Built for agents, with a real TUI for people.",
+  "type": "module",
+  "bin": {
+    "link-loom": "./bin/link-loom.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@link-loom/astro-generators": "3.0.0-alpha.0",
+    "@link-loom/devkit": "3.0.0-alpha.0",
+    "@link-loom/migrate": "3.0.0-alpha.0",
+    "@link-loom/node-generators": "3.0.0-alpha.0",
+    "@link-loom/react-generators": "3.0.0-alpha.0",
+    "htm": "^3.1.1",
+    "ink": "^8.0.0",
+    "react": "^19.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/link-loom/loom-cli.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "link-loom",
+    "cli",
+    "generators",
+    "scaffold",
+    "agents",
+    "mcp"
+  ],
+  "author": "Camilo Alexander Rodriguez Cuaran <camiepisode@outlook.com>",
+  "license": "Apache-2.0"
+}

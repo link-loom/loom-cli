@@ -1,0 +1,874 @@
+{
+  "context": {
+    "domains": [
+      "inventory",
+      "security",
+      "management"
+    ],
+    "entities": [
+      "product",
+      "api-key"
+    ]
+  },
+  "requests": [
+    {
+      "id": "es01",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea un proyecto landing llamado aurora-site",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "landing",
+          "name": "aurora-site"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es02",
+      "lang": "es",
+      "category": "complete",
+      "text": "Necesito una webapp de administración que se llame backoffice",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "webapp",
+          "variant": "admin",
+          "name": "backoffice"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es03",
+      "lang": "es",
+      "category": "complete",
+      "text": "Genera un servicio con arquitectura de microservicio llamado billing-api",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "service",
+          "shape": "microservice",
+          "name": "billing-api"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es04",
+      "lang": "es",
+      "category": "complete",
+      "text": "Agrega un CRUD de proveedores en inventario con copiar enlace",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "supplier",
+          "actions": [
+            "copy-link"
+          ]
+        },
+        "missing": []
+      },
+      "note": "needs-translation"
+    },
+    {
+      "id": "es05",
+      "lang": "es",
+      "category": "complete",
+      "text": "Añade la entidad warehouse al dominio inventario con lista compacta",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "warehouse",
+          "list": "compact"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es06",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea la entidad session en seguridad, con tarjetas, vista rápida y eliminar",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "security",
+          "entity": "session",
+          "list": "cards",
+          "actions": [
+            "quickview",
+            "delete"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es07",
+      "lang": "es",
+      "category": "complete",
+      "text": "Quiero gestionar clientes en gestión con editar, abrir página y copiar id",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "management",
+          "entity": "customer",
+          "actions": [
+            "edit",
+            "open-page",
+            "copy-id"
+          ]
+        },
+        "missing": []
+      },
+      "note": "needs-translation"
+    },
+    {
+      "id": "es08",
+      "lang": "es",
+      "category": "complete",
+      "text": "Agrega la entidad invoice en management",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "management",
+          "entity": "invoice"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es09",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea una página dashboard en management con ruta /dashboard",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "management",
+          "name": "dashboard",
+          "path": "/dashboard"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es10",
+      "lang": "es",
+      "category": "complete",
+      "text": "Agrega una página llamada audit-log en seguridad",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "security",
+          "name": "audit-log"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es11",
+      "lang": "es",
+      "category": "complete",
+      "text": "Nueva página stock-overview en inventario en /stock",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "inventory",
+          "name": "stock-overview",
+          "path": "/stock"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es12",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea un componente llamado status-badge en inventario para la lista",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "inventory",
+          "name": "status-badge",
+          "role": "list"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es13",
+      "lang": "es",
+      "category": "complete",
+      "text": "Añade un componente compartido user-avatar en seguridad",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "security",
+          "name": "user-avatar",
+          "role": "shared"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es14",
+      "lang": "es",
+      "category": "complete",
+      "text": "Componente de acciones rápidas row-menu en management",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "management",
+          "name": "row-menu",
+          "role": "quick-actions"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es15",
+      "lang": "es",
+      "category": "complete",
+      "text": "Genera el servicio de product en inventario",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "inventory",
+          "entity": "product"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es16",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea el servicio backend para api-key en seguridad",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "security",
+          "entity": "api-key"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es17",
+      "lang": "es",
+      "category": "complete",
+      "text": "Cambia el color primario a #0a84ff y el fondo a #f5f5f5",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "primary": "#0a84ff",
+          "background": "#f5f5f5"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es18",
+      "lang": "es",
+      "category": "complete",
+      "text": "Usa colores aleatorios para la marca",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "preset": "random"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es19",
+      "lang": "es",
+      "category": "complete",
+      "text": "Pon el header en #111827 y el footer en #1f2937",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "header": "#111827",
+          "footer": "#1f2937"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es20",
+      "lang": "es",
+      "category": "complete",
+      "text": "Genera todas las imágenes del proyecto",
+      "expected": {
+        "tool": "images_generate",
+        "args": {
+          "target": "all"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es21",
+      "lang": "es",
+      "category": "complete",
+      "text": "Agrega la integración con Veripass",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "veripass"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es22",
+      "lang": "es",
+      "category": "complete",
+      "text": "Quiero activar el command center",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "command-center"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es23",
+      "lang": "es",
+      "category": "complete",
+      "text": "Solo revisa si hay actualizaciones del stack, sin aplicar nada",
+      "expected": {
+        "tool": "update_stack",
+        "args": {
+          "check": true
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "es24",
+      "lang": "es",
+      "category": "complete",
+      "text": "Valida que el proyecto esté bien configurado",
+      "expected": {
+        "tool": "check_project",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "es25",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Crea un proyecto nuevo",
+      "expected": {
+        "tool": "create_project",
+        "args": {},
+        "missing": [
+          "type",
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "es26",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Agrega la entidad warehouse",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "entity": "warehouse"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "es27",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Quiero integrar un servicio externo al proyecto",
+      "expected": {
+        "tool": "services_add",
+        "args": {},
+        "missing": [
+          "service"
+        ]
+      }
+    },
+    {
+      "id": "es28",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Agrega una página llamada reports",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "name": "reports"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "es29",
+      "lang": "es",
+      "category": "unrelated",
+      "text": "¿Qué clima hace hoy en Bogotá?",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "es30",
+      "lang": "es",
+      "category": "unrelated",
+      "text": "Explícame la diferencia entre un monolito y un microservicio",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "en01",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create a landing page project called aurora-site",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "landing",
+          "name": "aurora-site"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en02",
+      "lang": "en",
+      "category": "complete",
+      "text": "New client webapp named storefront",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "webapp",
+          "variant": "client",
+          "name": "storefront"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en03",
+      "lang": "en",
+      "category": "complete",
+      "text": "Scaffold a monolith service called orders-api",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "service",
+          "shape": "monolith",
+          "name": "orders-api"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en04",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a CRUD for suppliers in inventory with copy link",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "supplier",
+          "actions": [
+            "copy-link"
+          ]
+        },
+        "missing": []
+      },
+      "note": "plural"
+    },
+    {
+      "id": "en05",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add the warehouse entity to inventory with a compact list",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "warehouse",
+          "list": "compact"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en06",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create entity session in security as cards with quick view and delete",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "security",
+          "entity": "session",
+          "list": "cards",
+          "actions": [
+            "quickview",
+            "delete"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en07",
+      "lang": "en",
+      "category": "complete",
+      "text": "I want to manage invoices in management with edit, open in new tab and copy id",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "management",
+          "entity": "invoice",
+          "actions": [
+            "edit",
+            "open-new-tab",
+            "copy-id"
+          ]
+        },
+        "missing": []
+      },
+      "note": "plural"
+    },
+    {
+      "id": "en08",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a customer entity in management",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "management",
+          "entity": "customer"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en09",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create a dashboard page in management at /dashboard",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "management",
+          "name": "dashboard",
+          "path": "/dashboard"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en10",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a page called audit-log to security",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "security",
+          "name": "audit-log"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en11",
+      "lang": "en",
+      "category": "complete",
+      "text": "New page stock-overview in inventory at /stock",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "inventory",
+          "name": "stock-overview",
+          "path": "/stock"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en12",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create a component named status-badge in inventory for the list",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "inventory",
+          "name": "status-badge",
+          "role": "list"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en13",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a shared component user-avatar in security",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "security",
+          "name": "user-avatar",
+          "role": "shared"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en14",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a quick actions component row-menu to management",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "management",
+          "name": "row-menu",
+          "role": "quick-actions"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en15",
+      "lang": "en",
+      "category": "complete",
+      "text": "Generate the product service in inventory",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "inventory",
+          "entity": "product"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en16",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create the backend service for api-key in security",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "security",
+          "entity": "api-key"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en17",
+      "lang": "en",
+      "category": "complete",
+      "text": "Set the primary color to #ff5a1f and the background to #fafafa",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "primary": "#ff5a1f",
+          "background": "#fafafa"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en18",
+      "lang": "en",
+      "category": "complete",
+      "text": "Reset the brand colors to the default",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "preset": "default"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en19",
+      "lang": "en",
+      "category": "complete",
+      "text": "Make the header #0f172a and the footer #1e293b",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "header": "#0f172a",
+          "footer": "#1e293b"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en20",
+      "lang": "en",
+      "category": "complete",
+      "text": "Generate the open graph image",
+      "expected": {
+        "tool": "images_generate",
+        "args": {
+          "target": "og"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en21",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add the analytics service",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "analytics"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en22",
+      "lang": "en",
+      "category": "complete",
+      "text": "Enable image generation",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "image-generation"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "en23",
+      "lang": "en",
+      "category": "complete",
+      "text": "Update the project stack",
+      "expected": {
+        "tool": "update_stack",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "en24",
+      "lang": "en",
+      "category": "complete",
+      "text": "Check that the project is healthy",
+      "expected": {
+        "tool": "check_project",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "en25",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Create a new service",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "service"
+        },
+        "missing": [
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "en26",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Add a component called status-badge",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "name": "status-badge"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "en27",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Generate the backend service for the entity invoice",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "entity": "invoice"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "en28",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Hook up one of the integrations",
+      "expected": {
+        "tool": "services_add",
+        "args": {},
+        "missing": [
+          "service"
+        ]
+      }
+    },
+    {
+      "id": "en29",
+      "lang": "en",
+      "category": "unrelated",
+      "text": "What's the capital of France?",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "en30",
+      "lang": "en",
+      "category": "unrelated",
+      "text": "Tell me a joke about databases",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    }
+  ]
+}

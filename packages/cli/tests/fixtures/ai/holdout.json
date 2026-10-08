@@ -1,0 +1,562 @@
+{
+  "requests": [
+    {
+      "id": "hes01",
+      "lang": "es",
+      "category": "complete",
+      "text": "Necesito una nueva landing que se llame promo-verano",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "landing",
+          "name": "promo-verano"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes02",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea una app web para clientes con el nombre portal-socios",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "webapp",
+          "variant": "client",
+          "name": "portal-socios"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes03",
+      "lang": "es",
+      "category": "complete",
+      "text": "Quiero un servicio monolítico llamado ledger-core",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "service",
+          "shape": "monolith",
+          "name": "ledger-core"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes04",
+      "lang": "es",
+      "category": "complete",
+      "text": "Añade una entidad pedido en inventario con lista de tarjetas y borrar",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "order",
+          "list": "cards",
+          "actions": [
+            "delete"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes05",
+      "lang": "es",
+      "category": "complete",
+      "text": "Registra la entidad user en seguridad con vista previa y abrir en nueva pestaña",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "security",
+          "entity": "user",
+          "actions": [
+            "quickview",
+            "open-new-tab"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes06",
+      "lang": "es",
+      "category": "complete",
+      "text": "Crea una página llamada resumen-ventas en gestión con ruta /ventas",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "management",
+          "name": "resumen-ventas",
+          "path": "/ventas"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes07",
+      "lang": "es",
+      "category": "complete",
+      "text": "Agrega un componente de registro detail-card en inventario",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "inventory",
+          "name": "detail-card",
+          "role": "record"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes08",
+      "lang": "es",
+      "category": "complete",
+      "text": "Necesito el servicio backend de la entidad invoice en gestión",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "management",
+          "entity": "invoice"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes09",
+      "lang": "es",
+      "category": "complete",
+      "text": "El color del footer debe ser #222222",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "footer": "#222222"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes10",
+      "lang": "es",
+      "category": "complete",
+      "text": "Restablece la paleta a la predeterminada",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "preset": "default"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes11",
+      "lang": "es",
+      "category": "complete",
+      "text": "Genera la imagen para compartir en redes (open graph)",
+      "expected": {
+        "tool": "images_generate",
+        "args": {
+          "target": "og"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes12",
+      "lang": "es",
+      "category": "complete",
+      "text": "Activa el despliegue",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "deploy"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes13",
+      "lang": "es",
+      "category": "complete",
+      "text": "Habilita stoneos",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "stoneos"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hes14",
+      "lang": "es",
+      "category": "complete",
+      "text": "Actualiza las dependencias del proyecto",
+      "expected": {
+        "tool": "update_stack",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hes15",
+      "lang": "es",
+      "category": "complete",
+      "text": "Haz un chequeo del proyecto",
+      "expected": {
+        "tool": "check_project",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hes16",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Añade una página nueva",
+      "expected": {
+        "tool": "add_page",
+        "args": {},
+        "missing": [
+          "domain",
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "hes17",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Quiero otro componente para la lista",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "role": "list"
+        },
+        "missing": [
+          "domain",
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "hes18",
+      "lang": "es",
+      "category": "incomplete",
+      "text": "Crea un servicio para la entidad product",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "entity": "product"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "hes19",
+      "lang": "es",
+      "category": "unrelated",
+      "text": "¿Cuánto es 15 por 12?",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hes20",
+      "lang": "es",
+      "category": "unrelated",
+      "text": "Dame una receta de empanadas",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hen01",
+      "lang": "en",
+      "category": "complete",
+      "text": "I need a new landing called summer-promo",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "landing",
+          "name": "summer-promo"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen02",
+      "lang": "en",
+      "category": "complete",
+      "text": "Create an admin webapp named control-panel",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "webapp",
+          "variant": "admin",
+          "name": "control-panel"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen03",
+      "lang": "en",
+      "category": "complete",
+      "text": "Spin up a microservice named ledger-core",
+      "expected": {
+        "tool": "create_project",
+        "args": {
+          "type": "service",
+          "shape": "microservice",
+          "name": "ledger-core"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen04",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add an order entity in inventory using cards and with delete",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "inventory",
+          "entity": "order",
+          "list": "cards",
+          "actions": [
+            "delete"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen05",
+      "lang": "en",
+      "category": "complete",
+      "text": "Register entity user in security with quick view and open in new tab",
+      "expected": {
+        "tool": "add_entity",
+        "args": {
+          "domain": "security",
+          "entity": "user",
+          "actions": [
+            "quickview",
+            "open-new-tab"
+          ]
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen06",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a page sales-summary to management at /sales",
+      "expected": {
+        "tool": "add_page",
+        "args": {
+          "domain": "management",
+          "name": "sales-summary",
+          "path": "/sales"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen07",
+      "lang": "en",
+      "category": "complete",
+      "text": "Add a record component detail-card to inventory",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "domain": "inventory",
+          "name": "detail-card",
+          "role": "record"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen08",
+      "lang": "en",
+      "category": "complete",
+      "text": "I need the backend service of the invoice entity in management",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "domain": "management",
+          "entity": "invoice"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen09",
+      "lang": "en",
+      "category": "complete",
+      "text": "The footer color should be #222222",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "footer": "#222222"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen10",
+      "lang": "en",
+      "category": "complete",
+      "text": "Randomize the brand palette",
+      "expected": {
+        "tool": "brand_colors",
+        "args": {
+          "preset": "random"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen11",
+      "lang": "en",
+      "category": "complete",
+      "text": "Generate every image for the project",
+      "expected": {
+        "tool": "images_generate",
+        "args": {
+          "target": "all"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen12",
+      "lang": "en",
+      "category": "complete",
+      "text": "Turn on deploy",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "deploy"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen13",
+      "lang": "en",
+      "category": "complete",
+      "text": "Connect veripass",
+      "expected": {
+        "tool": "services_add",
+        "args": {
+          "service": "veripass"
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen14",
+      "lang": "en",
+      "category": "complete",
+      "text": "Upgrade the dependencies of the project",
+      "expected": {
+        "tool": "update_stack",
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hen15",
+      "lang": "en",
+      "category": "complete",
+      "text": "Only check whether there are stack updates",
+      "expected": {
+        "tool": "update_stack",
+        "args": {
+          "check": true
+        },
+        "missing": []
+      }
+    },
+    {
+      "id": "hen16",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Add a new page",
+      "expected": {
+        "tool": "add_page",
+        "args": {},
+        "missing": [
+          "domain",
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "hen17",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "I want another component for the list",
+      "expected": {
+        "tool": "add_component",
+        "args": {
+          "role": "list"
+        },
+        "missing": [
+          "domain",
+          "name"
+        ]
+      }
+    },
+    {
+      "id": "hen18",
+      "lang": "en",
+      "category": "incomplete",
+      "text": "Create a service for the entity product",
+      "expected": {
+        "tool": "add_service",
+        "args": {
+          "entity": "product"
+        },
+        "missing": [
+          "domain"
+        ]
+      }
+    },
+    {
+      "id": "hen19",
+      "lang": "en",
+      "category": "unrelated",
+      "text": "How many days are in a leap year?",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    },
+    {
+      "id": "hen20",
+      "lang": "en",
+      "category": "unrelated",
+      "text": "Give me a recipe for pancakes",
+      "expected": {
+        "tool": null,
+        "args": {},
+        "missing": []
+      }
+    }
+  ]
+}
